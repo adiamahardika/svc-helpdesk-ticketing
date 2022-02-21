@@ -11,6 +11,7 @@ type CategoryServiceInterface interface {
 	GetCategory(request model.GetCategoryRequest) ([]entity.Category, error)
 	CreateCategory(request model.CreateCategoryRequest) (entity.Category, error)
 	UpdateCategory(request entity.Category) (entity.Category, error)
+	DeleteCategory(Id int) error
 }
 
 type categoryService struct {
@@ -53,4 +54,11 @@ func (categoryService *categoryService) UpdateCategory(request entity.Category) 
 	category, error := categoryService.repository.UpdateCategory(request)
 
 	return category, error
+}
+
+func (categoryService *categoryService) DeleteCategory(Id int) error {
+
+	error := categoryService.repository.DeleteCategory(Id)
+
+	return error
 }
