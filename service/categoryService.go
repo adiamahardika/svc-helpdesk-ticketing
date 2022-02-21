@@ -10,6 +10,7 @@ import (
 type CategoryServiceInterface interface {
 	GetCategory(request model.GetCategoryRequest) ([]entity.Category, error)
 	CreateCategory(request model.CreateCategoryRequest) (entity.Category, error)
+	UpdateCategory(request entity.Category) (entity.Category, error)
 }
 
 type categoryService struct {
@@ -42,4 +43,14 @@ func (categoryService *categoryService) CreateCategory(request model.CreateCateg
 	_, error := categoryService.repository.CreateCategory(category_request)
 
 	return category_request, error
+}
+
+func (categoryService *categoryService) UpdateCategory(request entity.Category) (entity.Category, error) {
+	date_now := time.Now()
+
+	request.UpdateAt = date_now
+
+	category, error := categoryService.repository.UpdateCategory(request)
+
+	return category, error
 }

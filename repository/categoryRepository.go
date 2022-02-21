@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
 )
@@ -8,6 +9,7 @@ import (
 type CategoryRepositoryInterface interface {
 	GetCategory(request model.GetCategoryRequest) ([]entity.Category, error)
 	CreateCategory(request entity.Category) (entity.Category, error)
+	UpdateCategory(request entity.Category) (entity.Category, error)
 }
 
 func (repo *repository) GetCategory(request model.GetCategoryRequest) ([]entity.Category, error) {
@@ -24,6 +26,16 @@ func (repo *repository) CreateCategory(request entity.Category) (entity.Category
 	var category entity.Category
 
 	error := repo.db.Table("category").Create(&request).Error
+
+	return category, error
+}
+
+func (repo *repository) UpdateCategory(request entity.Category) (entity.Category, error) {
+
+	var category entity.Category
+
+	error := repo.db.Raw("UPDATE category SET name = @Name, code_level = @CodeLevel, parent = @Parent, additional_input_1 = @AdditionalInput_1, additional_input_2 = @AdditionalInput_2, additional_input_3 = @AdditionalInput_3, update_at = @UpdateAt WHERE id = @Id RETURNING category.*", request).Find(&category).Error
+	fmt.Println(category)
 
 	return category, error
 }
