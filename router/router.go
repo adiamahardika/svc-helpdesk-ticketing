@@ -19,12 +19,13 @@ func AllRouter(db *gorm.DB) {
 	categoryService := service.CategoryService(repository)
 	categoryController := controller.CategoryController(categoryService, logService)
 
-	myg_ticketing := router.Group("myg-ticketing/api")
+	myg_ticketing := router.Group("/myg-ticketing")
 	{
 		v1 := myg_ticketing.Group("/v1")
 		{
 			category := v1.Group("/category")
 			category.GET("/get/:size/:page_no/:sort_by/:order_by", categoryController.GetCategory)
+			category.POST("/add", categoryController.CreateCategory)
 		}
 	}
 
