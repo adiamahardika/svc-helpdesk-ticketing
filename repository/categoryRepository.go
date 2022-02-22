@@ -10,6 +10,7 @@ type CategoryRepositoryInterface interface {
 	CreateCategory(request entity.Category) (entity.Category, error)
 	UpdateCategory(request entity.Category) (entity.Category, error)
 	DeleteCategory(Id int) error
+	GetDetailCategory(request string) ([]entity.Category, error)
 }
 
 func (repo *repository) GetCategory(request model.GetCategoryRequest) ([]entity.Category, error) {
@@ -45,4 +46,12 @@ func (repo *repository) DeleteCategory(Id int) error {
 	error := repo.db.Raw("UPDATE category SET is_active = ? WHERE id = ? RETURNING category.*", "false", Id).Find(&category).Error
 
 	return error
+}
+
+func (repo *repository) GetDetailCategory(request string) ([]entity.Category, error) {
+	var category []entity.Category
+
+	error := repo.db.Raw("SELECT * FROM category WHERE code_level = ?", request).Find(&category).Error
+
+	return category, error
 }

@@ -55,8 +55,8 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 			Description:    description,
 		}
 		context.JSON(http.StatusOK, gin.H{
-			"status": status,
-			"result": category,
+			"status":  status,
+			"content": category,
 		})
 	} else {
 
@@ -76,7 +76,7 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_category, _ := json.Marshal(category)
-	var result = fmt.Sprintf("{\"status\": %s, \"result\": %s}", string(parse_status), string(parse_category))
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s}", string(parse_status), string(parse_category))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
@@ -119,8 +119,8 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 				Description:    description,
 			}
 			context.JSON(http.StatusOK, gin.H{
-				"status": status,
-				"result": category,
+				"status":  status,
+				"content": category,
 			})
 
 		} else {
@@ -142,7 +142,7 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_category, _ := json.Marshal(category)
-	var result = fmt.Sprintf("{\"status\": %s, \"result\": %s}", string(parse_status), string(parse_category))
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s}", string(parse_status), string(parse_category))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
@@ -184,8 +184,8 @@ func (controller *categoryController) UpdateCategory(context *gin.Context) {
 				Description:    description,
 			}
 			context.JSON(http.StatusOK, gin.H{
-				"status": status,
-				"result": category,
+				"status":  status,
+				"content": category,
 			})
 
 		} else {
@@ -207,7 +207,7 @@ func (controller *categoryController) UpdateCategory(context *gin.Context) {
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_category, _ := json.Marshal(category)
-	var result = fmt.Sprintf("{\"status\": %s, \"result\": %s}", string(parse_status), string(parse_category))
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s}", string(parse_status), string(parse_category))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
@@ -251,5 +251,54 @@ func (controller *categoryController) DeleteCategory(context *gin.Context) {
 	}
 	parse_status, _ := json.Marshal(status)
 	var result = fmt.Sprintf("{\"status\": %s}", string(parse_status))
+	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
+}
+
+func (controller *categoryController) GetDetailCategory(context *gin.Context) {
+
+	code_level := context.Param("code-level")
+
+	description := []string{}
+	http_status := http.StatusOK
+	var status model.StandardResponse
+
+	category, parent_1, parent_2, parent_3, error := controller.categoryService.GetDetailCategory(code_level)
+
+	if error == nil {
+
+		description = append(description, "Success")
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusOK,
+			ResponseCode:   general.SuccessStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"status":   status,
+			"content":  category,
+			"parent_1": parent_1,
+			"parent_2": parent_2,
+			"parent_3": parent_3,
+		})
+
+	} else {
+
+		description = append(description, error.Error())
+		http_status = http.StatusBadRequest
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusBadRequest,
+			ResponseCode:   general.ErrorStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusBadRequest, gin.H{
+			"status": status,
+		})
+
+	}
+	parse_status, _ := json.Marshal(status)
+	parse_category, _ := json.Marshal(category)
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s}", string(parse_status), string(parse_category))
+	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 }
