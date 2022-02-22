@@ -11,6 +11,7 @@ type CategoryRepositoryInterface interface {
 	UpdateCategory(request entity.Category) (entity.Category, error)
 	DeleteCategory(Id int) error
 	GetDetailCategory(request string) ([]entity.Category, error)
+	GetCategoryByParent(request string) ([]entity.Category, error)
 }
 
 func (repo *repository) GetCategory(request model.GetCategoryRequest) ([]entity.Category, error) {
@@ -54,6 +55,14 @@ func (repo *repository) GetDetailCategory(request string) ([]entity.Category, er
 	var category []entity.Category
 
 	error := repo.db.Raw("SELECT * FROM category WHERE code_level = ?", request).Find(&category).Error
+
+	return category, error
+}
+
+func (repo *repository) GetCategoryByParent(request string) ([]entity.Category, error) {
+	var category []entity.Category
+
+	error := repo.db.Raw("SELECT * FROM category WHERE parent = ? ORDER BY update_at DESC", request).Find(&category).Error
 
 	return category, error
 }

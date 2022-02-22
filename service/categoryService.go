@@ -2,6 +2,7 @@ package service
 
 import (
 	"math"
+	"strconv"
 	"strings"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
@@ -40,7 +41,7 @@ func (categoryService *categoryService) CreateCategory(request model.CreateCateg
 
 	category_request := entity.Category{
 		Name:              request.Name,
-		CodeLevel:         request.CodeLevel,
+		CodeLevel:         "",
 		Parent:            request.Parent,
 		AdditionalInput_1: request.AdditionalInput1,
 		AdditionalInput_2: request.AdditionalInput2,
@@ -49,7 +50,22 @@ func (categoryService *categoryService) CreateCategory(request model.CreateCateg
 		UpdateAt:          date_now,
 	}
 
-	_, error := categoryService.repository.CreateCategory(category_request)
+	find_by_parent, error := categoryService.repository.GetCategoryByParent(request.Parent)
+
+	if len(find_by_parent) > 0 {
+		last_code_level := find_by_parent[0].CodeLevel
+		split := strings.Split(last_code_level, ".")
+		last_code := split[len(split)-1]
+		var parse_code int
+		parse_code, error = strconv.Atoi(last_code)
+		parse_code++
+
+		category_request.CodeLevel = request.Parent + "." + strconv.Itoa(parse_code)
+	} else {
+		category_request.CodeLevel = request.Parent + ".1"
+	}
+
+	_, error = categoryService.repository.CreateCategory(category_request)
 
 	return category_request, error
 }

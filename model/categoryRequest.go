@@ -13,7 +13,6 @@ type GetCategoryRequest struct {
 
 type CreateCategoryRequest struct {
 	Name             string    `json:"name"`
-	CodeLevel        string    `json:"code_level"`
 	Parent           string    `json:"parent"`
 	UpdateAt         time.Time `json:"update_at"`
 	AdditionalInput1 string    `json:"additional_input_1"`
