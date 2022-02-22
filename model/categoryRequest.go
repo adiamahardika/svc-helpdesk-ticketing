@@ -3,11 +3,12 @@ package model
 import "time"
 
 type GetCategoryRequest struct {
-	Size     string `json:"size"`
-	PageNo   string `json:"page_no"`
-	SortBy   string `json:"sort_by"`
-	OrderBy  string `json:"order_by"`
-	IsActive string `json:"is_active"`
+	Size       int    `json:"size"`
+	PageNo     int    `json:"page_no"`
+	StartIndex int    `json:"start_index"`
+	SortBy     string `json:"sort_by"`
+	OrderBy    string `json:"order_by"`
+	IsActive   string `json:"is_active"`
 }
 
 type CreateCategoryRequest struct {

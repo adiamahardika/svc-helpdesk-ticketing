@@ -1,6 +1,7 @@
 package service
 
 import (
+	"math"
 	"strings"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
@@ -25,6 +26,11 @@ func CategoryService(repository repository.CategoryRepositoryInterface) *categor
 }
 
 func (categoryService *categoryService) GetCategory(request model.GetCategoryRequest) ([]entity.Category, error) {
+
+	if request.Size == 0 {
+		request.Size = math.MaxInt16
+	}
+	request.StartIndex = request.PageNo * request.Size
 
 	return categoryService.repository.GetCategory(request)
 }

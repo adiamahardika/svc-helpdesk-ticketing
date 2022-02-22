@@ -26,8 +26,8 @@ func CategoryController(categoryService service.CategoryServiceInterface, logSer
 
 func (controller *categoryController) GetCategory(context *gin.Context) {
 
-	size := context.Param("size")
-	page_no := context.Param("page_no")
+	size, error := strconv.Atoi(context.Param("size"))
+	page_no, error := strconv.Atoi(context.Param("page_no"))
 	sort_by := context.Param("sort_by")
 	order_by := context.Param("order_by")
 
