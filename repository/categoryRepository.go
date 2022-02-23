@@ -7,6 +7,7 @@ import (
 
 type CategoryRepositoryInterface interface {
 	GetCategory(request model.GetCategoryRequest) ([]entity.Category, error)
+	CountCategory(request model.GetCategoryRequest) (int, error)
 	CreateCategory(request entity.Category) (entity.Category, error)
 	UpdateCategory(request entity.Category) (entity.Category, error)
 	DeleteCategory(Id int) error
@@ -25,6 +26,16 @@ func (repo *repository) GetCategory(request model.GetCategoryRequest) ([]entity.
 	}).Find(&category).Error
 
 	return category, error
+}
+
+func (repo *repository) CountCategory(request model.GetCategoryRequest) (int, error) {
+	var total_data int
+
+	error := repo.db.Raw("SELECT COUNT(*) as total_data FROM category WHERE is_active LIKE @IsActive", model.GetCategoryRequest{
+		IsActive: "%" + request.IsActive + "%",
+	}).Find(&total_data).Error
+
+	return total_data, error
 }
 
 func (repo *repository) CreateCategory(request entity.Category) (entity.Category, error) {

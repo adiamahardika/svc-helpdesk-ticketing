@@ -12,7 +12,7 @@ import (
 )
 
 type CategoryServiceInterface interface {
-	GetCategory(request model.GetCategoryRequest) ([]entity.Category, error)
+	GetCategory(request model.GetCategoryRequest) ([]entity.Category, float64, error)
 	CreateCategory(request model.CreateCategoryRequest) (entity.Category, error)
 	UpdateCategory(request entity.Category) (entity.Category, error)
 	DeleteCategory(Id int) error
@@ -27,14 +27,18 @@ func CategoryService(repository repository.CategoryRepositoryInterface) *categor
 	return &categoryService{repository}
 }
 
-func (categoryService *categoryService) GetCategory(request model.GetCategoryRequest) ([]entity.Category, error) {
+func (categoryService *categoryService) GetCategory(request model.GetCategoryRequest) ([]entity.Category, float64, error) {
 
 	if request.Size == 0 {
 		request.Size = math.MaxInt16
 	}
 	request.StartIndex = request.PageNo * request.Size
+	total_data, error := categoryService.repository.CountCategory(request)
+	total_pages := math.Ceil(float64(total_data) / float64(request.Size))
 
-	return categoryService.repository.GetCategory(request)
+	category, error := categoryService.repository.GetCategory(request)
+
+	return category, total_pages, error
 }
 
 func (categoryService *categoryService) CreateCategory(request model.CreateCategoryRequest) (entity.Category, error) {
