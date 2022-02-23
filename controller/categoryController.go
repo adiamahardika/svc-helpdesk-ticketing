@@ -43,7 +43,7 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 	http_status := http.StatusOK
 	var status model.StandardResponse
 
-	category, error := controller.categoryService.GetCategory(request)
+	category, total_pages, error := controller.categoryService.GetCategory(request)
 
 	if error == nil {
 
@@ -55,8 +55,10 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 			Description:    description,
 		}
 		context.JSON(http.StatusOK, gin.H{
-			"status":  status,
-			"content": category,
+			"status":      status,
+			"content":     category,
+			"page":        page_no,
+			"total_pages": total_pages,
 		})
 	} else {
 
@@ -76,7 +78,7 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_category, _ := json.Marshal(category)
-	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s}", string(parse_status), string(parse_category))
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s, \"page\": %d, \"total_pages\": %d}", string(parse_status), string(parse_category), page_no, int(total_pages))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
