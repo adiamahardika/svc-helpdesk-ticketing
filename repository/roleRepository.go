@@ -9,7 +9,7 @@ type RoleRepositoryInterface interface {
 func (repo *repository) GetRole() ([]entity.Role, error) {
 	var role []entity.Role
 
-	error := repo.db.Raw("WITH list_permission AS (SELECT * FROM permission LEFT OUTER JOIN role_has_permission ON (permission.id = role_has_permission.id_permission)) SELECT role.* FROM role LEFT OUTER JOIN role_has_permission ON (role.id IN role_has_permission.id_role) ORDER BY role.name ASC").Find(&role).Error
+	error := repo.db.Raw("SELECT role.*, JSON_AGG(JSON_BUILD_OBJECT('id', permission.id, 'name', permission.name, 'permission_code', permission.permission_code)) AS list_permission FROM role_has_permission INNER JOIN role ON (role.id = role_has_permission.id_role) inner JOIN permission ON (role_has_permission.id_permission = permission.id) GROUP by role_has_permission.id_role, role.id ORDER BY role.name ASC").Find(&role).Error
 
 	return role, error
 }
