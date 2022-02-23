@@ -132,7 +132,7 @@ func (categoryService *categoryService) GetDetailCategory(request string) ([]ent
 		parent_3 = nil
 	} else if len(split) == 3 {
 		parent_2, error = categoryService.repository.GetDetailCategory(category[0].Parent)
-		parent_1, error = categoryService.repository.GetDetailCategory(parent_1[0].Parent)
+		parent_1, error = categoryService.repository.GetDetailCategory(parent_2[0].Parent)
 		parent_3 = nil
 	} else if len(split) == 4 {
 		parent_3, error = categoryService.repository.GetDetailCategory(category[0].Parent)
