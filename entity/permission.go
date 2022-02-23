@@ -3,5 +3,5 @@ package entity
 type Permission struct {
 	Id             int    `json:"id" gorm:"primaryKey"`
 	Name           string `json:"name"`
-	PermissionCode string `json:"permission_code"`
+	PermissionCode string `json:"code"`
 }

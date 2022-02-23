@@ -1,7 +1,7 @@
 package model
 
 type StandardResponse struct {
-	HttpStatusCode int      `json:"http_status_code"`
-	ResponseCode   string   `json:"response_code"`
+	HttpStatusCode int      `json:"httpStatusCode"`
+	ResponseCode   string   `json:"responseCode"`
 	Description    []string `json:"description"`
 }

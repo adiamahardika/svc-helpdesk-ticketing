@@ -55,10 +55,10 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 			Description:    description,
 		}
 		context.JSON(http.StatusOK, gin.H{
-			"status":      status,
-			"content":     category,
-			"page":        page_no,
-			"total_pages": total_pages,
+			"status":     status,
+			"content":    category,
+			"page":       page_no,
+			"totalPages": total_pages,
 		})
 	} else {
 
@@ -78,7 +78,7 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_category, _ := json.Marshal(category)
-	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s, \"page\": %d, \"total_pages\": %d}", string(parse_status), string(parse_category), page_no, int(total_pages))
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s, \"page\": %d, \"totalPages\": %d}", string(parse_status), string(parse_category), page_no, int(total_pages))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
@@ -276,11 +276,11 @@ func (controller *categoryController) GetDetailCategory(context *gin.Context) {
 			Description:    description,
 		}
 		context.JSON(http.StatusOK, gin.H{
-			"status":   status,
-			"content":  category,
-			"parent_1": parent_1,
-			"parent_2": parent_2,
-			"parent_3": parent_3,
+			"status":  status,
+			"content": category,
+			"parent1": parent_1,
+			"parent2": parent_2,
+			"parent3": parent_3,
 		})
 
 	} else {
@@ -300,7 +300,10 @@ func (controller *categoryController) GetDetailCategory(context *gin.Context) {
 	}
 	parse_status, _ := json.Marshal(status)
 	parse_category, _ := json.Marshal(category)
-	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s}", string(parse_status), string(parse_category))
+	parent1, _ := json.Marshal(parent_1)
+	parent2, _ := json.Marshal(parent_2)
+	parent3, _ := json.Marshal(parent_3)
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s, \"parent1\": %s, \"parent2\": %s, \"parent3\": %s}", string(parse_status), string(parse_category), string(parent1), string(parent2), string(parent3))
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 }

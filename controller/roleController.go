@@ -38,8 +38,8 @@ func (controller *roleController) GetRole(context *gin.Context) {
 			Description:    description,
 		}
 		context.JSON(http.StatusOK, gin.H{
-			"status":    status,
-			"list_role": role,
+			"status":   status,
+			"listRole": role,
 		})
 	} else {
 		description = append(description, error.Error())
@@ -57,6 +57,6 @@ func (controller *roleController) GetRole(context *gin.Context) {
 
 	parse_status, _ := json.Marshal(status)
 	parse_category, _ := json.Marshal(role)
-	var result = fmt.Sprintf("{\"status\": %s, \"list_role\": %s}", string(parse_status), string(parse_category))
+	var result = fmt.Sprintf("{\"status\": %s, \"listRole\": %s}", string(parse_status), string(parse_category))
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 }
