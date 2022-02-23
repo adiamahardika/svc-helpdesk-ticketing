@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -50,7 +51,7 @@ func (categoryService *categoryService) CreateCategory(request model.CreateCateg
 		UpdateAt:          date_now,
 	}
 
-	find_by_parent, error := categoryService.repository.GetCategoryByParent(request.Parent)
+	find_by_parent, error := categoryService.repository.GetCategoryByParentDesc(request.Parent)
 
 	if len(find_by_parent) > 0 {
 		last_code_level := find_by_parent[0].CodeLevel
@@ -73,9 +74,34 @@ func (categoryService *categoryService) CreateCategory(request model.CreateCateg
 func (categoryService *categoryService) UpdateCategory(request entity.Category) (entity.Category, error) {
 	date_now := time.Now()
 
-	request.UpdateAt = date_now
+	find_by_parent, error := categoryService.repository.GetCategoryByParentDesc(request.Parent)
+	fmt.Println(find_by_parent)
+	find_by_code_level, error := categoryService.repository.GetCategoryByParentAsc(request.CodeLevel)
 
+	if len(find_by_parent) > 0 {
+		last_code_level := find_by_parent[0].CodeLevel
+		split := strings.Split(last_code_level, ".")
+		last_code := split[len(split)-1]
+		var parse_code int
+		parse_code, error = strconv.Atoi(last_code)
+
+		request.CodeLevel = request.Parent + "." + strconv.Itoa(parse_code+1)
+	} else {
+		request.CodeLevel = request.Parent + ".1"
+	}
+	request.UpdateAt = date_now
 	category, error := categoryService.repository.UpdateCategory(request)
+
+	if len(find_by_code_level) > 0 {
+		for index, value := range find_by_code_level {
+			number := index + 1
+			parse_index := strconv.Itoa(number)
+			value.CodeLevel = request.CodeLevel + "." + parse_index
+			value.Parent = request.CodeLevel
+			value.UpdateAt = date_now
+			_, error = categoryService.repository.UpdateCategory(value)
+		}
+	}
 
 	return category, error
 }
