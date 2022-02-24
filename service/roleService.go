@@ -10,6 +10,7 @@ import (
 type RoleServiceInterface interface {
 	GetRole() ([]model.GetRoleResponse, error)
 	CreateRole(request model.CreateRoleRequest) ([]entity.Role, error)
+	UpdateRole(request model.UpdateRoleRequest) ([]model.GetRoleResponse, error)
 }
 
 type roleService struct {
@@ -44,6 +45,26 @@ func (roleService *roleService) CreateRole(request model.CreateRoleRequest) ([]e
 			rhp_request = append(rhp_request, model.CreateRoleHasPermissionRequest{IdRole: role[0].Id, IdPermission: value.Id})
 		}
 		error = roleService.roleHasPermissionRepository.CreateRoleHasPermission(rhp_request)
+	}
+
+	return role, error
+}
+
+func (roleService *roleService) UpdateRole(request model.UpdateRoleRequest) ([]model.GetRoleResponse, error) {
+	var rhp_request []model.CreateRoleHasPermissionRequest
+	role, error := roleService.roleRepository.UpdateRole(request)
+
+	if error == nil {
+		error = roleService.roleHasPermissionRepository.DeleteRoleHasPermission(request.Id)
+
+		if error == nil {
+			for _, value := range request.ListPermission {
+				rhp_request = append(rhp_request, model.CreateRoleHasPermissionRequest{IdRole: role[0].Id, IdPermission: value.Id})
+			}
+			error = roleService.roleHasPermissionRepository.CreateRoleHasPermission(rhp_request)
+		}
+
+		role[0].ListPermission = request.ListPermission
 	}
 
 	return role, error

@@ -39,6 +39,7 @@ func AllRouter(db *gorm.DB) {
 			{
 				role.GET("/get", roleController.GetRole)
 				role.POST("/add", roleController.CreateRole)
+				role.PUT("/udpate", roleController.UpdateRole)
 			}
 		}
 	}
