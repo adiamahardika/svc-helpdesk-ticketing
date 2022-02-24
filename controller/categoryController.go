@@ -90,7 +90,7 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status model.StandardResponse
-	var category []entity.Category
+	var category entity.Category
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -109,7 +109,7 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 		})
 	} else {
 
-		category, error := controller.categoryService.CreateCategory(request)
+		category, error = controller.categoryService.CreateCategory(request)
 
 		if error == nil {
 

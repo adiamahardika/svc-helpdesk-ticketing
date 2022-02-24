@@ -19,7 +19,7 @@ func AllRouter(db *gorm.DB) {
 	categoryService := service.CategoryService(repository)
 	categoryController := controller.CategoryController(categoryService, logService)
 
-	roleService := service.RoleService(repository)
+	roleService := service.RoleService(repository, repository)
 	roleController := controller.RoleController(roleService, logService)
 
 	myg_ticketing := router.Group("/myg-ticketing")
@@ -38,6 +38,7 @@ func AllRouter(db *gorm.DB) {
 			role := v1.Group("/role")
 			{
 				role.GET("/get", roleController.GetRole)
+				role.POST("/add", roleController.CreateRole)
 			}
 		}
 	}

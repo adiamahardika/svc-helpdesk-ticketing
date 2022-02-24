@@ -9,19 +9,21 @@ import (
 
 type RoleServiceInterface interface {
 	GetRole() ([]model.GetRoleResponse, error)
+	CreateRole(request model.CreateRoleRequest) ([]entity.Role, error)
 }
 
 type roleService struct {
-	repository repository.RoleRepositoryInterface
+	roleRepository              repository.RoleRepositoryInterface
+	roleHasPermissionRepository repository.RoleHasPermissionRepositoryInterface
 }
 
-func RoleService(repository repository.RoleRepositoryInterface) *roleService {
-	return &roleService{repository}
+func RoleService(roleRepository repository.RoleRepositoryInterface, roleHasPermissionRepository repository.RoleHasPermissionRepositoryInterface) *roleService {
+	return &roleService{roleRepository, roleHasPermissionRepository}
 }
 
 func (roleService *roleService) GetRole() ([]model.GetRoleResponse, error) {
 	var response []model.GetRoleResponse
-	role, error := roleService.repository.GetRole()
+	role, error := roleService.roleRepository.GetRole()
 
 	for _, value := range role {
 		var list_permission []entity.Permission
@@ -31,4 +33,18 @@ func (roleService *roleService) GetRole() ([]model.GetRoleResponse, error) {
 	}
 
 	return response, error
+}
+
+func (roleService *roleService) CreateRole(request model.CreateRoleRequest) ([]entity.Role, error) {
+	var rhp_request []model.CreateRoleHasPermissionRequest
+	role, error := roleService.roleRepository.CreateRole(request)
+
+	if error == nil {
+		for _, value := range request.ListPermission {
+			rhp_request = append(rhp_request, model.CreateRoleHasPermissionRequest{IdRole: role[0].Id, IdPermission: value.Id})
+		}
+		error = roleService.roleHasPermissionRepository.CreateRoleHasPermission(rhp_request)
+	}
+
+	return role, error
 }
