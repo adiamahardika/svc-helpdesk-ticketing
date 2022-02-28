@@ -11,6 +11,7 @@ type RoleServiceInterface interface {
 	GetRole() ([]model.GetRoleResponse, error)
 	CreateRole(request model.CreateRoleRequest) ([]entity.Role, error)
 	UpdateRole(request model.UpdateRoleRequest) ([]model.GetRoleResponse, error)
+	DeleteRole(Id int) error
 }
 
 type roleService struct {
@@ -68,4 +69,11 @@ func (roleService *roleService) UpdateRole(request model.UpdateRoleRequest) ([]m
 	}
 
 	return role, error
+}
+
+func (roleService *roleService) DeleteRole(Id int) error {
+
+	error := roleService.roleRepository.DeleteRole(Id)
+
+	return error
 }

@@ -9,6 +9,7 @@ type RoleRepositoryInterface interface {
 	GetRole() ([]entity.Role, error)
 	CreateRole(request model.CreateRoleRequest) ([]entity.Role, error)
 	UpdateRole(request model.UpdateRoleRequest) ([]model.GetRoleResponse, error)
+	DeleteRole(Id int) error
 }
 
 func (repo *repository) GetRole() ([]entity.Role, error) {
@@ -33,4 +34,12 @@ func (repo *repository) UpdateRole(request model.UpdateRoleRequest) ([]model.Get
 	error := repo.db.Raw("UPDATE role SET name = @Name WHERE id = @Id RETURNING role.*", request).Find(&role).Error
 
 	return role, error
+}
+
+func (repo *repository) DeleteRole(Id int) error {
+	var role entity.Role
+
+	error := repo.db.Raw("UPDATE role SET is_active = ? WHERE id = ? RETURNING role.*", "false", Id).Find(&role).Error
+
+	return error
 }
