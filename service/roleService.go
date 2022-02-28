@@ -31,7 +31,7 @@ func (roleService *roleService) GetRole() ([]model.GetRoleResponse, error) {
 		var list_permission []entity.Permission
 		json.Unmarshal([]byte(value.ListPermission), &list_permission)
 
-		response = append(response, model.GetRoleResponse{Name: value.Name, Id: value.Id, ListPermission: list_permission})
+		response = append(response, model.GetRoleResponse{Name: value.Name, Id: value.Id, ListPermission: list_permission, IsActive: value.IsActive})
 	}
 
 	return response, error

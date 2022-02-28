@@ -22,6 +22,9 @@ func AllRouter(db *gorm.DB) {
 	roleService := service.RoleService(repository, repository)
 	roleController := controller.RoleController(roleService, logService)
 
+	permissionService := service.PermissionService(repository)
+	permissionController := controller.PermissionController(permissionService, logService)
+
 	myg_ticketing := router.Group("/myg-ticketing")
 	{
 		v1 := myg_ticketing.Group("/v1")
@@ -39,8 +42,13 @@ func AllRouter(db *gorm.DB) {
 			{
 				role.GET("/get", roleController.GetRole)
 				role.POST("/add", roleController.CreateRole)
-				role.PUT("/udpate", roleController.UpdateRole)
+				role.PUT("/update", roleController.UpdateRole)
 				role.DELETE("/delete/:role-id", roleController.DeleteRole)
+			}
+
+			permission := v1.Group("/permission")
+			{
+				permission.GET("/get", permissionController.GetPermission)
 			}
 		}
 	}

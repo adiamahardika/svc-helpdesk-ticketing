@@ -59,8 +59,8 @@ func (controller *roleController) GetRole(context *gin.Context) {
 	}
 
 	parse_status, _ := json.Marshal(status)
-	parse_category, _ := json.Marshal(role)
-	var result = fmt.Sprintf("{\"status\": %s, \"listRole\": %s}", string(parse_status), string(parse_category))
+	parse_role, _ := json.Marshal(role)
+	var result = fmt.Sprintf("{\"status\": %s, \"listRole\": %s}", string(parse_status), string(parse_role))
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 }
 
@@ -125,8 +125,8 @@ func (controller *roleController) CreateRole(context *gin.Context) {
 	}
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
-	parse_category, _ := json.Marshal(role)
-	var result = fmt.Sprintf("{\"status\": %s, \"listRole\": %s}", string(parse_status), string(parse_category))
+	parse_role, _ := json.Marshal(role)
+	var result = fmt.Sprintf("{\"status\": %s, \"listRole\": %s}", string(parse_status), string(parse_role))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
@@ -191,8 +191,8 @@ func (controller *roleController) UpdateRole(context *gin.Context) {
 	}
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
-	parse_category, _ := json.Marshal(role)
-	var result = fmt.Sprintf("{\"status\": %s, \"listRole\": %s}", string(parse_status), string(parse_category))
+	parse_role, _ := json.Marshal(role)
+	var result = fmt.Sprintf("{\"status\": %s, \"listRole\": %s}", string(parse_status), string(parse_role))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
