@@ -25,6 +25,9 @@ func AllRouter(db *gorm.DB) {
 	permissionService := service.PermissionService(repository)
 	permissionController := controller.PermissionController(permissionService, logService)
 
+	userService := service.UserService(repository)
+	userController := controller.UserController(userService, logService)
+
 	myg_ticketing := router.Group("/myg-ticketing")
 	{
 		v1 := myg_ticketing.Group("/v1")
@@ -49,6 +52,11 @@ func AllRouter(db *gorm.DB) {
 			permission := v1.Group("/permission")
 			{
 				permission.GET("/get", permissionController.GetPermission)
+			}
+
+			user := v1.Group("/user")
+			{
+				user.GET("/get/:search/:size/:page_no", userController.GetUser)
 			}
 		}
 	}
