@@ -57,6 +57,7 @@ func AllRouter(db *gorm.DB) {
 			user := v1.Group("/user")
 			{
 				user.GET("/get/:search/:size/:page_no", userController.GetUser)
+				user.GET("/get-detail/:username", userController.GetUserDetail)
 			}
 		}
 	}

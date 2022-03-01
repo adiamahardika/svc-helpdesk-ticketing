@@ -10,6 +10,7 @@ import (
 
 type UserServiceInterface interface {
 	GetUser(request model.GetUserRequest) ([]model.GetUserResponse, float64, error)
+	GetUserDetail(request string) (model.GetUserResponse, error)
 }
 
 type userService struct {
@@ -26,7 +27,7 @@ func (userService *userService) GetUser(request model.GetUserRequest) ([]model.G
 	if request.Size == 0 {
 		request.Size = math.MaxInt16
 	}
-	request.StartIndex = request.PageNo * request.PageNo
+	request.StartIndex = request.PageNo * request.Size
 	total_data, error := userService.repository.CountUser(request)
 	total_pages := math.Ceil(float64(total_data) / float64(request.Size))
 
@@ -40,10 +41,13 @@ func (userService *userService) GetUser(request model.GetUserRequest) ([]model.G
 			Id:         value.Id,
 			Username:   value.Username,
 			Name:       value.Name,
+			Email:      value.Email,
 			Password:   "",
 			Area:       value.Area,
 			Roles:      role,
 			Regional:   value.Regional,
+			Phone:      value.Phone,
+			Status:     value.Status,
 			CreatedAt:  value.CreatedAt,
 			UpdatedAt:  value.UpdatedAt,
 			TerminalId: value.TerminalId,
@@ -53,4 +57,34 @@ func (userService *userService) GetUser(request model.GetUserRequest) ([]model.G
 	}
 
 	return response, total_pages, error
+}
+
+func (userService *userService) GetUserDetail(request string) (model.GetUserResponse, error) {
+
+	var response model.GetUserResponse
+
+	user, error := userService.repository.GetUserDetail(request)
+
+	var role []entity.Role
+	json.Unmarshal([]byte(user.Roles), &role)
+
+	response = model.GetUserResponse{
+		Id:         user.Id,
+		Username:   user.Username,
+		Name:       user.Name,
+		Email:      user.Email,
+		Password:   "",
+		Phone:      user.Phone,
+		Status:     user.Status,
+		Area:       user.Area,
+		Roles:      role,
+		Regional:   user.Regional,
+		CreatedAt:  user.CreatedAt,
+		UpdatedAt:  user.UpdatedAt,
+		TerminalId: user.TerminalId,
+		RuleId:     user.RuleId,
+		GrapariId:  user.GrapariId,
+	}
+
+	return response, error
 }
