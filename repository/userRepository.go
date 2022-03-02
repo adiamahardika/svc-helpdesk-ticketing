@@ -9,6 +9,7 @@ type UserRepositoryInterface interface {
 	GetUser(request model.GetUserRequest) ([]entity.User, error)
 	GetUserDetail(request string) (entity.User, error)
 	CountUser(request model.GetUserRequest) (int, error)
+	DeleteUser(id int) error
 }
 
 func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, error) {
@@ -39,4 +40,12 @@ func (repo *repository) GetUserDetail(request string) (entity.User, error) {
 	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', role.id, 'name', role.name)) AS roles FROM users LEFT OUTER JOIN user_has_role ON (users.id = user_has_role.id_user) LEFT OUTER JOIN role ON (role.id = user_has_role.id_role) WHERE users.username = ? GROUP BY user_has_role.id_user, users.id ORDER BY users.name ASC", request).Find(&user).Error
 
 	return user, error
+}
+
+func (repo *repository) DeleteUser(id int) error {
+	var users entity.User
+
+	error := repo.db.Raw("UPDATE users SET status = ? WHERE id = ? RETURNING users.*", "Inactive", id).Find(&users).Error
+
+	return error
 }

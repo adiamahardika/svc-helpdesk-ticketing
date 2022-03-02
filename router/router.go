@@ -58,6 +58,7 @@ func AllRouter(db *gorm.DB) {
 			{
 				user.GET("/get/:search/:size/:page_no", userController.GetUser)
 				user.GET("/get-detail/:username", userController.GetUserDetail)
+				user.DELETE("/delete/:user-id", userController.DeleteUser)
 			}
 		}
 	}

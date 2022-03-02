@@ -11,6 +11,7 @@ import (
 type UserServiceInterface interface {
 	GetUser(request model.GetUserRequest) ([]model.GetUserResponse, float64, error)
 	GetUserDetail(request string) (model.GetUserResponse, error)
+	DeleteUser(id int) error
 }
 
 type userService struct {
@@ -87,4 +88,11 @@ func (userService *userService) GetUserDetail(request string) (model.GetUserResp
 	}
 
 	return response, error
+}
+
+func (userService *userService) DeleteUser(id int) error {
+
+	error := userService.repository.DeleteUser(id)
+
+	return error
 }
