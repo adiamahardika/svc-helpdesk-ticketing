@@ -8,6 +8,7 @@ import (
 type TicketRepositoryInterface interface {
 	GetTicket(request model.GetTicketRequest) ([]entity.Ticket, error)
 	CountTicket(request model.GetTicketRequest) (int, error)
+	GetDetailTicket(ticket_code string) (entity.Ticket, error)
 }
 
 func (repo *repository) GetTicket(request model.GetTicketRequest) ([]entity.Ticket, error) {
@@ -56,4 +57,12 @@ func (repo *repository) CountTicket(request model.GetTicketRequest) (int, error)
 	}).Find(&total_data).Error
 
 	return total_data, error
+}
+
+func (repo *repository) GetDetailTicket(ticket_code string) (entity.Ticket, error) {
+	var ticket entity.Ticket
+
+	error := repo.db.Raw("SELECT * FROM ticket WHERE kode_ticket = ?", ticket_code).Find(&ticket).Error
+
+	return ticket, error
 }

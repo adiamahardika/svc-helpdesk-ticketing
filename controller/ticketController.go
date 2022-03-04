@@ -91,3 +91,51 @@ func (controller *ticketController) GetTicket(context *gin.Context) {
 	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s, \"page\": %d, \"totalPages\": %d}", string(parse_status), string(parse_ticket), request.PageNo, int(total_pages))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
+
+func (controller *ticketController) GetDetailTicket(context *gin.Context) {
+
+	ticket_code := context.Param("ticket-code")
+
+	description := []string{}
+	http_status := http.StatusOK
+	var status model.StandardResponse
+
+	ticket, error := controller.ticketController.GetDetailTicket(ticket_code)
+
+	if error == nil {
+
+		description = append(description, "Success")
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusOK,
+			ResponseCode:   general.SuccessStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"status":           status,
+			"listDetailTicket": ticket.ListDetailTicket,
+			"listReplyTicket":  ticket.ListReplyTicket,
+		})
+
+	} else {
+
+		description = append(description, error.Error())
+		http_status = http.StatusBadRequest
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusBadRequest,
+			ResponseCode:   general.ErrorStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusBadRequest, gin.H{
+			"status": status,
+		})
+
+	}
+
+	parse_status, _ := json.Marshal(status)
+	parse_ticket, _ := json.Marshal(ticket.ListDetailTicket)
+	parse_reply, _ := json.Marshal(ticket.ListReplyTicket)
+	var result = fmt.Sprintf("{\"status\": %s, \"listDetailTicket\": %s, \"listReplyTicket\": %s}", string(parse_status), string(parse_ticket), string(parse_reply))
+	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
+}
