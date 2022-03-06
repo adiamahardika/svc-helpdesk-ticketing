@@ -15,8 +15,8 @@ import (
 )
 
 type ticketController struct {
-	ticketController service.TicketServiceInterface
-	logService       service.LogServiceInterface
+	ticketService service.TicketServiceInterface
+	logService    service.LogServiceInterface
 }
 
 func TicketController(ticketService service.TicketServiceInterface, logService service.LogServiceInterface) *ticketController {
@@ -51,7 +51,7 @@ func (controller *ticketController) GetTicket(context *gin.Context) {
 		})
 	} else {
 
-		ticket, total_pages, error = controller.ticketController.GetTicket(request)
+		ticket, total_pages, error = controller.ticketService.GetTicket(request)
 
 		if error == nil {
 
@@ -100,7 +100,7 @@ func (controller *ticketController) GetDetailTicket(context *gin.Context) {
 	http_status := http.StatusOK
 	var status model.StandardResponse
 
-	ticket, error := controller.ticketController.GetDetailTicket(ticket_code)
+	ticket, error := controller.ticketService.GetDetailTicket(ticket_code)
 
 	if error == nil {
 
