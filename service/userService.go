@@ -19,6 +19,7 @@ type UserServiceInterface interface {
 	DeleteUser(id int) error
 	CreateUser(request model.CreateUserRequest) (entity.User, error)
 	UpdateUser(request model.UpdateUserRequest) (entity.User, error)
+	ChangePassword(request model.ChangePassRequest) (entity.User, error)
 }
 
 type userService struct {
@@ -152,6 +153,39 @@ func (userService *userService) UpdateUser(request model.UpdateUserRequest) (ent
 
 		if error == nil {
 			error = userService.userHasRoleRepository.CreateUserHasRole(user.Id, id_role)
+		}
+	}
+
+	return user, error
+}
+
+func (userService *userService) ChangePassword(request model.ChangePassRequest) (entity.User, error) {
+
+	var user entity.User
+	date_now := time.Now()
+
+	users, error := userService.userRepository.CheckUsername(request.Username)
+
+	if len(users) < 1 {
+		error = fmt.Errorf("Username Not Found!")
+	} else {
+
+		error_check_pass := bcrypt.CompareHashAndPassword([]byte(users[0].Password), []byte(request.OldPassword))
+		if error_check_pass != nil {
+			error = fmt.Errorf("Wrong Old Password!")
+		} else {
+
+			new_pass, error_hash_pass := bcrypt.GenerateFromPassword([]byte(request.NewPassword), bcrypt.DefaultCost)
+
+			if error_hash_pass != nil {
+				error = fmt.Errorf("There was an error creating new password!")
+			} else {
+				request.UpdatedAt = date_now
+				request.NewPassword = string(new_pass)
+
+				user, error = userService.userRepository.ChangePassword(request)
+				user.Password = ""
+			}
 		}
 	}
 

@@ -34,3 +34,10 @@ type UpdateUserRequest struct {
 	RuleId     int       `json:"ruleId"`
 	GrapariId  string    `json:"grapariId"`
 }
+
+type ChangePassRequest struct {
+	Username    string    `json:"username"`
+	OldPassword string    `json:"old_password"`
+	NewPassword string    `json:"new_password"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
