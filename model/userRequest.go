@@ -41,3 +41,9 @@ type ChangePassRequest struct {
 	NewPassword string    `json:"new_password"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
+
+type ResetPassword struct {
+	Username    string    `json:"username"`
+	NewPassword string    `json:"new_password"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}

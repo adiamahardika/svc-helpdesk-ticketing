@@ -310,7 +310,7 @@ func (controller *userController) ChangePassword(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status model.StandardResponse
-	var user entity.User
+	var user model.GetUserResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -330,6 +330,72 @@ func (controller *userController) ChangePassword(context *gin.Context) {
 	} else {
 
 		user, error = controller.userService.ChangePassword(request)
+
+		if error == nil {
+
+			description = append(description, "Success")
+
+			status = model.StandardResponse{
+				HttpStatusCode: http.StatusOK,
+				ResponseCode:   general.SuccessStatusCode,
+				Description:    description,
+			}
+			context.JSON(http.StatusOK, gin.H{
+				"status":  status,
+				"content": user,
+			})
+
+		} else {
+
+			description = append(description, error.Error())
+			http_status = http.StatusBadRequest
+
+			status = model.StandardResponse{
+				HttpStatusCode: http.StatusBadRequest,
+				ResponseCode:   general.ErrorStatusCode,
+				Description:    description,
+			}
+			context.JSON(http.StatusBadRequest, gin.H{
+				"status": status,
+			})
+
+		}
+	}
+	parse_request, _ := json.Marshal(request)
+	parse_status, _ := json.Marshal(status)
+	parse_user, _ := json.Marshal(user)
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s}", string(parse_status), string(parse_user))
+	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
+}
+
+func (controller *userController) ResetPassword(context *gin.Context) {
+
+	var request model.ResetPassword
+
+	error := context.ShouldBindJSON(&request)
+	description := []string{}
+	http_status := http.StatusOK
+	var status model.StandardResponse
+	var user model.GetUserResponse
+
+	if error != nil {
+		for _, value := range error.(validator.ValidationErrors) {
+			errorMessage := fmt.Sprintf("Error on field %s, condition: %s", value.Field(), value.ActualTag())
+			description = append(description, errorMessage)
+		}
+		http_status = http.StatusBadRequest
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusBadRequest,
+			ResponseCode:   general.ErrorStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusBadRequest, gin.H{
+			"status": status,
+		})
+	} else {
+
+		user, error = controller.userService.ResetPassword(request)
 
 		if error == nil {
 

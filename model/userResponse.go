@@ -3,11 +3,11 @@ package model
 import "svc-myg-ticketing/entity"
 
 type GetUserResponse struct {
-	Id         int           `json:"id" gorm:"primaryKey"`
-	Username   string        `json:"username"`
-	Name       string        `json:"name"`
-	Email      string        `json:"email"`
-	Password   string        `json:"password"`
+	Id       int    `json:"id" gorm:"primaryKey"`
+	Username string `json:"username"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	// Password   string        `json:"password"`
 	Phone      string        `json:"phone"`
 	Status     string        `json:"status"`
 	Area       string        `json:"area"`

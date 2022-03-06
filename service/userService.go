@@ -19,7 +19,8 @@ type UserServiceInterface interface {
 	DeleteUser(id int) error
 	CreateUser(request model.CreateUserRequest) (entity.User, error)
 	UpdateUser(request model.UpdateUserRequest) (entity.User, error)
-	ChangePassword(request model.ChangePassRequest) (entity.User, error)
+	ChangePassword(request model.ChangePassRequest) (model.GetUserResponse, error)
+	ResetPassword(request model.ResetPassword) (model.GetUserResponse, error)
 }
 
 type userService struct {
@@ -52,7 +53,6 @@ func (userService *userService) GetUser(request model.GetUserRequest) ([]model.G
 			Username:   value.Username,
 			Name:       value.Name,
 			Email:      value.Email,
-			Password:   "",
 			Area:       value.Area,
 			Roles:      role,
 			Regional:   value.Regional,
@@ -83,7 +83,6 @@ func (userService *userService) GetUserDetail(request string) (model.GetUserResp
 		Username:   user.Username,
 		Name:       user.Name,
 		Email:      user.Email,
-		Password:   "",
 		Phone:      user.Phone,
 		Status:     user.Status,
 		Area:       user.Area,
@@ -159,9 +158,9 @@ func (userService *userService) UpdateUser(request model.UpdateUserRequest) (ent
 	return user, error
 }
 
-func (userService *userService) ChangePassword(request model.ChangePassRequest) (entity.User, error) {
+func (userService *userService) ChangePassword(request model.ChangePassRequest) (model.GetUserResponse, error) {
 
-	var user entity.User
+	var user model.GetUserResponse
 	date_now := time.Now()
 
 	users, error := userService.userRepository.CheckUsername(request.Username)
@@ -184,9 +183,37 @@ func (userService *userService) ChangePassword(request model.ChangePassRequest) 
 				request.NewPassword = string(new_pass)
 
 				user, error = userService.userRepository.ChangePassword(request)
-				user.Password = ""
 			}
 		}
+	}
+
+	return user, error
+}
+
+func (userService *userService) ResetPassword(request model.ResetPassword) (model.GetUserResponse, error) {
+	var user model.GetUserResponse
+	date_now := time.Now()
+
+	users, error := userService.userRepository.CheckUsername(request.Username)
+
+	if len(users) < 1 {
+		error = fmt.Errorf("Username Not Found!")
+	} else {
+
+		new_pass, error_hash_pass := bcrypt.GenerateFromPassword([]byte(request.NewPassword), bcrypt.DefaultCost)
+
+		if error_hash_pass != nil {
+			error = fmt.Errorf("There was an error creating new password!")
+		} else {
+			new_request := model.ChangePassRequest{
+				Username:    request.Username,
+				NewPassword: string(new_pass),
+				UpdatedAt:   date_now,
+			}
+
+			user, error = userService.userRepository.ChangePassword(new_request)
+		}
+
 	}
 
 	return user, error
