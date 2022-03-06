@@ -12,6 +12,7 @@ type UserRepositoryInterface interface {
 	DeleteUser(id int) error
 	CreateUser(request model.CreateUserRequest) (entity.User, error)
 	CheckUsername(request string) ([]entity.User, error)
+	UpdateUser(request model.UpdateUserRequest) (entity.User, error)
 }
 
 func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, error) {
@@ -55,16 +56,7 @@ func (repo *repository) DeleteUser(id int) error {
 func (repo *repository) CreateUser(request model.CreateUserRequest) (entity.User, error) {
 	var user entity.User
 
-	error := repo.db.Raw("INSERT INTO users(name,username,password,email,phone,status,updated_at,created_at) VALUES(@Name, @Username, @Password, @Email, @Phone, @Status, @UpdatedAt, @CreatedAt) RETURNING users.*", model.CreateUserRequest{
-		Name:      request.Name,
-		Username:  request.Username,
-		Password:  request.Password,
-		Email:     request.Email,
-		Phone:     request.Phone,
-		Status:    request.Status,
-		UpdatedAt: request.UpdatedAt,
-		CreatedAt: request.CreatedAt,
-	}).Find(&user).Error
+	error := repo.db.Raw("INSERT INTO users(name,username,password,email,phone,status,updated_at,created_at) VALUES(@Name, @Username, @Password, @Email, @Phone, @Status, @UpdatedAt, @CreatedAt) RETURNING users.*", request).Find(&user).Error
 
 	return user, error
 }
@@ -75,6 +67,14 @@ func (repo *repository) CheckUsername(request string) ([]entity.User, error) {
 	error := repo.db.Raw("SELECT * FROM users WHERE username = @Username", model.CreateUserRequest{
 		Username: request,
 	}).Find(&user).Error
+
+	return user, error
+}
+
+func (repo *repository) UpdateUser(request model.UpdateUserRequest) (entity.User, error) {
+	var user entity.User
+
+	error := repo.db.Raw("UPDATE users SET name = @Name, email = @Email, phone = @Phone, area = @Area, regional = @Regional, updated_at = @UpdatedAt, terminal_id = @TerminalId, rule_id = @RuleId, grapari_id = @GrapariId WHERE id = @Id RETURNING users.*", request).Find(&user).Error
 
 	return user, error
 }

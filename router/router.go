@@ -66,6 +66,7 @@ func AllRouter(db *gorm.DB) {
 				user.GET("/get-detail/:username", userController.GetUserDetail)
 				user.DELETE("/delete/:user-id", userController.DeleteUser)
 				user.POST("/add", userController.CreateUser)
+				user.PUT("/update", userController.UpdateUser)
 			}
 
 			ticket := v1.Group("/ticket")

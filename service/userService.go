@@ -18,6 +18,7 @@ type UserServiceInterface interface {
 	GetUserDetail(request string) (model.GetUserResponse, error)
 	DeleteUser(id int) error
 	CreateUser(request model.CreateUserRequest) (entity.User, error)
+	UpdateUser(request model.UpdateUserRequest) (entity.User, error)
 }
 
 type userService struct {
@@ -126,9 +127,31 @@ func (userService *userService) CreateUser(request model.CreateUserRequest) (ent
 			id_role, _ := strconv.Atoi(request.Role)
 
 			user, error = userService.userRepository.CreateUser(request)
+			user.Password = ""
 			if error == nil {
 				error = userService.userHasRoleRepository.CreateUserHasRole(user.Id, id_role)
 			}
+		}
+	}
+
+	return user, error
+}
+
+func (userService *userService) UpdateUser(request model.UpdateUserRequest) (entity.User, error) {
+	var user entity.User
+	date_now := time.Now()
+
+	request.UpdatedAt = date_now
+	id_role, _ := strconv.Atoi(request.Role)
+
+	user, error := userService.userRepository.UpdateUser(request)
+	user.Password = ""
+
+	if error == nil {
+		error = userService.userHasRoleRepository.DeleteUserHasRole(request.Id)
+
+		if error == nil {
+			error = userService.userHasRoleRepository.CreateUserHasRole(user.Id, id_role)
 		}
 	}
 
