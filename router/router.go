@@ -25,7 +25,7 @@ func AllRouter(db *gorm.DB) {
 	permissionService := service.PermissionService(repository)
 	permissionController := controller.PermissionController(permissionService, logService)
 
-	userService := service.UserService(repository)
+	userService := service.UserService(repository, repository)
 	userController := controller.UserController(userService, logService)
 
 	ticketService := service.TicketService(repository, repository)
@@ -65,6 +65,7 @@ func AllRouter(db *gorm.DB) {
 				user.GET("/get/:search/:size/:page_no", userController.GetUser)
 				user.GET("/get-detail/:username", userController.GetUserDetail)
 				user.DELETE("/delete/:user-id", userController.DeleteUser)
+				user.POST("/add", userController.CreateUser)
 			}
 
 			ticket := v1.Group("/ticket")

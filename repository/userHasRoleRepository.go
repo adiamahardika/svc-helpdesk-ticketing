@@ -1,0 +1,16 @@
+package repository
+
+import "svc-myg-ticketing/entity"
+
+type UserHasRoleRepositoryInterface interface {
+	CreateUserHasRole(id_user int, id_role int) error
+}
+
+func (repo *repository) CreateUserHasRole(id_user int, id_role int) error {
+
+	var user_has_role entity.UserHasRole
+
+	error := repo.db.Raw("INSERT INTO user_has_role(id_user, id_role) VALUES(?, ?) RETURNING user_has_role.*", id_user, id_role).Find(&user_has_role).Error
+
+	return error
+}

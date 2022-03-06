@@ -2,24 +2,31 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
+	"strconv"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
 	"svc-myg-ticketing/repository"
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserServiceInterface interface {
 	GetUser(request model.GetUserRequest) ([]model.GetUserResponse, float64, error)
 	GetUserDetail(request string) (model.GetUserResponse, error)
 	DeleteUser(id int) error
+	CreateUser(request model.CreateUserRequest) (entity.User, error)
 }
 
 type userService struct {
-	repository repository.UserRepositoryInterface
+	userRepository        repository.UserRepositoryInterface
+	userHasRoleRepository repository.UserHasRoleRepositoryInterface
 }
 
-func UserService(repository repository.UserRepositoryInterface) *userService {
-	return &userService{repository}
+func UserService(userRepository repository.UserRepositoryInterface, userHasRoleRepository repository.UserHasRoleRepositoryInterface) *userService {
+	return &userService{userRepository, userHasRoleRepository}
 }
 
 func (userService *userService) GetUser(request model.GetUserRequest) ([]model.GetUserResponse, float64, error) {
@@ -29,10 +36,10 @@ func (userService *userService) GetUser(request model.GetUserRequest) ([]model.G
 		request.Size = math.MaxInt16
 	}
 	request.StartIndex = request.PageNo * request.Size
-	total_data, error := userService.repository.CountUser(request)
+	total_data, error := userService.userRepository.CountUser(request)
 	total_pages := math.Ceil(float64(total_data) / float64(request.Size))
 
-	user, error := userService.repository.GetUser(request)
+	user, error := userService.userRepository.GetUser(request)
 
 	for _, value := range user {
 		var role []entity.Role
@@ -64,7 +71,7 @@ func (userService *userService) GetUserDetail(request string) (model.GetUserResp
 
 	var response model.GetUserResponse
 
-	user, error := userService.repository.GetUserDetail(request)
+	user, error := userService.userRepository.GetUserDetail(request)
 
 	var role []entity.Role
 	json.Unmarshal([]byte(user.Roles), &role)
@@ -92,7 +99,38 @@ func (userService *userService) GetUserDetail(request string) (model.GetUserResp
 
 func (userService *userService) DeleteUser(id int) error {
 
-	error := userService.repository.DeleteUser(id)
+	error := userService.userRepository.DeleteUser(id)
 
 	return error
+}
+
+func (userService *userService) CreateUser(request model.CreateUserRequest) (entity.User, error) {
+	var user entity.User
+	date_now := time.Now()
+
+	users, error := userService.userRepository.CheckUsername(request.Username)
+
+	if len(users) > 0 {
+		error = fmt.Errorf("Username already exist!")
+	} else {
+		new_pass, error_hash_pass := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+
+		if error_hash_pass != nil {
+			error = fmt.Errorf("There was an error creating new password!")
+		} else {
+
+			request.CreatedAt = date_now
+			request.UpdatedAt = date_now
+			request.Password = string(new_pass)
+			request.Status = "Active"
+			id_role, _ := strconv.Atoi(request.Role)
+
+			user, error = userService.userRepository.CreateUser(request)
+			if error == nil {
+				error = userService.userHasRoleRepository.CreateUserHasRole(user.Id, id_role)
+			}
+		}
+	}
+
+	return user, error
 }

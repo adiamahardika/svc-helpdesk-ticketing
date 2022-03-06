@@ -10,6 +10,8 @@ type UserRepositoryInterface interface {
 	GetUserDetail(request string) (entity.User, error)
 	CountUser(request model.GetUserRequest) (int, error)
 	DeleteUser(id int) error
+	CreateUser(request model.CreateUserRequest) (entity.User, error)
+	CheckUsername(request string) ([]entity.User, error)
 }
 
 func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, error) {
@@ -48,4 +50,31 @@ func (repo *repository) DeleteUser(id int) error {
 	error := repo.db.Raw("UPDATE users SET status = ? WHERE id = ? RETURNING users.*", "Inactive", id).Find(&users).Error
 
 	return error
+}
+
+func (repo *repository) CreateUser(request model.CreateUserRequest) (entity.User, error) {
+	var user entity.User
+
+	error := repo.db.Raw("INSERT INTO users(name,username,password,email,phone,status,updated_at,created_at) VALUES(@Name, @Username, @Password, @Email, @Phone, @Status, @UpdatedAt, @CreatedAt) RETURNING users.*", model.CreateUserRequest{
+		Name:      request.Name,
+		Username:  request.Username,
+		Password:  request.Password,
+		Email:     request.Email,
+		Phone:     request.Phone,
+		Status:    request.Status,
+		UpdatedAt: request.UpdatedAt,
+		CreatedAt: request.CreatedAt,
+	}).Find(&user).Error
+
+	return user, error
+}
+
+func (repo *repository) CheckUsername(request string) ([]entity.User, error) {
+	var user []entity.User
+
+	error := repo.db.Raw("SELECT * FROM users WHERE username = @Username", model.CreateUserRequest{
+		Username: request,
+	}).Find(&user).Error
+
+	return user, error
 }
