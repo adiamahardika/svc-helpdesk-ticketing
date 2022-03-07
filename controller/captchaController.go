@@ -114,7 +114,7 @@ func (controller *captchaController) CaptchaVerify(context *gin.Context) {
 		}
 		context.JSON(http.StatusOK, gin.H{
 			"status":   status,
-			"response": is_valid,
+			"is_valid": is_valid,
 		})
 
 	} else {
