@@ -37,13 +37,13 @@ type UpdateUserRequest struct {
 
 type ChangePassRequest struct {
 	Username    string    `json:"username"`
-	OldPassword string    `json:"old_password"`
-	NewPassword string    `json:"new_password"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	OldPassword string    `json:"oldPassword"`
+	NewPassword string    `json:"newPassword"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 type ResetPassword struct {
 	Username    string    `json:"username"`
-	NewPassword string    `json:"new_password"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	NewPassword string    `json:"newPassword"`
+	UpdatedAt   time.Time `json:"updatedAt"`
 }
