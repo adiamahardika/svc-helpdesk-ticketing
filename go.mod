@@ -42,3 +42,9 @@ require (
 	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
+
+require (
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/mojocn/base64Captcha v1.3.5 // indirect
+	golang.org/x/image v0.0.0-20220302094943-723b81ca9867 // indirect
+)

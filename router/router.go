@@ -37,6 +37,9 @@ func AllRouter(db *gorm.DB) {
 	authService := service.AuthService(repository, repository)
 	authController := controller.AuthController(authService, logService)
 
+	captchaService := service.CapthcaService()
+	captchaController := controller.CaptchaController(captchaService, logService)
+
 	myg_ticketing := router.Group("/myg-ticketing")
 	{
 		v1 := myg_ticketing.Group("/v1")
@@ -88,6 +91,11 @@ func AllRouter(db *gorm.DB) {
 			auth := v1.Group("/auth")
 			{
 				auth.POST("/login", authController.Login)
+			}
+
+			captcha := v1.Group("/captcha")
+			{
+				captcha.POST("/generate", captchaController.GenerateCaptcha)
 			}
 		}
 	}
