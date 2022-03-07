@@ -96,6 +96,7 @@ func AllRouter(db *gorm.DB) {
 			captcha := v1.Group("/captcha")
 			{
 				captcha.POST("/generate", captchaController.GenerateCaptcha)
+				captcha.POST("/verify", captchaController.CaptchaVerify)
 			}
 		}
 	}

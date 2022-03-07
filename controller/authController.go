@@ -62,7 +62,6 @@ func (controller *authController) Login(context *gin.Context) {
 			context.JSON(http.StatusOK, gin.H{
 				"status":   status,
 				"response": user,
-				// "auth":     login,
 			})
 
 		} else {
@@ -84,7 +83,6 @@ func (controller *authController) Login(context *gin.Context) {
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_user, _ := json.Marshal(user)
-	// parse_auth, _ := json.Marshal(login)
 	var result = fmt.Sprintf("{\"status\": %s, \"response\": %s}", string(parse_status), string(parse_user))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }

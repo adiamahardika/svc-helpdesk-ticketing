@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"svc-myg-ticketing/model"
 
 	"github.com/mojocn/base64Captcha"
@@ -8,6 +9,7 @@ import (
 
 type CaptchaServiceInterface interface {
 	GenerateCaptcha(param model.ConfigJsonBody) (string, string, error)
+	CaptchaVerify(request model.ConfigJsonBody) (bool, error)
 }
 
 type captchaService struct{}
@@ -29,33 +31,16 @@ func (captchaService *captchaService) GenerateCaptcha(request model.ConfigJsonBo
 	id, b64s, error := c.Generate()
 
 	return id, b64s, error
-	// body := map[string]interface{}{"code": 1, "data": b64s, "captchaId": id, "msg": "success"}
-
-	// if err != nil {
-	// 	body = map[string]interface{}{"code": 0, "msg": err.Error()}
-	// }
-
 }
 
-// base64Captcha verify http handler
-// func captchaVerifyHandle(w http.ResponseWriter, r *http.Request) {
+func (captchaService *captchaService) CaptchaVerify(request model.ConfigJsonBody) (bool, error) {
 
-// 	//parse request json body
-// 	decoder := json.NewDecoder(r.Body)
-// 	var param model.ConfigJsonBody
-// 	err := decoder.Decode(&param)
-// 	if err != nil {
-// 		log.Println(err)
-// 	}
-// 	defer r.Body.Close()
-// 	//verify the captcha
-// 	body := map[string]interface{}{"code": 0, "msg": "failed"}
-// 	if store.Verify(param.Id, param.VerifyValue, true) {
-// 		body = map[string]interface{}{"code": 1, "msg": "ok"}
-// 	}
+	is_valid := false
+	error := fmt.Errorf("Captcha Not Match")
+	if store.Verify(request.CaptchaId, request.VerifyValue, true) {
+		is_valid = true
+		error = nil
+	}
 
-// 	//set json response
-// 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-
-// 	json.NewEncoder(w).Encode(body)
-// }
+	return is_valid, error
+}
