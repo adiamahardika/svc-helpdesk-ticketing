@@ -21,6 +21,7 @@ type UserServiceInterface interface {
 	UpdateUser(request model.UpdateUserRequest) (entity.User, error)
 	ChangePassword(request model.ChangePassRequest) (model.GetUserResponse, error)
 	ResetPassword(request model.ResetPassword) (model.GetUserResponse, error)
+	UpdateProfile(request model.UpdateUserRequest) (entity.User, error)
 }
 
 type userService struct {
@@ -215,6 +216,18 @@ func (userService *userService) ResetPassword(request model.ResetPassword) (mode
 		}
 
 	}
+
+	return user, error
+}
+
+func (userService *userService) UpdateProfile(request model.UpdateUserRequest) (entity.User, error) {
+	var user entity.User
+	date_now := time.Now()
+
+	request.UpdatedAt = date_now
+
+	user, error := userService.userRepository.UpdateUser(request)
+	user.Password = ""
 
 	return user, error
 }

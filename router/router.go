@@ -75,6 +75,7 @@ func AllRouter(db *gorm.DB) {
 				user.PUT("/update", userController.UpdateUser)
 				user.POST("/change-pass", userController.ChangePassword)
 				user.POST("/reset-pass", userController.ResetPassword)
+				user.PUT("/update-profile", userController.UpdateProfile)
 			}
 
 			ticket := v1.Group("/ticket")
