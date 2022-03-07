@@ -12,3 +12,7 @@ type UpdateRoleRequest struct {
 	Name           string              `json:"name"`
 	ListPermission []entity.Permission `json:"listPermission" gorm:"foreignKey:Id"`
 }
+
+type GetRoleRequest struct {
+	IdUser int `json:"idUser"`
+}

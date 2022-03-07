@@ -34,6 +34,9 @@ func AllRouter(db *gorm.DB) {
 	reportService := service.ReportService(repository)
 	reportController := controller.ReportController(reportService, logService)
 
+	authService := service.AuthService(repository, repository)
+	authController := controller.AuthController(authService, logService)
+
 	myg_ticketing := router.Group("/myg-ticketing")
 	{
 		v1 := myg_ticketing.Group("/v1")
@@ -80,6 +83,11 @@ func AllRouter(db *gorm.DB) {
 			report := v1.Group("/report")
 			{
 				report.POST("/get", reportController.GetReport)
+			}
+
+			auth := v1.Group("/auth")
+			{
+				auth.POST("/login", authController.Login)
 			}
 		}
 	}
