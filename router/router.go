@@ -40,6 +40,9 @@ func AllRouter(db *gorm.DB) {
 	captchaService := service.CapthcaService()
 	captchaController := controller.CaptchaController(captchaService, logService)
 
+	dir := os.Getenv("FILE_DIR")
+	router.Static("/assets", dir)
+
 	myg_ticketing := router.Group("/myg-ticketing")
 	{
 		v1 := myg_ticketing.Group("/v1")
@@ -82,6 +85,7 @@ func AllRouter(db *gorm.DB) {
 			{
 				ticket.POST("/get", ticketController.GetTicket)
 				ticket.GET("/get-detail/:ticket-code", ticketController.GetDetailTicket)
+				ticket.POST("/add", ticketController.CreateTicket)
 			}
 
 			report := v1.Group("/report")

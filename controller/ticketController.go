@@ -139,3 +139,72 @@ func (controller *ticketController) GetDetailTicket(context *gin.Context) {
 	var result = fmt.Sprintf("{\"status\": %s, \"listDetailTicket\": %s, \"listReplyTicket\": %s}", string(parse_status), string(parse_ticket), string(parse_reply))
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 }
+
+func (controller *ticketController) CreateTicket(context *gin.Context) {
+
+	var request model.CreateTicketRequest
+
+	error := context.ShouldBind(&request)
+	description := []string{}
+	http_status := http.StatusOK
+	var status model.StandardResponse
+	var ticket entity.Ticket
+	var ticket_isi entity.TicketIsi
+
+	if error != nil {
+		for _, value := range error.(validator.ValidationErrors) {
+			errorMessage := fmt.Sprintf("Error on field %s, condition: %s", value.Field(), value.ActualTag())
+			description = append(description, errorMessage)
+		}
+		http_status = http.StatusBadRequest
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusBadRequest,
+			ResponseCode:   general.ErrorStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusBadRequest, gin.H{
+			"status": status,
+		})
+	} else {
+
+		ticket, ticket_isi, error = controller.ticketService.CreateTicket(request, context)
+
+		if error == nil {
+
+			description = append(description, "Success")
+
+			status = model.StandardResponse{
+				HttpStatusCode: http.StatusOK,
+				ResponseCode:   general.SuccessStatusCode,
+				Description:    description,
+			}
+			context.JSON(http.StatusOK, gin.H{
+				"status":     status,
+				"ticket":     ticket,
+				"ticket_isi": ticket_isi,
+			})
+
+		} else {
+
+			description = append(description, error.Error())
+			http_status = http.StatusBadRequest
+
+			status = model.StandardResponse{
+				HttpStatusCode: http.StatusBadRequest,
+				ResponseCode:   general.ErrorStatusCode,
+				Description:    description,
+			}
+			context.JSON(http.StatusBadRequest, gin.H{
+				"status": status,
+			})
+
+		}
+	}
+	parse_request, _ := json.Marshal(request)
+	parse_status, _ := json.Marshal(status)
+	parse_ticket, _ := json.Marshal(ticket)
+	parse_ticket_isi, _ := json.Marshal(ticket_isi)
+	var result = fmt.Sprintf("{\"status\": %s, \"ticket\": %s, \"ticket_isi\": %s}", string(parse_status), string(parse_ticket), string(parse_ticket_isi))
+	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
+}
