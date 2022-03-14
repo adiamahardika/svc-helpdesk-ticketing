@@ -1,6 +1,9 @@
 package model
 
-import "mime/multipart"
+import (
+	"mime/multipart"
+	"time"
+)
 
 type GetTicketRequest struct {
 	AssignedTo      string   `json:"assignedTo"`
@@ -32,4 +35,17 @@ type CreateTicketRequest struct {
 	UserPembuat       string                `json:"userPembuat" form:"userPembuat"`
 	TotalWaktu        string                `json:"totalWaktu" form:"totalWaktu"`
 	TicketCode        string                `json:"ticketCode" form:"ticketCode"`
+}
+
+type UpdateTicketRequest struct {
+	AssignedTo    string    `json:"assignedTo" form:"assignedTo"`
+	Email         string    `json:"email" form:"email"`
+	Judul         string    `json:"judul" form:"judul"`
+	Category      string    `json:"category" form:"category"`
+	Lokasi        string    `json:"lokasi" form:"lokasi"`
+	Prioritas     string    `json:"prioritas" form:"prioritas"`
+	Status        string    `json:"status" form:"status"`
+	TerminalId    string    `json:"terminalId" form:"terminalId"`
+	TicketCode    string    `json:"ticketCode" form:"ticketCode"`
+	TglDiperbarui time.Time `json:"tglDiperbarui"`
 }

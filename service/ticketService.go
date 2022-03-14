@@ -17,6 +17,7 @@ type TicketServiceInterface interface {
 	GetTicket(request model.GetTicketRequest) ([]entity.Ticket, int, error)
 	GetDetailTicket(ticket_code string) (model.GetDetailTicketResponse, error)
 	CreateTicket(request model.CreateTicketRequest, context *gin.Context) (entity.Ticket, entity.TicketIsi, error)
+	UpdateTicket(request model.UpdateTicketRequest) (entity.Ticket, error)
 }
 
 type ticketService struct {
@@ -147,4 +148,14 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 
 	return ticket_request, ticket_isi_request, error
 
+}
+
+func (ticketService *ticketService) UpdateTicket(request model.UpdateTicketRequest) (entity.Ticket, error) {
+	date_now := time.Now()
+
+	request.TglDiperbarui = date_now
+
+	ticket, error := ticketService.ticketRepository.UpdateTicket(request)
+
+	return ticket, error
 }
