@@ -87,6 +87,7 @@ func AllRouter(db *gorm.DB) {
 				ticket.GET("/get-detail/:ticket-code", ticketController.GetDetailTicket)
 				ticket.POST("/add", ticketController.CreateTicket)
 				ticket.PUT("/update", ticketController.UpdateTicket)
+				ticket.POST("/reply", ticketController.ReplyTicket)
 			}
 
 			report := v1.Group("/report")

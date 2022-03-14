@@ -18,6 +18,7 @@ type TicketServiceInterface interface {
 	GetDetailTicket(ticket_code string) (model.GetDetailTicketResponse, error)
 	CreateTicket(request model.CreateTicketRequest, context *gin.Context) (entity.Ticket, entity.TicketIsi, error)
 	UpdateTicket(request model.UpdateTicketRequest) (entity.Ticket, error)
+	ReplyTicket(request model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error)
 }
 
 type ticketService struct {
@@ -156,6 +157,83 @@ func (ticketService *ticketService) UpdateTicket(request model.UpdateTicketReque
 	request.TglDiperbarui = date_now
 
 	ticket, error := ticketService.ticketRepository.UpdateTicket(request)
+
+	return ticket, error
+}
+
+func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error) {
+	var ticket []entity.Ticket
+
+	date_now := time.Now()
+	dir := os.Getenv("FILE_DIR")
+	path := dir + "/ticket/" + request.TicketCode + "/" + date_now.Format("2006-01-02")
+	error := fmt.Errorf("error")
+	attachment1 := "-"
+	attachment2 := "-"
+
+	_, check_dir_error := os.Stat(path)
+
+	if os.IsNotExist(check_dir_error) {
+		check_dir_error = os.MkdirAll(path, 0755)
+
+		if check_dir_error != nil {
+			error = check_dir_error
+		}
+	}
+
+	if request.Attachment1 != nil {
+		attachment1 = general.RandomString(4) + "_" + request.Attachment1.Filename
+		error = context.SaveUploadedFile(request.Attachment1, path+"/"+attachment1)
+	} else {
+		error = nil
+	}
+
+	if request.Attachment2 != nil {
+		attachment2 = general.RandomString(4) + "_" + request.Attachment2.Filename
+		error = context.SaveUploadedFile(request.Attachment2, path+"/"+attachment2)
+	} else {
+		error = nil
+	}
+
+	ticket, error = ticketService.ticketRepository.CheckTicketCode(request.TicketCode)
+
+	if len(ticket) == 0 {
+		error = fmt.Errorf("Ticket code doesnt exist!")
+	} else {
+
+		update_ticket := model.UpdateTicketRequest{
+			AssignedTo:       ticket[0].AssignedTo,
+			Email:            ticket[0].Email,
+			Judul:            ticket[0].Judul,
+			Category:         ticket[0].Category,
+			Lokasi:           ticket[0].Lokasi,
+			Prioritas:        ticket[0].Prioritas,
+			Status:           request.Status,
+			TerminalId:       ticket[0].TerminalId,
+			TicketCode:       request.TicketCode,
+			TotalWaktu:       ticket[0].TotalWaktu,
+			UsernamePembalas: request.UsernamePengirim,
+			TglDiperbarui:    date_now,
+		}
+
+		reply_request := entity.TicketIsi{
+			TicketCode:       request.TicketCode,
+			UsernamePengirim: request.UsernamePengirim,
+			Isi:              request.Isi,
+			Attachment1:      attachment1,
+			Attachment2:      attachment2,
+			TglDibuat:        date_now,
+		}
+
+		if error == nil {
+			_, error = ticketService.ticketRepository.UpdateTicket(update_ticket)
+
+			if error == nil {
+				_, error = ticketService.ticketIsiRepository.CreateTicketIsi(reply_request)
+			}
+		}
+
+	}
 
 	return ticket, error
 }

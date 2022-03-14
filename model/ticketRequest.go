@@ -38,14 +38,26 @@ type CreateTicketRequest struct {
 }
 
 type UpdateTicketRequest struct {
-	AssignedTo    string    `json:"assignedTo" form:"assignedTo"`
-	Email         string    `json:"email" form:"email"`
-	Judul         string    `json:"judul" form:"judul"`
-	Category      string    `json:"category" form:"category"`
-	Lokasi        string    `json:"lokasi" form:"lokasi"`
-	Prioritas     string    `json:"prioritas" form:"prioritas"`
-	Status        string    `json:"status" form:"status"`
-	TerminalId    string    `json:"terminalId" form:"terminalId"`
-	TicketCode    string    `json:"ticketCode" form:"ticketCode"`
-	TglDiperbarui time.Time `json:"tglDiperbarui"`
+	AssignedTo       string    `json:"assignedTo" form:"assignedTo"`
+	Email            string    `json:"email" form:"email"`
+	Judul            string    `json:"judul" form:"judul"`
+	Category         string    `json:"category" form:"category"`
+	Lokasi           string    `json:"lokasi" form:"lokasi"`
+	Prioritas        string    `json:"prioritas" form:"prioritas"`
+	Status           string    `json:"status" form:"status"`
+	TerminalId       string    `json:"terminalId" form:"terminalId"`
+	TicketCode       string    `json:"ticketCode" form:"ticketCode"`
+	TotalWaktu       string    `json:"totalWaktu" form:"totalWaktu"`
+	UsernamePembalas string    `json:"usernamePembalas"`
+	TglDiperbarui    time.Time `json:"tglDiperbarui"`
+}
+
+type ReplyTicket struct {
+	TicketCode       string                `json:"ticketCode" form:"ticketCode"`
+	UsernamePengirim string                `json:"usernamePengirim" form:"usernamePengirim"`
+	Status           string                `json:"status" form:"status"`
+	Isi              string                `json:"isi" form:"isi"`
+	Attachment1      *multipart.FileHeader `json:"attachment1" form:"attachment1"`
+	Attachment2      *multipart.FileHeader `json:"attachment2" form:"attachment2"`
+	TglDibuat        time.Time             `json:"tglDibuat" form:"tglDibuat"`
 }
