@@ -14,7 +14,7 @@ func GetMD5Hash(text string, text_2 string) string {
 }
 
 func RandomString(length int) string {
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(time.Now().UnixMicro())
 	var letters = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 	random_string := make([]rune, length)

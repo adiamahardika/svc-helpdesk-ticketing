@@ -49,6 +49,23 @@ func (ticketService *ticketService) GetDetailTicket(ticket_code string) (model.G
 	detail_ticket, error := ticketService.ticketRepository.GetDetailTicket(ticket_code)
 	reply_ticket, error := ticketService.ticketIsiRepository.GetTicketIsi(ticket_code)
 
+	url := os.Getenv("FILE_URL")
+
+	for index := range reply_ticket {
+		date := reply_ticket[index].TglDibuat.Format("2006-01-02")
+		ticket_code := reply_ticket[index].TicketCode
+
+		file_name1 := reply_ticket[index].Attachment1
+		if file_name1 != "" {
+			reply_ticket[index].Attachment1 = url + "ticket/" + ticket_code + "/" + date + "/" + file_name1
+		}
+
+		file_name2 := reply_ticket[index].Attachment2
+		if file_name2 != "" {
+			reply_ticket[index].Attachment2 = url + "ticket/" + ticket_code + "/" + date + "/" + file_name2
+		}
+	}
+
 	reponse.ListDetailTicket = detail_ticket
 	reponse.ListReplyTicket = reply_ticket
 
