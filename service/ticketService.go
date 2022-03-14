@@ -17,7 +17,7 @@ type TicketServiceInterface interface {
 	GetTicket(request model.GetTicketRequest) ([]entity.Ticket, int, error)
 	GetDetailTicket(ticket_code string) (model.GetDetailTicketResponse, error)
 	CreateTicket(request model.CreateTicketRequest, context *gin.Context) (entity.Ticket, entity.TicketIsi, error)
-	UpdateTicket(request model.UpdateTicketRequest) (entity.Ticket, error)
+	UpdateTicket(request model.UpdateTicketRequest) ([]entity.Ticket, error)
 	ReplyTicket(request model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error)
 }
 
@@ -107,13 +107,13 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 	} else {
 		error = nil
 	}
-
+	total_waktu := "0y 0m 0d 0h 0mm 0s"
 	ticket_request := entity.Ticket{
 		Judul:            request.Judul,
 		UsernamePembuat:  request.UserPembuat,
 		UsernamePembalas: request.UserPembuat,
 		Prioritas:        request.Prioritas,
-		TotalWaktu:       request.TotalWaktu,
+		TotalWaktu:       total_waktu,
 		Status:           request.Status,
 		TicketCode:       request.TicketCode,
 		Category:         request.Category,
@@ -151,12 +151,24 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 
 }
 
-func (ticketService *ticketService) UpdateTicket(request model.UpdateTicketRequest) (entity.Ticket, error) {
+func (ticketService *ticketService) UpdateTicket(request model.UpdateTicketRequest) ([]entity.Ticket, error) {
 	date_now := time.Now()
 
-	request.TglDiperbarui = date_now
+	ticket, error := ticketService.ticketRepository.CheckTicketCode(request.TicketCode)
 
-	ticket, error := ticketService.ticketRepository.UpdateTicket(request)
+	if len(ticket) == 0 {
+		error = fmt.Errorf("Ticket code doesnt exist!")
+	} else {
+		tgl := ticket[0].TglDibuat
+		past_date := time.Date(tgl.Year(), tgl.Month(), tgl.Day(), tgl.Hour(), tgl.Minute(), tgl.Second(), tgl.Nanosecond(), time.Local)
+		year, month, day, hour, min, sec := general.TimeDifference(past_date, date_now)
+		total_waktu := fmt.Sprintf("%dy %dm %dd %dh %dmm %ds", year, month, day, hour, min, sec)
+
+		request.TotalWaktu = total_waktu
+		request.TglDiperbarui = date_now
+
+		ticket, error = ticketService.ticketRepository.UpdateTicket(request)
+	}
 
 	return ticket, error
 }
@@ -200,6 +212,10 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 	if len(ticket) == 0 {
 		error = fmt.Errorf("Ticket code doesnt exist!")
 	} else {
+		tgl := ticket[0].TglDibuat
+		past_date := time.Date(tgl.Year(), tgl.Month(), tgl.Day(), tgl.Hour(), tgl.Minute(), tgl.Second(), tgl.Nanosecond(), time.Local)
+		year, month, day, hour, min, sec := general.TimeDifference(past_date, date_now)
+		total_waktu := fmt.Sprintf("%dy %dm %dd %dh %dmm %ds", year, month, day, hour, min, sec)
 
 		update_ticket := model.UpdateTicketRequest{
 			AssignedTo:       ticket[0].AssignedTo,
@@ -211,7 +227,7 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 			Status:           request.Status,
 			TerminalId:       ticket[0].TerminalId,
 			TicketCode:       request.TicketCode,
-			TotalWaktu:       ticket[0].TotalWaktu,
+			TotalWaktu:       total_waktu,
 			UsernamePembalas: request.UsernamePengirim,
 			TglDiperbarui:    date_now,
 		}

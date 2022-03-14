@@ -217,7 +217,7 @@ func (controller *ticketController) UpdateTicket(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status model.StandardResponse
-	var ticket entity.Ticket
+	var ticket []entity.Ticket
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {

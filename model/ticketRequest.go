@@ -33,7 +33,6 @@ type CreateTicketRequest struct {
 	Status            string                `json:"status" form:"status"`
 	TerminalId        string                `json:"terminalId" form:"terminalId"`
 	UserPembuat       string                `json:"userPembuat" form:"userPembuat"`
-	TotalWaktu        string                `json:"totalWaktu" form:"totalWaktu"`
 	TicketCode        string                `json:"ticketCode" form:"ticketCode"`
 }
 
