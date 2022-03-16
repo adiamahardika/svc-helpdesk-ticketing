@@ -58,12 +58,12 @@ func (ticketService *ticketService) GetDetailTicket(ticket_code string) (model.G
 		ticket_code := reply_ticket[index].TicketCode
 
 		file_name1 := reply_ticket[index].Attachment1
-		if file_name1 != "" {
+		if file_name1 != "-" {
 			reply_ticket[index].Attachment1 = url + "ticket/" + ticket_code + "/" + date + "/" + file_name1
 		}
 
 		file_name2 := reply_ticket[index].Attachment2
-		if file_name2 != "" {
+		if file_name2 != "-" {
 			reply_ticket[index].Attachment2 = url + "ticket/" + ticket_code + "/" + date + "/" + file_name2
 		}
 	}
