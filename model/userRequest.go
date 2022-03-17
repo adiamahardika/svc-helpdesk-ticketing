@@ -11,7 +11,7 @@ type GetUserRequest struct {
 
 type CreateUserRequest struct {
 	Name      string    `json:"name"`
-	Username  string    `json:"username"`
+	Username  string    `json:"username" binding:"required"`
 	Password  string    `json:"password"`
 	Email     string    `json:"email"`
 	Phone     string    `json:"phone"`
@@ -22,7 +22,7 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Id         int       `json:"id" gorm:"primaryKey"`
+	Id         int       `json:"id" gorm:"primaryKey" binding:"required"`
 	Name       string    `json:"name"`
 	Email      string    `json:"email"`
 	Phone      string    `json:"phone"`
@@ -36,14 +36,20 @@ type UpdateUserRequest struct {
 }
 
 type ChangePassRequest struct {
-	Username    string    `json:"username"`
-	OldPassword string    `json:"oldPassword"`
-	NewPassword string    `json:"newPassword"`
+	Username    string    `json:"username" binding:"required"`
+	OldPassword string    `json:"oldPassword" binding:"required"`
+	NewPassword string    `json:"newPassword" binding:"required"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
 type ResetPassword struct {
-	Username    string    `json:"username"`
-	NewPassword string    `json:"newPassword"`
+	Username    string    `json:"username" binding:"required"`
+	NewPassword string    `json:"newPassword" binding:"required"`
 	UpdatedAt   time.Time `json:"updatedAt"`
+}
+
+type UpdateUserStatus struct {
+	Username  string    `json:"username" binding:"required"`
+	Status    string    `json:"status" binding:"required"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }

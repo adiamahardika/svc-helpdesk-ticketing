@@ -34,6 +34,8 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 
 	if user.Username == "" {
 		error = fmt.Errorf("Username Not Found!")
+	} else if user.Status != "Active" {
+		error = fmt.Errorf("This account has inactive!")
 	} else {
 		error_check_pass := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password))
 

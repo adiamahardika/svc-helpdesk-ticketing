@@ -14,6 +14,7 @@ type UserRepositoryInterface interface {
 	CheckUsername(request string) ([]entity.User, error)
 	UpdateUser(request model.UpdateUserRequest) (entity.User, error)
 	ChangePassword(request model.ChangePassRequest) (model.GetUserResponse, error)
+	UpdateUserStatus(request model.UpdateUserStatus) (entity.User, error)
 }
 
 func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, error) {
@@ -85,6 +86,15 @@ func (repo *repository) ChangePassword(request model.ChangePassRequest) (model.G
 	var user model.GetUserResponse
 
 	error := repo.db.Raw("UPDATE users SET password = @NewPassword, updated_at = @UpdatedAt WHERE username = @Username RETURNING users.*", request).Find(&user).Error
+
+	return user, error
+}
+
+func (repo *repository) UpdateUserStatus(request model.UpdateUserStatus) (entity.User, error) {
+
+	var user entity.User
+
+	error := repo.db.Raw("UPDATE users SET status = @Status, updated_at = @UpdatedAt WHERE username = @Username RETURNING users.*", request).Find(&user).Error
 
 	return user, error
 }
