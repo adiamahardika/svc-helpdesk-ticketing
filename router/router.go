@@ -49,6 +49,7 @@ func AllRouter(db *gorm.DB) {
 		{
 			category := v1.Group("/category")
 			{
+				category.Use(authService.Authentication(), authService.Authorization())
 				category.GET("/get/:size/:page_no/:sort_by/:order_by", categoryController.GetCategory)
 				category.GET("/get-detail/:code-level", categoryController.GetDetailCategory)
 				category.POST("/add", categoryController.CreateCategory)
@@ -58,6 +59,7 @@ func AllRouter(db *gorm.DB) {
 
 			role := v1.Group("/role")
 			{
+				role.Use(authService.Authentication(), authService.Authorization())
 				role.GET("/get", roleController.GetRole)
 				role.POST("/add", roleController.CreateRole)
 				role.PUT("/update", roleController.UpdateRole)
@@ -66,11 +68,13 @@ func AllRouter(db *gorm.DB) {
 
 			permission := v1.Group("/permission")
 			{
+				permission.Use(authService.Authentication(), authService.Authorization())
 				permission.GET("/get", permissionController.GetPermission)
 			}
 
 			user := v1.Group("/user")
 			{
+				user.Use(authService.Authentication(), authService.Authorization())
 				user.GET("/get/:search/:size/:page_no", userController.GetUser)
 				user.GET("/get-detail/:username", userController.GetUserDetail)
 				user.DELETE("/delete/:user-id", userController.DeleteUser)
@@ -84,6 +88,7 @@ func AllRouter(db *gorm.DB) {
 
 			ticket := v1.Group("/ticket")
 			{
+				ticket.Use(authService.Authentication(), authService.Authorization())
 				ticket.POST("/get", ticketController.GetTicket)
 				ticket.GET("/get-detail/:ticket-code", ticketController.GetDetailTicket)
 				ticket.POST("/add", ticketController.CreateTicket)
@@ -93,12 +98,14 @@ func AllRouter(db *gorm.DB) {
 
 			report := v1.Group("/report")
 			{
+				report.Use(authService.Authentication(), authService.Authorization())
 				report.POST("/get", reportController.GetReport)
 			}
 
 			auth := v1.Group("/auth")
 			{
 				auth.POST("/login", authController.Login)
+				auth.GET("/refresh-token", authController.RefreshToken)
 			}
 
 			captcha := v1.Group("/captcha")
