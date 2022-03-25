@@ -280,7 +280,6 @@ func (controller *ticketController) ReplyTicket(context *gin.Context) {
 	var request model.ReplyTicket
 
 	error := context.ShouldBind(&request)
-	fmt.Printf(request.TicketCode)
 	description := []string{}
 	http_status := http.StatusOK
 	var status model.StandardResponse

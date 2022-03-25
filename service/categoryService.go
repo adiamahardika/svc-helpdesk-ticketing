@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -79,7 +78,6 @@ func (categoryService *categoryService) UpdateCategory(request entity.Category) 
 	date_now := time.Now()
 
 	find_by_parent, error := categoryService.repository.GetCategoryByParentDesc(request.Parent)
-	fmt.Println(find_by_parent)
 	find_by_code_level, error := categoryService.repository.GetCategoryByParentAsc(request.CodeLevel)
 
 	if len(find_by_parent) > 0 {
