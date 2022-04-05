@@ -17,7 +17,7 @@ func AllRouter(db *gorm.DB) {
 
 	// gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
-	router.Use(LoadTls())
+	// router.Use(LoadTls())
 	router.Use(cors.New(cors.Config{
 		AllowMethods:     []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "User-Agent", "Referrer", "Host", "token", "request-by", "signature-key"},
@@ -53,6 +53,9 @@ func AllRouter(db *gorm.DB) {
 
 	captchaService := service.CapthcaService()
 	captchaController := controller.CaptchaController(captchaService, logService)
+
+	ticketStatusService := service.TicketStatusService(repository)
+	ticketStatusController := controller.TicketStatusController(ticketStatusService, logService)
 
 	dir := os.Getenv("FILE_DIR")
 	router.Static("/assets", dir)
@@ -127,10 +130,15 @@ func AllRouter(db *gorm.DB) {
 				captcha.POST("/generate", captchaController.GenerateCaptcha)
 				captcha.POST("/verify", captchaController.CaptchaVerify)
 			}
+
+			ticket_status := v1.Group("/ticket-status")
+			{
+				ticket_status.GET("/get", ticketStatusController.GetTicketStatus)
+			}
 		}
 	}
-
-	router.RunTLS(os.Getenv("PORT"), "cert/cert.pem", "cert/key.pem")
+	router.Run(os.Getenv("PORT"))
+	// router.RunTLS(os.Getenv("PORT"), "cert/cert.pem", "cert/key.pem")
 }
 
 func LoadTls() gin.HandlerFunc {
