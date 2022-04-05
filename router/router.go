@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"os"
 	"svc-myg-ticketing/controller"
 	"svc-myg-ticketing/repository"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/unrolled/secure"
 	"gorm.io/gorm"
 )
 
@@ -15,6 +17,7 @@ func AllRouter(db *gorm.DB) {
 
 	// gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+	router.Use(LoadTls())
 	router.Use(cors.New(cors.Config{
 		AllowMethods:     []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "User-Agent", "Referrer", "Host", "token", "request-by", "signature-key"},
@@ -127,5 +130,23 @@ func AllRouter(db *gorm.DB) {
 		}
 	}
 
-	router.Run(os.Getenv("PORT"))
+	router.RunTLS(os.Getenv("PORT"), "cert/cert.pem", "cert/key.pem")
+}
+
+func LoadTls() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		host := fmt.Sprintf("localhost" + os.Getenv("PORT"))
+		middleware := secure.New(secure.Options{
+			SSLRedirect: true,
+			SSLHost:     host,
+		})
+		error := middleware.Process(context.Writer, context.Request)
+		if error != nil {
+			//If an error occurs, do not continue.
+			fmt.Println(error)
+			return
+		}
+		//Continue processing
+		context.Next()
+	}
 }

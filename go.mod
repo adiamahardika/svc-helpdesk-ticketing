@@ -54,6 +54,7 @@ require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/gin-contrib/cors v1.3.1
 	github.com/klauspost/compress v1.15.0 // indirect
+	github.com/unrolled/secure v1.10.0
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.34.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
