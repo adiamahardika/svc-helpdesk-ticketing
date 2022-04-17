@@ -8,6 +8,7 @@ import (
 	"svc-myg-ticketing/general"
 	"svc-myg-ticketing/model"
 	"svc-myg-ticketing/repository"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,6 +32,7 @@ func TicketService(ticketRepository repository.TicketRepositoryInterface, ticket
 }
 
 func (ticketService *ticketService) GetTicket(request model.GetTicketRequest) ([]entity.Ticket, int, error) {
+	var wg sync.WaitGroup
 
 	if request.PageSize == 0 {
 		request.PageSize = math.MaxInt16
@@ -40,7 +42,8 @@ func (ticketService *ticketService) GetTicket(request model.GetTicketRequest) ([
 	total_pages := math.Ceil(float64(total_data) / float64(request.PageSize))
 
 	ticket, error := ticketService.ticketRepository.GetTicket(request)
-
+	wg.Add(1)
+	go SmtpService().SendEmail(&wg)
 	return ticket, int(total_pages), error
 }
 
