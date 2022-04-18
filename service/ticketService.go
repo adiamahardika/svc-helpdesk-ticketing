@@ -112,20 +112,21 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 	}
 	total_waktu := "0y 0m 0d 0h 0mm 0s"
 	ticket_request := entity.Ticket{
-		Judul:            request.Judul,
-		UsernamePembuat:  request.UserPembuat,
-		UsernamePembalas: request.UserPembuat,
-		Prioritas:        request.Prioritas,
-		TotalWaktu:       total_waktu,
-		Status:           request.Status,
-		TicketCode:       request.TicketCode,
-		Category:         request.Category,
-		Lokasi:           request.Lokasi,
-		TerminalId:       request.TerminalId,
-		Email:            request.Email,
-		AssignedTo:       request.AssignedTo,
-		TglDibuat:        date_now,
-		TglDiperbarui:    date_now,
+		Judul:             request.Judul,
+		UsernamePembuat:   request.UserPembuat,
+		UsernamePembalas:  request.UserPembuat,
+		Prioritas:         request.Prioritas,
+		TotalWaktu:        total_waktu,
+		Status:            request.Status,
+		TicketCode:        request.TicketCode,
+		Category:          request.Category,
+		Lokasi:            request.Lokasi,
+		TerminalId:        request.TerminalId,
+		Email:             request.Email,
+		AssignedTo:        request.AssignedTo,
+		EmailNotification: request.EmailNotification,
+		TglDibuat:         date_now,
+		TglDiperbarui:     date_now,
 	}
 
 	ticket_isi_request := entity.TicketIsi{

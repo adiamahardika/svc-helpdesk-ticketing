@@ -37,7 +37,7 @@ func (captchaService *captchaService) CaptchaVerify(request model.ConfigJsonBody
 
 	is_valid := false
 	error := fmt.Errorf("Captcha Not Match")
-	if store.Verify(request.CaptchaId, request.VerifyValue, true) {
+	if store.Verify(request.CaptchaId, request.VerifyValue, true) && request.CaptchaId != "" && request.VerifyValue != "" {
 		is_valid = true
 		error = nil
 	}
