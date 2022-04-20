@@ -32,7 +32,6 @@ func TicketService(ticketRepository repository.TicketRepositoryInterface, ticket
 }
 
 func (ticketService *ticketService) GetTicket(request model.GetTicketRequest) ([]entity.Ticket, int, error) {
-	var wg sync.WaitGroup
 
 	if request.PageSize == 0 {
 		request.PageSize = math.MaxInt16
@@ -42,8 +41,7 @@ func (ticketService *ticketService) GetTicket(request model.GetTicketRequest) ([
 	total_pages := math.Ceil(float64(total_data) / float64(request.PageSize))
 
 	ticket, error := ticketService.ticketRepository.GetTicket(request)
-	wg.Add(1)
-	go SmtpService().SendEmail(&wg)
+
 	return ticket, int(total_pages), error
 }
 
@@ -78,6 +76,7 @@ func (ticketService *ticketService) GetDetailTicket(ticket_code string) (model.G
 }
 
 func (ticketService *ticketService) CreateTicket(request model.CreateTicketRequest, context *gin.Context) (entity.Ticket, entity.TicketIsi, error) {
+	var wg sync.WaitGroup
 	var ticket []entity.Ticket
 
 	date_now := time.Now()
@@ -149,6 +148,17 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 		if error == nil {
 			_, error = ticketService.ticketIsiRepository.CreateTicketIsi(ticket_isi_request)
 		}
+
+		if request.EmailNotification == "true" {
+			wg.Add(1)
+
+			sender := NewSMTP()
+			message := NewMessage(request.Judul, request.Isi)
+			message.To = []string{request.Email}
+			message.AttachFile(path+attachment1, path+attachment2)
+			error = sender.Send(&wg, message)
+		}
+
 	}
 
 	return ticket_request, ticket_isi_request, error
