@@ -10,6 +10,7 @@ import (
 	"net/smtp"
 	"path/filepath"
 	"strings"
+	"svc-myg-ticketing/model"
 	"sync"
 )
 
@@ -24,30 +25,8 @@ func SmtpService() *smtpService {
 
 var host = "10.54.59.13"
 var port = "2500"
-var sender = "mygrapari@telkomsel.com"
+var sender = "MyGrapari Ticketing Team <mygrapari@telkomsel.com>"
 var auth_email = "mygrapari@telkomsel.com"
-
-// func (smtpService *smtpService) SendEmail(wg *sync.WaitGroup) error {
-// 	defer wg.Done()
-// 	to := []string{"dikaadia@gmail.com"}
-// 	cc := []string{"adiamahardika.work@gmail.com"}
-// 	subject := "Test mail"
-// 	message := "Hello"
-// 	body := "From: " + sender + "\n" +
-// 		"To: " + strings.Join(to, ",") + "\n" +
-// 		"Cc: " + strings.Join(cc, ",") + "\n" +
-// 		"Subject: " + subject + "\n\n" +
-// 		message
-
-// 	smtpAddr := fmt.Sprintf("%s:%s", host, port)
-
-// 	err := smtp.SendMail(smtpAddr, nil, auth_email, append(to, cc...), []byte(body))
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
 
 type Sender struct {
 	auth smtp.Auth
@@ -72,8 +51,30 @@ func (s *Sender) Send(wg *sync.WaitGroup, m *Message) error {
 	return smtp.SendMail(smtpAddr, nil, auth_email, m.To, m.ToBytes())
 }
 
-func NewMessage(subject, body string) *Message {
-	return &Message{Subject: subject, Body: body, Attachments1: make(map[string][]byte), Attachments2: make(map[string][]byte)}
+func NewMessage(request *model.SmtpRequest) *Message {
+
+	subject := fmt.Sprintf("%s [%s] %s", request.Type, request.TicketCode, request.Judul)
+	message := fmt.Sprintf(`<html>
+	<body>
+	  <div
+		style="
+		  font-family: 'Poppins', sans-serif;
+		  font-weight: 400;
+		"
+	  >
+		<p style="font-size: 12px;>
+		  Lokasi: %s<br />
+		  Terminal Id: %s<br />
+		  Status: %s<br />
+		  Prioritas: %s<br />
+		  Dibuat oleh: %s<br />
+		</p>
+		<br />
+		<p style="white-space: pre-line;font-size: 14px;">%s</p>
+	  </div>
+	</body>
+  </html>`, request.Lokasi, request.TerminalId, request.Status, request.Prioritas, request.UsernamePembuat, request.Isi)
+	return &Message{Subject: subject, Body: message, Attachments1: make(map[string][]byte), Attachments2: make(map[string][]byte)}
 }
 
 func (m *Message) AttachFile(src1, src2 string) error {
@@ -107,7 +108,7 @@ func (m *Message) ToBytes() []byte {
 		buf.WriteString(fmt.Sprintf("Content-Type: multipart/mixed; boundary=%s\n", boundary))
 		buf.WriteString(fmt.Sprintf("--%s\n", boundary))
 	} else {
-		buf.WriteString("Content-Type: text/plain; charset=utf-8\n")
+		buf.WriteString("Content-Type: text/html; charset=utf-8\n")
 	}
 
 	buf.WriteString(m.Body)

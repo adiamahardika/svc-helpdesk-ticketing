@@ -153,7 +153,18 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 			wg.Add(1)
 
 			sender := NewSMTP()
-			message := NewMessage(request.Judul, request.Isi)
+			message := NewMessage(&model.SmtpRequest{
+				Judul:           request.Judul,
+				Prioritas:       request.Prioritas,
+				UsernamePembuat: request.UserPembuat,
+				Status:          request.Status,
+				TicketCode:      request.TicketCode,
+				Lokasi:          request.Lokasi,
+				TerminalId:      request.TerminalId,
+				Email:           request.Email,
+				Isi:             request.Isi,
+				Type:            "New",
+			})
 			message.To = []string{request.Email}
 			message.AttachFile(path+attachment1, path+attachment2)
 			error = sender.Send(&wg, message)
