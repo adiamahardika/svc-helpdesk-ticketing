@@ -62,18 +62,19 @@ func NewMessage(request *model.SmtpRequest) *Message {
 		  font-weight: 400;
 		"
 	  >
-		<p style="font-size: 12px;>
+		<p style="font-size: 12px;">
 		  Lokasi: %s<br />
 		  Terminal Id: %s<br />
 		  Status: %s<br />
 		  Prioritas: %s<br />
-		  Dibuat oleh: %s<br />
+		  Pembuat tiket: %s<br />
+		  Penulis: %s
 		</p>
 		<br />
 		<p style="white-space: pre-line;font-size: 14px;">%s</p>
 	  </div>
 	</body>
-  </html>`, request.Lokasi, request.TerminalId, request.Status, request.Prioritas, request.UsernamePembuat, request.Isi)
+  </html>`, request.Lokasi, request.TerminalId, request.Status, request.Prioritas, request.UsernamePembuat, request.Author, request.Isi)
 	return &Message{Subject: subject, Body: message, Attachments1: make(map[string][]byte), Attachments2: make(map[string][]byte)}
 }
 

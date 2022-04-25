@@ -52,11 +52,12 @@ type UpdateTicketRequest struct {
 }
 
 type ReplyTicket struct {
-	TicketCode       string                `json:"ticketCode" form:"ticketCode"`
-	UsernamePengirim string                `json:"usernamePengirim" form:"usernamePengirim"`
-	Status           string                `json:"status" form:"status"`
-	Isi              string                `json:"isi" form:"isi"`
-	Attachment1      *multipart.FileHeader `json:"attachment1" form:"attachment1"`
-	Attachment2      *multipart.FileHeader `json:"attachment2" form:"attachment2"`
-	TglDibuat        time.Time             `json:"tglDibuat" form:"tglDibuat"`
+	TicketCode        string                `json:"ticketCode" form:"ticketCode"`
+	UsernamePengirim  string                `json:"usernamePengirim" form:"usernamePengirim"`
+	EmailNotification string                `json:"emailNotification" form:"emailNotification"`
+	Status            string                `json:"status" form:"status"`
+	Isi               string                `json:"isi" form:"isi"`
+	Attachment1       *multipart.FileHeader `json:"attachment1" form:"attachment1"`
+	Attachment2       *multipart.FileHeader `json:"attachment2" form:"attachment2"`
+	TglDibuat         time.Time             `json:"tglDibuat" form:"tglDibuat"`
 }
