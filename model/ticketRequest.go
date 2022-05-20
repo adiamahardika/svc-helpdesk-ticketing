@@ -17,6 +17,8 @@ type GetTicketRequest struct {
 	SortType        string   `json:"sortType"`
 	Status          string   `json:"status"`
 	UsernamePembuat string   `json:"usernamePembuat"`
+	StartDate       string   `json:"startDate" binding:"required"`
+	EndDate         string   `json:"endDate" binding:"required"`
 }
 
 type CreateTicketRequest struct {
