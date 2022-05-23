@@ -19,4 +19,5 @@ type Ticket struct {
 	Email             string    `json:"email"`
 	AssignedTo        string    `json:"assignedTo"`
 	EmailNotification string    `json:"emailNotification"`
+	Isi               string    `json:"isi"`
 }
