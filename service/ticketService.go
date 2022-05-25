@@ -20,6 +20,7 @@ type TicketServiceInterface interface {
 	CreateTicket(request model.CreateTicketRequest, context *gin.Context) (entity.Ticket, entity.TicketIsi, error)
 	UpdateTicket(request model.UpdateTicketRequest) ([]entity.Ticket, error)
 	ReplyTicket(request model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error)
+	UpdateTicketStatus(request model.UpdateTicketStatusRequest) ([]entity.Ticket, error)
 }
 
 type ticketService struct {
@@ -298,6 +299,23 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 			}
 		}
 
+	}
+
+	return ticket, error
+}
+
+func (ticketService *ticketService) UpdateTicketStatus(request model.UpdateTicketStatusRequest) ([]entity.Ticket, error) {
+	date_now := time.Now()
+
+	ticket, error := ticketService.ticketRepository.CheckTicketCode(request.TicketCode)
+
+	if len(ticket) == 0 {
+		error = fmt.Errorf("Ticket code doesnt exist!")
+	} else {
+
+		request.TglDiperbarui = date_now
+
+		ticket, error = ticketService.ticketRepository.UpdateTicketStatus(request)
 	}
 
 	return ticket, error

@@ -12,6 +12,7 @@ type TicketRepositoryInterface interface {
 	CreateTicket(request entity.Ticket) (entity.Ticket, error)
 	CheckTicketCode(request string) ([]entity.Ticket, error)
 	UpdateTicket(request model.UpdateTicketRequest) ([]entity.Ticket, error)
+	UpdateTicketStatus(request model.UpdateTicketStatusRequest) ([]entity.Ticket, error)
 }
 
 func (repo *repository) GetTicket(request model.GetTicketRequest) ([]entity.Ticket, error) {
@@ -96,6 +97,14 @@ func (repo *repository) UpdateTicket(request model.UpdateTicketRequest) ([]entit
 	var ticket []entity.Ticket
 
 	error := repo.db.Raw("UPDATE ticket SET assigned_to =  @AssignedTo, email = @Email, judul = @Judul, category = @Category, lokasi = @Lokasi,  prioritas = @Prioritas, status = @Status, terminal_id = @TerminalId, total_waktu = @TotalWaktu, username_pembalas = @UsernamePembalas, tgl_diperbarui = @TglDiperbarui WHERE ticket_code = @TicketCode RETURNING ticket.*", request).Find(&ticket).Error
+
+	return ticket, error
+}
+
+func (repo *repository) UpdateTicketStatus(request model.UpdateTicketStatusRequest) ([]entity.Ticket, error) {
+	var ticket []entity.Ticket
+
+	error := repo.db.Raw("UPDATE ticket SET status = @Status, tgl_diperbarui = @TglDiperbarui WHERE ticket_code = @TicketCode RETURNING ticket.*", request).Find(&ticket).Error
 
 	return ticket, error
 }

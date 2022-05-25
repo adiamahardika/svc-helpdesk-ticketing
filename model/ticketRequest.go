@@ -63,3 +63,9 @@ type ReplyTicket struct {
 	Attachment2       *multipart.FileHeader `json:"attachment2" form:"attachment2"`
 	TglDibuat         time.Time             `json:"tglDibuat" form:"tglDibuat"`
 }
+
+type UpdateTicketStatusRequest struct {
+	Status        string    `json:"status" form:"status"`
+	TicketCode    string    `json:"ticketCode" form:"ticketCode"`
+	TglDiperbarui time.Time `json:"tglDiperbarui"`
+}
