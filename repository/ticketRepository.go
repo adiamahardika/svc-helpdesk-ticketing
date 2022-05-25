@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
 )
@@ -37,7 +36,7 @@ func (repo *repository) GetTicket(request model.GetTicketRequest) ([]entity.Tick
 		StartDate:       request.StartDate,
 		EndDate:         request.EndDate,
 	}).Find(&ticket).Error
-	fmt.Println(len(ticket))
+
 	return ticket, error
 }
 

@@ -13,22 +13,30 @@ type ReportRepositoryInterface interface {
 func (repo *repository) GetReport(request model.GetReportRequest) ([]entity.Ticket, error) {
 	var ticket []entity.Ticket
 	var query string
+	var category string
+	var created_by string
 
 	if len(request.Category) == 0 {
-		query = "SELECT DISTINCT ON (ticket_code) * FROM (SELECT ticket.*, category.name AS category, ticket_isi.isi FROM ticket LEFT OUTER JOIN category ON (ticket.category = CAST(category.id AS varchar(10))) LEFT OUTER JOIN ticket_isi ON (ticket.ticket_code = ticket_isi.ticket_code) WHERE prioritas IN @Priority AND status IN @Status AND assigned_to LIKE @AssignedTo AND username_pembuat LIKE @UsernamePembuat AND ticket.tgl_dibuat >= @StartDate AND ticket.tgl_dibuat <= @EndDate ORDER BY ticket_isi.tgl_dibuat ASC) AS ticket"
+		category = ""
 	} else {
-		query = "SELECT DISTINCT ON (ticket_code) * FROM (SELECT ticket.*, category.name AS category, ticket_isi.isi FROM ticket LEFT OUTER JOIN category ON (ticket.category = CAST(category.id AS varchar(10))) LEFT OUTER JOIN ticket_isi ON (ticket.ticket_code = ticket_isi.ticket_code) WHERE prioritas IN @Priority AND status IN @Status AND assigned_to LIKE @AssignedTo AND username_pembuat LIKE @UsernamePembuat AND category IN @Category AND ticket.tgl_dibuat >= @StartDate AND ticket.tgl_dibuat <= @EndDate ORDER BY ticket_isi.tgl_dibuat ASC) AS ticket"
+		category = "AND category IN @Category"
 	}
+	if len(request.UsernamePembuat) == 0 {
+		created_by = ""
+	} else {
+		created_by = "AND username_pembuat IN @UsernamePembuat"
+	}
+	query = fmt.Sprintf("SELECT DISTINCT ON (ticket_code) * FROM (SELECT ticket.*, category.name AS category, ticket_isi.isi FROM ticket LEFT OUTER JOIN category ON (ticket.category = CAST(category.id AS varchar(10))) LEFT OUTER JOIN ticket_isi ON (ticket.ticket_code = ticket_isi.ticket_code) WHERE prioritas IN @Priority AND status IN @Status AND assigned_to LIKE @AssignedTo %s %s AND ticket.tgl_dibuat >= @StartDate AND ticket.tgl_dibuat <= @EndDate ORDER BY ticket_isi.tgl_dibuat ASC) AS ticket", category, created_by)
 
 	error := repo.db.Raw(query, model.GetReportRequest{
 		AssignedTo:      "%" + request.AssignedTo + "%",
 		Category:        request.Category,
 		Priority:        request.Priority,
 		Status:          request.Status,
-		UsernamePembuat: "%" + request.UsernamePembuat + "%",
+		UsernamePembuat: request.UsernamePembuat,
 		StartDate:       request.StartDate,
 		EndDate:         request.EndDate,
 	}).Find(&ticket).Error
-	fmt.Println(len(ticket))
+
 	return ticket, error
 }
