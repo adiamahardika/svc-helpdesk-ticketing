@@ -23,6 +23,7 @@ type UserServiceInterface interface {
 	ResetPassword(request model.ResetPassword) (model.GetUserResponse, error)
 	UpdateProfile(request model.UpdateUserRequest) (entity.User, error)
 	UpdateUserStatus(request model.UpdateUserStatus) (entity.User, error)
+	GetUserGroupByRole() ([]model.GetUserGroupByRoleResponse, error)
 }
 
 type userService struct {
@@ -243,4 +244,22 @@ func (userService *userService) UpdateUserStatus(request model.UpdateUserStatus)
 	user.Password = ""
 
 	return user, error
+}
+
+func (userService *userService) GetUserGroupByRole() ([]model.GetUserGroupByRoleResponse, error) {
+	var response []model.GetUserGroupByRoleResponse
+	user, error := userService.userRepository.GetUserGroupByRole()
+
+	for _, value := range user {
+		var user_options []model.UserOptions
+		json.Unmarshal([]byte(value.Options), &user_options)
+
+		response = append(response, model.GetUserGroupByRoleResponse{
+			Id:      value.Id,
+			Label:   value.Label,
+			Options: user_options,
+		})
+	}
+
+	return response, error
 }

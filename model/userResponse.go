@@ -19,3 +19,20 @@ type GetUserResponse struct {
 	RuleId     int           `json:"ruleId"`
 	GrapariId  string        `json:"grapariId"`
 }
+
+type UserOptions struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+}
+
+type GetUserGroupByRoleResponse struct {
+	Id      int           `json:"id" gorm:"primaryKey"`
+	Label   string        `json:"label"`
+	Options []UserOptions `json:"options"`
+}
+
+type GetUserGroupByRole struct {
+	Id      int    `json:"id" gorm:"primaryKey"`
+	Label   string `json:"label"`
+	Options string `json:"options"`
+}

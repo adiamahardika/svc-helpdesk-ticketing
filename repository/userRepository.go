@@ -15,6 +15,7 @@ type UserRepositoryInterface interface {
 	UpdateUser(request model.UpdateUserRequest) (entity.User, error)
 	ChangePassword(request model.ChangePassRequest) (model.GetUserResponse, error)
 	UpdateUserStatus(request model.UpdateUserStatus) (entity.User, error)
+	GetUserGroupByRole() ([]model.GetUserGroupByRole, error)
 }
 
 func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, error) {
@@ -95,6 +96,14 @@ func (repo *repository) UpdateUserStatus(request model.UpdateUserStatus) (entity
 	var user entity.User
 
 	error := repo.db.Raw("UPDATE users SET status = @Status, updated_at = @UpdatedAt WHERE username = @Username RETURNING users.*", request).Find(&user).Error
+
+	return user, error
+}
+
+func (repo *repository) GetUserGroupByRole() ([]model.GetUserGroupByRole, error) {
+	var user []model.GetUserGroupByRole
+
+	error := repo.db.Raw("SELECT role.id, role.name AS label, JSON_AGG(JSON_BUILD_OBJECT('label', users.name, 'value', users.username)) AS options FROM user_has_role INNER JOIN role ON (role.id = user_has_role.id_role) INNER JOIN users ON (users.id = user_has_role.id_user) WHERE role.is_active = 'true' GROUP BY role.name, role.id ORDER BY role.name ASC").Find(&user).Error
 
 	return user, error
 }
