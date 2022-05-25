@@ -103,7 +103,7 @@ func (repo *repository) UpdateUserStatus(request model.UpdateUserStatus) (entity
 func (repo *repository) GetUserGroupByRole() ([]model.GetUserGroupByRole, error) {
 	var user []model.GetUserGroupByRole
 
-	error := repo.db.Raw("SELECT role.id, role.name AS label, JSON_AGG(JSON_BUILD_OBJECT('label', users.name, 'value', users.username)) AS options FROM user_has_role INNER JOIN role ON (role.id = user_has_role.id_role) INNER JOIN users ON (users.id = user_has_role.id_user) WHERE role.is_active = 'true' GROUP BY role.name, role.id ORDER BY role.name ASC").Find(&user).Error
+	error := repo.db.Raw("SELECT role.id, role.name AS label, JSON_AGG(JSON_BUILD_OBJECT('label', users.name, 'value', users.username)) AS options FROM user_has_role INNER JOIN role ON (role.id = user_has_role.id_role) INNER JOIN users ON (users.id = user_has_role.id_user) WHERE role.is_active = 'true' AND users.status = 'Active'  GROUP BY role.name, role.id ORDER BY role.name ASC").Find(&user).Error
 
 	return user, error
 }
