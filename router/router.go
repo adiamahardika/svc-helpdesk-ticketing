@@ -60,6 +60,9 @@ func AllRouter(db *gorm.DB) {
 	areaService := service.AreaService(repository)
 	areaController := controller.AreaController(areaService, logService)
 
+	regionalService := service.RegionalService(repository)
+	regionalController := controller.RegionalController(regionalService, logService)
+
 	dir := os.Getenv("FILE_DIR")
 	router.Static("/assets", dir)
 
@@ -146,6 +149,12 @@ func AllRouter(db *gorm.DB) {
 			{
 				report.Use(authService.Authentication(), authService.Authorization())
 				area.POST("/get", areaController.GetArea)
+			}
+
+			regional := v1.Group("/regional")
+			{
+				report.Use(authService.Authentication(), authService.Authorization())
+				regional.POST("/get", regionalController.GetRegional)
 			}
 		}
 	}
