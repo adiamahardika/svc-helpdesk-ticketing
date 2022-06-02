@@ -63,6 +63,9 @@ func AllRouter(db *gorm.DB) {
 	regionalService := service.RegionalService(repository)
 	regionalController := controller.RegionalController(regionalService, logService)
 
+	grapariService := service.GrapariService(repository)
+	grapariController := controller.GrapariController(grapariService, logService)
+
 	dir := os.Getenv("FILE_DIR")
 	router.Static("/assets", dir)
 
@@ -155,6 +158,12 @@ func AllRouter(db *gorm.DB) {
 			{
 				report.Use(authService.Authentication(), authService.Authorization())
 				regional.POST("/get", regionalController.GetRegional)
+			}
+
+			grapari := v1.Group("/grapari")
+			{
+				report.Use(authService.Authentication(), authService.Authorization())
+				grapari.POST("/get", grapariController.GetGrapari)
 			}
 		}
 	}
