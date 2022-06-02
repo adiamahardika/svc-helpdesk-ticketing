@@ -8,12 +8,12 @@ type User struct {
 	Password   string `json:"password"`
 	Phone      string `json:"phone"`
 	Status     string `json:"status"`
-	AreaId     string `json:"areaId"`
+	AreaCode   string `json:"areaCode"`
 	Regional   string `json:"regional"`
+	GrapariId  string `json:"grapariId"`
 	CreatedAt  string `json:"createdAt"`
 	UpdatedAt  string `json:"updatedAt"`
 	Roles      string `json:"roles"`
 	TerminalId string `json:"terminalId"`
 	RuleId     int    `json:"ruleId"`
-	GrapariId  string `json:"grapariId"`
 }

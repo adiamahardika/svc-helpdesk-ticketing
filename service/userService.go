@@ -50,24 +50,18 @@ func (userService *userService) GetUser(request model.GetUserRequest) ([]model.G
 	for _, value := range user {
 		var role []entity.Role
 		json.Unmarshal([]byte(value.Roles), &role)
-		var areaId []string
-		json.Unmarshal([]byte(value.AreaId), &areaId)
 
 		response = append(response, model.GetUserResponse{
-			Id:         value.Id,
-			Username:   value.Username,
-			Name:       value.Name,
-			Email:      value.Email,
-			AreaId:     areaId,
-			Roles:      role,
-			Regional:   value.Regional,
-			Phone:      value.Phone,
-			Status:     value.Status,
-			CreatedAt:  value.CreatedAt,
-			UpdatedAt:  value.UpdatedAt,
-			TerminalId: value.TerminalId,
-			RuleId:     value.RuleId,
-			GrapariId:  value.GrapariId,
+			Id:        value.Id,
+			Username:  value.Username,
+			Name:      value.Name,
+			Email:     value.Email,
+			Roles:     role,
+			Phone:     value.Phone,
+			Status:    value.Status,
+			CreatedAt: value.CreatedAt,
+			UpdatedAt: value.UpdatedAt,
+			RuleId:    value.RuleId,
 		})
 	}
 
@@ -82,8 +76,12 @@ func (userService *userService) GetUserDetail(request string) (model.GetUserResp
 
 	var role []entity.Role
 	json.Unmarshal([]byte(user.Roles), &role)
-	var areaId []string
-	json.Unmarshal([]byte(user.AreaId), &areaId)
+	var areaCode []string
+	json.Unmarshal([]byte(user.AreaCode), &areaCode)
+	var regional []string
+	json.Unmarshal([]byte(user.Regional), &regional)
+	var grapariId []string
+	json.Unmarshal([]byte(user.GrapariId), &grapariId)
 
 	response = model.GetUserResponse{
 		Id:         user.Id,
@@ -92,14 +90,14 @@ func (userService *userService) GetUserDetail(request string) (model.GetUserResp
 		Email:      user.Email,
 		Phone:      user.Phone,
 		Status:     user.Status,
-		AreaId:     areaId,
+		AreaCode:   areaCode,
+		Regional:   regional,
+		GrapariId:  grapariId,
 		Roles:      role,
-		Regional:   user.Regional,
 		CreatedAt:  user.CreatedAt,
 		UpdatedAt:  user.UpdatedAt,
 		TerminalId: user.TerminalId,
 		RuleId:     user.RuleId,
-		GrapariId:  user.GrapariId,
 	}
 
 	return response, error

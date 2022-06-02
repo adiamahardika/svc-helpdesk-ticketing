@@ -21,7 +21,7 @@ type UserRepositoryInterface interface {
 func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, error) {
 	var user []entity.User
 
-	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', role.id, 'name', role.name)) AS roles, JSON_AGG(user_has_area.area) AS area_id FROM users LEFT OUTER JOIN user_has_role ON (users.id = user_has_role.id_user) LEFT OUTER JOIN role ON (role.id = user_has_role.id_role) LEFT OUTER JOIN user_has_area ON (users.username = user_has_area.username) WHERE users.name LIKE @Search OR users.username LIKE @Search OR users.email LIKE @Search GROUP BY user_has_role.id_user, users.id ORDER BY users.name ASC LIMIT @Size OFFSET @StartIndex", model.GetUserRequest{
+	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', role.id, 'name', role.name)) AS roles FROM users LEFT OUTER JOIN user_has_role ON (users.id = user_has_role.id_user) LEFT OUTER JOIN role ON (role.id = user_has_role.id_role) WHERE users.name LIKE @Search OR users.username LIKE @Search OR users.email LIKE @Search GROUP BY user_has_role.id_user, users.id ORDER BY users.name ASC LIMIT @Size OFFSET @StartIndex", model.GetUserRequest{
 		Search:     "%" + request.Search + "%",
 		Size:       request.Size,
 		StartIndex: request.StartIndex,
@@ -43,7 +43,7 @@ func (repo *repository) CountUser(request model.GetUserRequest) (int, error) {
 func (repo *repository) GetUserDetail(request string) (entity.User, error) {
 	var user entity.User
 
-	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', role.id, 'name', role.name)) AS roles, JSON_AGG(user_has_area.area) AS area_id FROM users LEFT OUTER JOIN user_has_role ON (users.id = user_has_role.id_user) LEFT OUTER JOIN role ON (role.id = user_has_role.id_role) LEFT OUTER JOIN user_has_area ON (users.username = user_has_area.username) WHERE users.username = ? GROUP BY user_has_role.id_user, users.id ORDER BY users.name ASC", request).Find(&user).Error
+	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', role.id, 'name', role.name)) AS roles, JSON_AGG(user_has_area.area) AS area_code, JSON_AGG(user_has_region.regional) AS regional, JSON_AGG(user_has_grapari.grapari_id) AS grapari_id FROM users LEFT OUTER JOIN user_has_role ON (users.id = user_has_role.id_user) LEFT OUTER JOIN role ON (role.id = user_has_role.id_role) LEFT OUTER JOIN user_has_area ON (users.username = user_has_area.username) LEFT OUTER JOIN myg_ticketing.user_has_region ON (users.username = user_has_region.username) LEFT OUTER JOIN myg_ticketing.user_has_grapari ON (users.username = user_has_grapari.username) WHERE users.username = ? GROUP BY user_has_role.id_user, users.id ORDER BY users.name ASC", request).Find(&user).Error
 
 	return user, error
 }

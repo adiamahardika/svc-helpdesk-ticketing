@@ -10,14 +10,14 @@ type GetUserResponse struct {
 	// Password   string        `json:"password"`
 	Phone      string        `json:"phone"`
 	Status     string        `json:"status"`
-	AreaId     []string      `json:"areaId"`
-	Regional   string        `json:"regional"`
+	AreaCode   []string      `json:"areaCode"`
+	Regional   []string      `json:"regional"`
+	GrapariId  []string      `json:"grapariId"`
 	CreatedAt  string        `json:"createdAt"`
 	UpdatedAt  string        `json:"updatedAt"`
 	Roles      []entity.Role `json:"roles" gorm:"foreignKey:Id"`
 	TerminalId string        `json:"terminalId"`
 	RuleId     int           `json:"ruleId"`
-	GrapariId  string        `json:"grapariId"`
 }
 
 type UserOptions struct {
