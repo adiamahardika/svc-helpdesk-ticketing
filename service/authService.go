@@ -77,6 +77,9 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 			if err != nil {
 				error = err
 			}
+			var areaId []string
+			json.Unmarshal([]byte(user.AreaId), &areaId)
+
 			user_response = model.LoginResponse{
 				Id:          user.Id,
 				Name:        user.Name,
@@ -84,6 +87,7 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 				Email:       user.Email,
 				AccessToken: tokenString,
 				Role:        parse_role,
+				AreaId:      areaId,
 			}
 		}
 

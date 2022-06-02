@@ -10,7 +10,7 @@ type GetUserResponse struct {
 	// Password   string        `json:"password"`
 	Phone      string        `json:"phone"`
 	Status     string        `json:"status"`
-	Area       string        `json:"area"`
+	AreaId     []string      `json:"areaId"`
 	Regional   string        `json:"regional"`
 	CreatedAt  string        `json:"createdAt"`
 	UpdatedAt  string        `json:"updatedAt"`

@@ -50,13 +50,15 @@ func (userService *userService) GetUser(request model.GetUserRequest) ([]model.G
 	for _, value := range user {
 		var role []entity.Role
 		json.Unmarshal([]byte(value.Roles), &role)
+		var areaId []string
+		json.Unmarshal([]byte(value.AreaId), &areaId)
 
 		response = append(response, model.GetUserResponse{
 			Id:         value.Id,
 			Username:   value.Username,
 			Name:       value.Name,
 			Email:      value.Email,
-			Area:       value.Area,
+			AreaId:     areaId,
 			Roles:      role,
 			Regional:   value.Regional,
 			Phone:      value.Phone,
@@ -80,6 +82,8 @@ func (userService *userService) GetUserDetail(request string) (model.GetUserResp
 
 	var role []entity.Role
 	json.Unmarshal([]byte(user.Roles), &role)
+	var areaId []string
+	json.Unmarshal([]byte(user.AreaId), &areaId)
 
 	response = model.GetUserResponse{
 		Id:         user.Id,
@@ -88,7 +92,7 @@ func (userService *userService) GetUserDetail(request string) (model.GetUserResp
 		Email:      user.Email,
 		Phone:      user.Phone,
 		Status:     user.Status,
-		Area:       user.Area,
+		AreaId:     areaId,
 		Roles:      role,
 		Regional:   user.Regional,
 		CreatedAt:  user.CreatedAt,

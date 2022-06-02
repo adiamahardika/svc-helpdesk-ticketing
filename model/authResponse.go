@@ -10,6 +10,7 @@ type LoginResponse struct {
 	Username    string            `json:"username"`
 	Email       string            `json:"email"`
 	Role        []GetRoleResponse `json:"role" gorm:"foreignKey:Id"`
+	AreaId      []string          `json:"areaId"`
 	AccessToken string            `json:"accessToken"`
 }
 
