@@ -57,6 +57,9 @@ func AllRouter(db *gorm.DB) {
 	ticketStatusService := service.TicketStatusService(repository)
 	ticketStatusController := controller.TicketStatusController(ticketStatusService, logService)
 
+	areaService := service.AreaService(repository)
+	areaController := controller.AreaController(areaService, logService)
+
 	dir := os.Getenv("FILE_DIR")
 	router.Static("/assets", dir)
 
@@ -135,7 +138,14 @@ func AllRouter(db *gorm.DB) {
 
 			ticket_status := v1.Group("/ticket-status")
 			{
+				report.Use(authService.Authentication(), authService.Authorization())
 				ticket_status.GET("/get", ticketStatusController.GetTicketStatus)
+			}
+
+			area := v1.Group("/area")
+			{
+				report.Use(authService.Authentication(), authService.Authorization())
+				area.POST("/get", areaController.GetArea)
 			}
 		}
 	}
