@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
 )
@@ -10,14 +11,29 @@ type GrapariRepositotyInterface interface {
 }
 
 func (repo *repository) GetGrapari(request model.GetGrapariRequest) ([]entity.MsGrapari, error) {
-	var grapari []entity.MsGrapari
+	var result []entity.MsGrapari
+	var area_code string
+	var regional string
+	var grapari_id string
 
-	error := repo.db.Raw("SELECT * FROM ms_grapari WHERE regional LIKE @Regional AND area LIKE @AreaCode AND grapari_id LIKE @GrapariId AND status LIKE @Status ORDER BY name ASC", model.GetGrapariRequest{
-		AreaCode:  "%" + request.AreaCode + "%",
-		Regional:  "%" + request.Regional + "%",
-		GrapariId: "%" + request.GrapariId + "%",
+	if len(request.AreaCode) > 0 {
+		area_code = "area IN @AreaCode AND"
+	}
+	if len(request.Regional) > 0 {
+		regional = "regional IN @Regional AND"
+	}
+	if len(request.GrapariId) > 0 {
+		grapari_id = "grapari_id IN @GrapariId AND "
+	}
+
+	query := fmt.Sprintf("SELECT * FROM ms_grapari WHERE %s %s %s status LIKE @Status ORDER BY name ASC", area_code, regional, grapari_id)
+
+	error := repo.db.Raw(query, model.GetGrapariRequest{
+		AreaCode:  request.AreaCode,
+		Regional:  request.Regional,
+		GrapariId: request.GrapariId,
 		Status:    "%" + request.Status + "%",
-	}).Find(&grapari).Error
+	}).Find(&result).Error
 
-	return grapari, error
+	return result, error
 }
