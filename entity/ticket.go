@@ -14,10 +14,15 @@ type Ticket struct {
 	Status            string    `json:"status"`
 	TicketCode        string    `json:"ticketCode"`
 	Category          string    `json:"category"`
-	Lokasi            string    `json:"lokasi"`
-	TerminalId        string    `json:"terminalId"`
 	Email             string    `json:"email"`
 	AssignedTo        string    `json:"assignedTo"`
 	EmailNotification string    `json:"emailNotification"`
-	Isi               string    `json:"isi"`
+	Isi               string    `json:"isi" gorm:"->"`
+	AreaCode          string    `json:"areaCode"`
+	AreaName          string    `json:"areaName"`
+	Regional          string    `json:"regional"`
+	GrapariId         string    `json:"grapariId"`
+	GrapariName       string    `json:"grapariName"`
+	TerminalId        string    `json:"terminalId"`
+	Lokasi            string    `json:"lokasi"`
 }

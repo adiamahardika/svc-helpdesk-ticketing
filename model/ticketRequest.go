@@ -33,6 +33,9 @@ type CreateTicketRequest struct {
 	Lokasi            string                `json:"lokasi" form:"lokasi"`
 	Prioritas         string                `json:"prioritas" form:"prioritas"`
 	Status            string                `json:"status" form:"status"`
+	AreaCode          string                `json:"area_code" form:"areaCode"`
+	Regional          string                `json:"regional" form:"regional"`
+	GrapariId         string                `json:"grapari_id" form:"grapariId"`
 	TerminalId        string                `json:"terminalId" form:"terminalId"`
 	UserPembuat       string                `json:"userPembuat" form:"userPembuat"`
 	TicketCode        string                `json:"ticketCode" form:"ticketCode"`
