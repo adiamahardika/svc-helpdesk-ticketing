@@ -41,6 +41,7 @@ func (ticketService *ticketService) GetTicket(request model.GetTicketRequest) ([
 	total_data, error := ticketService.ticketRepository.CountTicket(request)
 	total_pages := math.Ceil(float64(total_data) / float64(request.PageSize))
 
+	request.EndDate = request.EndDate + " 23:59:59"
 	ticket, error := ticketService.ticketRepository.GetTicket(request)
 
 	return ticket, int(total_pages), error

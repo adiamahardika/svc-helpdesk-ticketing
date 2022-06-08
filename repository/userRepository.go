@@ -77,7 +77,7 @@ func (repo *repository) CheckUsername(request string) ([]entity.User, error) {
 func (repo *repository) UpdateUser(request model.UpdateUserRequest) (entity.User, error) {
 	var user entity.User
 
-	error := repo.db.Raw("UPDATE users SET name = @Name, email = @Email, phone = @Phone, area = @Area, regional = @Regional, updated_at = @UpdatedAt, terminal_id = @TerminalId, rule_id = @RuleId, grapari_id = @GrapariId WHERE id = @Id RETURNING users.*", request).Find(&user).Error
+	error := repo.db.Raw("UPDATE users SET name = @Name, email = @Email, phone = @Phone WHERE id = @Id RETURNING users.*", request).Find(&user).Error
 
 	return user, error
 }

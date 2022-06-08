@@ -19,10 +19,10 @@ type Ticket struct {
 	EmailNotification string    `json:"emailNotification"`
 	Isi               string    `json:"isi" gorm:"->"`
 	AreaCode          string    `json:"areaCode"`
-	AreaName          string    `json:"areaName"`
+	AreaName          string    `json:"areaName" gorm:"->"`
 	Regional          string    `json:"regional"`
 	GrapariId         string    `json:"grapariId"`
-	GrapariName       string    `json:"grapariName"`
+	GrapariName       string    `json:"grapariName" gorm:"->"`
 	TerminalId        string    `json:"terminalId"`
 	Lokasi            string    `json:"lokasi"`
 }

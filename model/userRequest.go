@@ -22,17 +22,12 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Id         int       `json:"id" gorm:"primaryKey" binding:"required"`
-	Name       string    `json:"name"`
-	Email      string    `json:"email"`
-	Phone      string    `json:"phone"`
-	Area       string    `json:"area"`
-	Regional   string    `json:"regional"`
-	UpdatedAt  time.Time `json:"updatedAt"`
-	Role       string    `json:"role"`
-	TerminalId string    `json:"terminalId"`
-	RuleId     int       `json:"ruleId"`
-	GrapariId  string    `json:"grapariId"`
+	Id        int       `json:"id" gorm:"primaryKey" binding:"required"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	Role      string    `json:"role"`
 }
 
 type ChangePassRequest struct {
