@@ -19,7 +19,7 @@ type CategoryRepositoryInterface interface {
 func (repo *repository) GetCategory(request model.GetCategoryRequest) ([]entity.Category, error) {
 	var category []entity.Category
 
-	error := repo.db.Raw("SELECT * FROM category WHERE is_active LIKE @IsActive ORDER BY name ASC LIMIT @Size OFFSET @StartIndex", model.GetCategoryRequest{
+	error := repo.db.Raw("SELECT category.*, JSON_AGG(JSON_BUILD_OBJECT('id', sub_category.id, 'idCategory', sub_category.id_category, 'name', sub_category.name, 'priority', sub_category.priority)) AS sub_category FROM category LEFT OUTER JOIN sub_category ON (category.id = sub_category.id_category) WHERE is_active LIKE @IsActive GROUP BY category.id ORDER BY name ASC LIMIT @Size OFFSET @StartIndex", model.GetCategoryRequest{
 		IsActive:   "%" + request.IsActive + "%",
 		Size:       request.Size,
 		StartIndex: request.StartIndex,

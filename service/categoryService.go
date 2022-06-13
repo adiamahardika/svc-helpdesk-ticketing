@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"math"
 	"strconv"
 	"strings"
@@ -11,7 +12,7 @@ import (
 )
 
 type CategoryServiceInterface interface {
-	GetCategory(request model.GetCategoryRequest) ([]entity.Category, float64, error)
+	GetCategory(request model.GetCategoryRequest) ([]model.GetCategoryResponse, float64, error)
 	CreateCategory(request model.CreateCategoryRequest) (entity.Category, error)
 	UpdateCategory(request entity.Category) (entity.Category, error)
 	DeleteCategory(Id int) error
@@ -26,7 +27,8 @@ func CategoryService(repository repository.CategoryRepositoryInterface) *categor
 	return &categoryService{repository}
 }
 
-func (categoryService *categoryService) GetCategory(request model.GetCategoryRequest) ([]entity.Category, float64, error) {
+func (categoryService *categoryService) GetCategory(request model.GetCategoryRequest) ([]model.GetCategoryResponse, float64, error) {
+	var response []model.GetCategoryResponse
 
 	if request.Size == 0 {
 		request.Size = math.MaxInt16
@@ -37,7 +39,22 @@ func (categoryService *categoryService) GetCategory(request model.GetCategoryReq
 
 	category, error := categoryService.repository.GetCategory(request)
 
-	return category, total_pages, error
+	for _, value := range category {
+		var sub_category []entity.SubCategory
+		json.Unmarshal([]byte(value.SubCategory), &sub_category)
+
+		response = append(response, model.GetCategoryResponse{
+			Id:          value.Id,
+			Name:        value.Name,
+			CodeLevel:   value.CodeLevel,
+			Parent:      value.Parent,
+			SubCategory: sub_category,
+			IsActive:    value.IsActive,
+			UpdateAt:    value.UpdateAt,
+		})
+	}
+
+	return response, total_pages, error
 }
 
 func (categoryService *categoryService) CreateCategory(request model.CreateCategoryRequest) (entity.Category, error) {
