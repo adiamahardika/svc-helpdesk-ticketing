@@ -44,14 +44,11 @@ func (categoryService *categoryService) CreateCategory(request model.CreateCateg
 	date_now := time.Now()
 
 	category_request := entity.Category{
-		Name:              request.Name,
-		CodeLevel:         "",
-		Parent:            request.Parent,
-		AdditionalInput_1: request.AdditionalInput1,
-		AdditionalInput_2: request.AdditionalInput2,
-		AdditionalInput_3: request.AdditionalInput3,
-		IsActive:          "true",
-		UpdateAt:          date_now,
+		Name:      request.Name,
+		CodeLevel: "",
+		Parent:    request.Parent,
+		IsActive:  "true",
+		UpdateAt:  date_now,
 	}
 
 	find_by_parent, error := categoryService.repository.GetCategoryByParentDesc(request.Parent)
