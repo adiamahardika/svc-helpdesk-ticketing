@@ -80,7 +80,7 @@ func AllRouter(db *gorm.DB) {
 			{
 				category.Use(authService.Authentication(), authService.Authorization())
 				category.GET("/get/:size/:page_no/:sort_by/:order_by", categoryController.GetCategory)
-				category.GET("/get-detail/:code-level", categoryController.GetDetailCategory)
+				category.GET("/get-detail/:id", categoryController.GetDetailCategory)
 				category.POST("/add", categoryController.CreateCategory)
 				category.PUT("/update", categoryController.UpdateCategory)
 				category.DELETE("/delete/:category-id", categoryController.DeleteCategory)

@@ -258,13 +258,13 @@ func (controller *categoryController) DeleteCategory(context *gin.Context) {
 
 func (controller *categoryController) GetDetailCategory(context *gin.Context) {
 
-	code_level := context.Param("code-level")
+	id := context.Param("id")
 
 	description := []string{}
 	http_status := http.StatusOK
 	var status model.StandardResponse
 
-	category, error := controller.categoryService.GetDetailCategory(code_level)
+	category, error := controller.categoryService.GetDetailCategory(id)
 
 	if error == nil {
 

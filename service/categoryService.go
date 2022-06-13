@@ -14,7 +14,7 @@ type CategoryServiceInterface interface {
 	CreateCategory(request model.CreateCategoryRequest) (entity.Category, error)
 	UpdateCategory(request entity.Category) (entity.Category, error)
 	DeleteCategory(Id int) error
-	GetDetailCategory(request string) ([]entity.Category, error)
+	GetDetailCategory(request string) ([]model.GetCategoryResponse, error)
 }
 
 type categoryService struct {
@@ -83,9 +83,23 @@ func (categoryService *categoryService) DeleteCategory(Id int) error {
 	return error
 }
 
-func (categoryService *categoryService) GetDetailCategory(request string) ([]entity.Category, error) {
+func (categoryService *categoryService) GetDetailCategory(request string) ([]model.GetCategoryResponse, error) {
+	var response []model.GetCategoryResponse
 
 	category, error := categoryService.repository.GetDetailCategory(request)
 
-	return category, error
+	for _, value := range category {
+		var sub_category []entity.SubCategory
+		json.Unmarshal([]byte(value.SubCategory), &sub_category)
+
+		response = append(response, model.GetCategoryResponse{
+			Id:          value.Id,
+			Name:        value.Name,
+			SubCategory: sub_category,
+			IsActive:    value.IsActive,
+			UpdateAt:    value.UpdateAt,
+		})
+	}
+
+	return response, error
 }

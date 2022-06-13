@@ -66,7 +66,7 @@ func (repo *repository) DeleteCategory(Id int) error {
 func (repo *repository) GetDetailCategory(request string) ([]entity.Category, error) {
 	var category []entity.Category
 
-	error := repo.db.Raw("SELECT * FROM category WHERE code_level = ?", request).Find(&category).Error
+	error := repo.db.Raw("SELECT category.*, JSON_AGG(JSON_BUILD_OBJECT('id', sub_category.id, 'idCategory', sub_category.id_category, 'name', sub_category.name, 'priority', sub_category.priority)) AS sub_category FROM category LEFT OUTER JOIN sub_category ON (category.id = sub_category.id_category) WHERE category.id = ? GROUP BY category.id", request).Find(&category).Error
 
 	return category, error
 }
