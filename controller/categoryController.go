@@ -264,7 +264,7 @@ func (controller *categoryController) GetDetailCategory(context *gin.Context) {
 	http_status := http.StatusOK
 	var status model.StandardResponse
 
-	category, parent_1, parent_2, parent_3, error := controller.categoryService.GetDetailCategory(code_level)
+	category, error := controller.categoryService.GetDetailCategory(code_level)
 
 	if error == nil {
 
@@ -278,9 +278,6 @@ func (controller *categoryController) GetDetailCategory(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
 			"status":  status,
 			"content": category,
-			"parent1": parent_1,
-			"parent2": parent_2,
-			"parent3": parent_3,
 		})
 
 	} else {
@@ -300,10 +297,7 @@ func (controller *categoryController) GetDetailCategory(context *gin.Context) {
 	}
 	parse_status, _ := json.Marshal(status)
 	parse_category, _ := json.Marshal(category)
-	parent1, _ := json.Marshal(parent_1)
-	parent2, _ := json.Marshal(parent_2)
-	parent3, _ := json.Marshal(parent_3)
-	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s, \"parent1\": %s, \"parent2\": %s, \"parent3\": %s}", string(parse_status), string(parse_category), string(parent1), string(parent2), string(parent3))
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s}", string(parse_status), string(parse_category))
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 }

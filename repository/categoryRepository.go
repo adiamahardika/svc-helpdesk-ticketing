@@ -50,7 +50,7 @@ func (repo *repository) UpdateCategory(request entity.Category) (entity.Category
 
 	var category entity.Category
 
-	error := repo.db.Raw("UPDATE category SET name = @Name, code_level = @CodeLevel, parent = @Parent, update_at = @UpdateAt WHERE id = @Id RETURNING category.*", request).Find(&category).Error
+	error := repo.db.Raw("UPDATE category SET name = @Name, update_at = @UpdateAt WHERE id = @Id RETURNING category.*", request).Find(&category).Error
 
 	return category, error
 }
