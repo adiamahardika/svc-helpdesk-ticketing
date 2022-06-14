@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"math"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
@@ -60,17 +59,13 @@ func (categoryService *categoryService) CreateCategory(request model.CreateCateg
 	var response model.CreateCategoryRequest
 	date_now := time.Now()
 
-	fmt.Println("request")
-	fmt.Println(request)
 	request.UpdateAt = date_now
 	request.IsActive = "true"
 
 	category, error := categoryService.categoryRepository.CreateCategory(request)
-	fmt.Println("result")
 
 	if error == nil {
 		for _, value := range request.SubCategory {
-			fmt.Println(category.Id)
 			sub_category = append(sub_category, entity.SubCategory{
 				Name:       value.Name,
 				IdCategory: category.Id,
