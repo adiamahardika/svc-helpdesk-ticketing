@@ -9,7 +9,7 @@ type CategoryRepositoryInterface interface {
 	GetCategory(request model.GetCategoryRequest) ([]entity.Category, error)
 	CountCategory(request model.GetCategoryRequest) (int, error)
 	CreateCategory(request entity.Category) (entity.Category, error)
-	UpdateCategory(request entity.Category) (entity.Category, error)
+	UpdateCategory(request model.GetCategoryResponse) (model.GetCategoryResponse, error)
 	DeleteCategory(Id int) error
 	GetDetailCategory(request string) ([]entity.Category, error)
 	GetCategoryByParentDesc(request string) ([]entity.Category, error)
@@ -46,9 +46,9 @@ func (repo *repository) CreateCategory(request entity.Category) (entity.Category
 	return category, error
 }
 
-func (repo *repository) UpdateCategory(request entity.Category) (entity.Category, error) {
+func (repo *repository) UpdateCategory(request model.GetCategoryResponse) (model.GetCategoryResponse, error) {
 
-	var category entity.Category
+	var category model.GetCategoryResponse
 
 	error := repo.db.Raw("UPDATE category SET name = @Name, update_at = @UpdateAt WHERE id = @Id RETURNING category.*", request).Find(&category).Error
 

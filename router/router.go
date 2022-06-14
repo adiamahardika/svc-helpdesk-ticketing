@@ -30,7 +30,7 @@ func AllRouter(db *gorm.DB) {
 
 	logService := service.LogService(repository)
 
-	categoryService := service.CategoryService(repository)
+	categoryService := service.CategoryService(repository, repository)
 	categoryController := controller.CategoryController(categoryService, logService)
 
 	roleService := service.RoleService(repository, repository)

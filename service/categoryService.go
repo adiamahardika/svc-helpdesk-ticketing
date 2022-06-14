@@ -12,17 +12,18 @@ import (
 type CategoryServiceInterface interface {
 	GetCategory(request model.GetCategoryRequest) ([]model.GetCategoryResponse, float64, error)
 	CreateCategory(request model.CreateCategoryRequest) (entity.Category, error)
-	UpdateCategory(request entity.Category) (entity.Category, error)
+	UpdateCategory(request model.GetCategoryResponse) (model.GetCategoryResponse, error)
 	DeleteCategory(Id int) error
 	GetDetailCategory(request string) ([]model.GetCategoryResponse, error)
 }
 
 type categoryService struct {
-	repository repository.CategoryRepositoryInterface
+	categoryRepository    repository.CategoryRepositoryInterface
+	subCategoryRepository repository.SubCategoryRepositoryInterface
 }
 
-func CategoryService(repository repository.CategoryRepositoryInterface) *categoryService {
-	return &categoryService{repository}
+func CategoryService(categoryRepository repository.CategoryRepositoryInterface, subCategoryRepository repository.SubCategoryRepositoryInterface) *categoryService {
+	return &categoryService{categoryRepository, subCategoryRepository}
 }
 
 func (categoryService *categoryService) GetCategory(request model.GetCategoryRequest) ([]model.GetCategoryResponse, float64, error) {
@@ -32,10 +33,10 @@ func (categoryService *categoryService) GetCategory(request model.GetCategoryReq
 		request.Size = math.MaxInt16
 	}
 	request.StartIndex = request.PageNo * request.Size
-	total_data, error := categoryService.repository.CountCategory(request)
+	total_data, error := categoryService.categoryRepository.CountCategory(request)
 	total_pages := math.Ceil(float64(total_data) / float64(request.Size))
 
-	category, error := categoryService.repository.GetCategory(request)
+	category, error := categoryService.categoryRepository.GetCategory(request)
 
 	for _, value := range category {
 		var sub_category []entity.SubCategory
@@ -62,23 +63,33 @@ func (categoryService *categoryService) CreateCategory(request model.CreateCateg
 		UpdateAt: date_now,
 	}
 
-	_, error := categoryService.repository.CreateCategory(category_request)
+	_, error := categoryService.categoryRepository.CreateCategory(category_request)
 
 	return category_request, error
 }
 
-func (categoryService *categoryService) UpdateCategory(request entity.Category) (entity.Category, error) {
+func (categoryService *categoryService) UpdateCategory(request model.GetCategoryResponse) (model.GetCategoryResponse, error) {
+	var sub_category []entity.SubCategory
 	date_now := time.Now()
 
 	request.UpdateAt = date_now
-	category, error := categoryService.repository.UpdateCategory(request)
+	category, error := categoryService.categoryRepository.UpdateCategory(request)
+
+	if error == nil {
+		error = categoryService.subCategoryRepository.DeleteSubCategory(request.Id)
+
+		if error == nil {
+			sub_category, error = categoryService.subCategoryRepository.CreateSubCategory(request.SubCategory)
+			category.SubCategory = sub_category
+		}
+	}
 
 	return category, error
 }
 
 func (categoryService *categoryService) DeleteCategory(Id int) error {
 
-	error := categoryService.repository.DeleteCategory(Id)
+	error := categoryService.categoryRepository.DeleteCategory(Id)
 
 	return error
 }
@@ -86,7 +97,7 @@ func (categoryService *categoryService) DeleteCategory(Id int) error {
 func (categoryService *categoryService) GetDetailCategory(request string) ([]model.GetCategoryResponse, error) {
 	var response []model.GetCategoryResponse
 
-	category, error := categoryService.repository.GetDetailCategory(request)
+	category, error := categoryService.categoryRepository.GetDetailCategory(request)
 
 	for _, value := range category {
 		var sub_category []entity.SubCategory

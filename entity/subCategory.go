@@ -3,7 +3,7 @@ package entity
 import "time"
 
 type SubCategory struct {
-	Id         int       `json:"id" gorm:"primaryKey"`
+	Id         int       `json:"id" gorm:"primaryKey" gorm:"->"`
 	Name       string    `json:"name"`
 	IdCategory int       `json:"idCategory"`
 	Priority   string    `json:"priority"`

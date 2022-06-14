@@ -149,13 +149,13 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 }
 
 func (controller *categoryController) UpdateCategory(context *gin.Context) {
-	var request entity.Category
+	var request model.GetCategoryResponse
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
 	var status model.StandardResponse
-	var category entity.Category
+	var category model.GetCategoryResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
