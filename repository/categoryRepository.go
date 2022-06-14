@@ -8,8 +8,8 @@ import (
 type CategoryRepositoryInterface interface {
 	GetCategory(request model.GetCategoryRequest) ([]entity.Category, error)
 	CountCategory(request model.GetCategoryRequest) (int, error)
-	CreateCategory(request entity.Category) (entity.Category, error)
-	UpdateCategory(request model.GetCategoryResponse) (model.GetCategoryResponse, error)
+	CreateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error)
+	UpdateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error)
 	DeleteCategory(Id int) error
 	GetDetailCategory(request string) ([]entity.Category, error)
 	GetCategoryByParentDesc(request string) ([]entity.Category, error)
@@ -38,17 +38,17 @@ func (repo *repository) CountCategory(request model.GetCategoryRequest) (int, er
 	return total_data, error
 }
 
-func (repo *repository) CreateCategory(request entity.Category) (entity.Category, error) {
-	var category entity.Category
+func (repo *repository) CreateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error) {
+	var category model.CreateCategoryRequest
 
-	error := repo.db.Table("category").Create(&request).Error
+	error := repo.db.Raw("INSERT INTO category(name, is_active, update_at) VALUES(@Name, @IsActive, @UpdateAt) RETURNING category.*", request).Find(&category).Error
 
 	return category, error
 }
 
-func (repo *repository) UpdateCategory(request model.GetCategoryResponse) (model.GetCategoryResponse, error) {
+func (repo *repository) UpdateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error) {
 
-	var category model.GetCategoryResponse
+	var category model.CreateCategoryRequest
 
 	error := repo.db.Raw("UPDATE category SET name = @Name, update_at = @UpdateAt WHERE id = @Id RETURNING category.*", request).Find(&category).Error
 

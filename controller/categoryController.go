@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/general"
 	"svc-myg-ticketing/model"
 	"svc-myg-ticketing/service"
@@ -90,7 +89,7 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status model.StandardResponse
-	var category entity.Category
+	var category model.CreateCategoryRequest
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -149,13 +148,13 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 }
 
 func (controller *categoryController) UpdateCategory(context *gin.Context) {
-	var request model.GetCategoryResponse
+	var request model.CreateCategoryRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
 	var status model.StandardResponse
-	var category model.GetCategoryResponse
+	var category model.CreateCategoryRequest
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {

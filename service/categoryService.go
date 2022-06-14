@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
@@ -10,11 +11,11 @@ import (
 )
 
 type CategoryServiceInterface interface {
-	GetCategory(request model.GetCategoryRequest) ([]model.GetCategoryResponse, float64, error)
-	CreateCategory(request model.CreateCategoryRequest) (entity.Category, error)
-	UpdateCategory(request model.GetCategoryResponse) (model.GetCategoryResponse, error)
+	GetCategory(request model.GetCategoryRequest) ([]model.CreateCategoryRequest, float64, error)
+	CreateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error)
+	UpdateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error)
 	DeleteCategory(Id int) error
-	GetDetailCategory(request string) ([]model.GetCategoryResponse, error)
+	GetDetailCategory(request string) ([]model.CreateCategoryRequest, error)
 }
 
 type categoryService struct {
@@ -26,8 +27,8 @@ func CategoryService(categoryRepository repository.CategoryRepositoryInterface, 
 	return &categoryService{categoryRepository, subCategoryRepository}
 }
 
-func (categoryService *categoryService) GetCategory(request model.GetCategoryRequest) ([]model.GetCategoryResponse, float64, error) {
-	var response []model.GetCategoryResponse
+func (categoryService *categoryService) GetCategory(request model.GetCategoryRequest) ([]model.CreateCategoryRequest, float64, error) {
+	var response []model.CreateCategoryRequest
 
 	if request.Size == 0 {
 		request.Size = math.MaxInt16
@@ -42,7 +43,7 @@ func (categoryService *categoryService) GetCategory(request model.GetCategoryReq
 		var sub_category []entity.SubCategory
 		json.Unmarshal([]byte(value.SubCategory), &sub_category)
 
-		response = append(response, model.GetCategoryResponse{
+		response = append(response, model.CreateCategoryRequest{
 			Id:          value.Id,
 			Name:        value.Name,
 			SubCategory: sub_category,
@@ -54,21 +55,45 @@ func (categoryService *categoryService) GetCategory(request model.GetCategoryReq
 	return response, total_pages, error
 }
 
-func (categoryService *categoryService) CreateCategory(request model.CreateCategoryRequest) (entity.Category, error) {
+func (categoryService *categoryService) CreateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error) {
+	var sub_category []entity.SubCategory
+	var response model.CreateCategoryRequest
 	date_now := time.Now()
 
-	category_request := entity.Category{
-		Name:     request.Name,
-		IsActive: "true",
-		UpdateAt: date_now,
+	fmt.Println("request")
+	fmt.Println(request)
+	request.UpdateAt = date_now
+	request.IsActive = "true"
+
+	category, error := categoryService.categoryRepository.CreateCategory(request)
+	fmt.Println("result")
+
+	if error == nil {
+		for _, value := range request.SubCategory {
+			fmt.Println(category.Id)
+			sub_category = append(sub_category, entity.SubCategory{
+				Name:       value.Name,
+				IdCategory: category.Id,
+				Priority:   value.Priority,
+				CreatedAt:  date_now,
+				UpdatedAt:  date_now,
+			})
+		}
+		sub_category, error = categoryService.subCategoryRepository.CreateSubCategory(sub_category)
+
+		response = model.CreateCategoryRequest{
+			Id:          category.Id,
+			Name:        category.Name,
+			SubCategory: sub_category,
+			IsActive:    category.IsActive,
+			UpdateAt:    category.UpdateAt,
+		}
 	}
 
-	_, error := categoryService.categoryRepository.CreateCategory(category_request)
-
-	return category_request, error
+	return response, error
 }
 
-func (categoryService *categoryService) UpdateCategory(request model.GetCategoryResponse) (model.GetCategoryResponse, error) {
+func (categoryService *categoryService) UpdateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error) {
 	var sub_category []entity.SubCategory
 	date_now := time.Now()
 
@@ -94,8 +119,8 @@ func (categoryService *categoryService) DeleteCategory(Id int) error {
 	return error
 }
 
-func (categoryService *categoryService) GetDetailCategory(request string) ([]model.GetCategoryResponse, error) {
-	var response []model.GetCategoryResponse
+func (categoryService *categoryService) GetDetailCategory(request string) ([]model.CreateCategoryRequest, error) {
+	var response []model.CreateCategoryRequest
 
 	category, error := categoryService.categoryRepository.GetDetailCategory(request)
 
@@ -103,7 +128,7 @@ func (categoryService *categoryService) GetDetailCategory(request string) ([]mod
 		var sub_category []entity.SubCategory
 		json.Unmarshal([]byte(value.SubCategory), &sub_category)
 
-		response = append(response, model.GetCategoryResponse{
+		response = append(response, model.CreateCategoryRequest{
 			Id:          value.Id,
 			Name:        value.Name,
 			SubCategory: sub_category,

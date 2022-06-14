@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"svc-myg-ticketing/entity"
+	"time"
+)
 
 type GetCategoryRequest struct {
 	Size       int    `json:"size"`
@@ -12,6 +15,9 @@ type GetCategoryRequest struct {
 }
 
 type CreateCategoryRequest struct {
-	Name     string    `json:"name"`
-	UpdateAt time.Time `json:"updateAt"`
+	Id          int                  `json:"id" gorm:"primaryKey"`
+	Name        string               `json:"name"`
+	SubCategory []entity.SubCategory `json:"subCategory" gorm:"foreignKey:Id"`
+	IsActive    string               `json:"isActive"`
+	UpdateAt    time.Time            `json:"updateAt"`
 }
