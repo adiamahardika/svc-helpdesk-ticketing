@@ -121,6 +121,7 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 		Status:            request.Status,
 		TicketCode:        request.TicketCode,
 		Category:          request.Category,
+		SubCategory:       request.SubCategory,
 		Lokasi:            request.Lokasi,
 		TerminalId:        request.TerminalId,
 		AreaCode:          request.AreaCode,

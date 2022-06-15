@@ -30,6 +30,7 @@ type CreateTicketRequest struct {
 	Isi               string                `json:"isi" form:"isi"`
 	Judul             string                `json:"judul" form:"judul"`
 	Category          string                `json:"category" form:"category"`
+	SubCategory       string                `json:"subCategory" form:"subCategory"`
 	Lokasi            string                `json:"lokasi" form:"lokasi"`
 	Prioritas         string                `json:"prioritas" form:"prioritas"`
 	Status            string                `json:"status" form:"status"`
