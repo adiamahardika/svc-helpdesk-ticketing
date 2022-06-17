@@ -69,6 +69,9 @@ func AllRouter(db *gorm.DB) {
 	terminalService := service.TerminalService(repository)
 	terminalController := controller.TerminalController(terminalService, logService)
 
+	emailNotifService := service.EmailNotifService(repository)
+	emailNotifController := controller.EmailNotifController(emailNotifService, logService)
+
 	dir := os.Getenv("FILE_DIR")
 	router.Static("/assets", dir)
 
@@ -147,32 +150,38 @@ func AllRouter(db *gorm.DB) {
 
 			ticket_status := v1.Group("/ticket-status")
 			{
-				report.Use(authService.Authentication(), authService.Authorization())
+				ticket_status.Use(authService.Authentication(), authService.Authorization())
 				ticket_status.GET("/get", ticketStatusController.GetTicketStatus)
 			}
 
 			area := v1.Group("/area")
 			{
-				report.Use(authService.Authentication(), authService.Authorization())
+				area.Use(authService.Authentication(), authService.Authorization())
 				area.POST("/get", areaController.GetArea)
 			}
 
 			regional := v1.Group("/regional")
 			{
-				report.Use(authService.Authentication(), authService.Authorization())
+				regional.Use(authService.Authentication(), authService.Authorization())
 				regional.POST("/get", regionalController.GetRegional)
 			}
 
 			grapari := v1.Group("/grapari")
 			{
-				report.Use(authService.Authentication(), authService.Authorization())
+				grapari.Use(authService.Authentication(), authService.Authorization())
 				grapari.POST("/get", grapariController.GetGrapari)
 			}
 
 			terminal := v1.Group("/terminal")
 			{
-				report.Use(authService.Authentication(), authService.Authorization())
+				terminal.Use(authService.Authentication(), authService.Authorization())
 				terminal.POST("/get", terminalController.GetTerminal)
+			}
+
+			email_notif := v1.Group("/email-notif")
+			{
+				email_notif.Use(authService.Authentication(), authService.Authorization())
+				email_notif.POST("/add", emailNotifController.CreateEmailNotif)
 			}
 		}
 	}
