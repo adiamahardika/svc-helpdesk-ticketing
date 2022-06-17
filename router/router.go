@@ -182,6 +182,7 @@ func AllRouter(db *gorm.DB) {
 			{
 				email_notif.Use(authService.Authentication(), authService.Authorization())
 				email_notif.POST("/add", emailNotifController.CreateEmailNotif)
+				email_notif.GET("/get", emailNotifController.GetEmailNotif)
 			}
 		}
 	}

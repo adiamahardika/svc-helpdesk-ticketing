@@ -87,3 +87,47 @@ func (controller *emailNotifController) CreateEmailNotif(context *gin.Context) {
 	var result = fmt.Sprintf("{\"status\": %s, \"email_notif\": %s}", string(parse_status), string(parse_email_notif))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
+
+func (controller *emailNotifController) GetEmailNotif(context *gin.Context) {
+
+	description := []string{}
+	http_status := http.StatusOK
+	var status model.StandardResponse
+
+	email_notif, error := controller.emailNotifService.GetEmailNotif()
+
+	if error == nil {
+
+		description = append(description, "Success")
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusOK,
+			ResponseCode:   general.SuccessStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"status":      status,
+			"email_notif": email_notif,
+		})
+
+	} else {
+
+		description = append(description, error.Error())
+		http_status = http.StatusBadRequest
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusBadRequest,
+			ResponseCode:   general.ErrorStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusBadRequest, gin.H{
+			"status": status,
+		})
+
+	}
+
+	parse_status, _ := json.Marshal(status)
+	parse_email_notif, _ := json.Marshal(email_notif)
+	var result = fmt.Sprintf("{\"status\": %s, \"email_notif\": %s}", string(parse_status), string(parse_email_notif))
+	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
+}

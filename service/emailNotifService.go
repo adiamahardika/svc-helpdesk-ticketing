@@ -8,6 +8,7 @@ import (
 
 type EmailNotifServiceInterface interface {
 	CreateEmailNotif(request entity.EmailNotif) (entity.EmailNotif, error)
+	GetEmailNotif() ([]entity.EmailNotif, error)
 }
 
 type emailNotifService struct {
@@ -26,4 +27,11 @@ func (emailNotifService *emailNotifService) CreateEmailNotif(request entity.Emai
 	error := emailNotifService.emailNotifRepository.CreateEmailNotif(request)
 
 	return request, error
+}
+
+func (emailNotifService *emailNotifService) GetEmailNotif() ([]entity.EmailNotif, error) {
+
+	email_notif, error := emailNotifService.emailNotifRepository.GetEmailNotif()
+
+	return email_notif, error
 }
