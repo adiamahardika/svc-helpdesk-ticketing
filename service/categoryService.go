@@ -99,7 +99,17 @@ func (categoryService *categoryService) UpdateCategory(request model.CreateCateg
 		error = categoryService.subCategoryRepository.DeleteSubCategory(request.Id)
 
 		if error == nil {
-			sub_category, error = categoryService.subCategoryRepository.CreateSubCategory(request.SubCategory)
+			for _, value := range request.SubCategory {
+				sub_category = append(sub_category, entity.SubCategory{
+					Name:       value.Name,
+					IdCategory: request.Id,
+					Priority:   value.Priority,
+					CreatedAt:  date_now,
+					UpdatedAt:  date_now,
+				})
+			}
+
+			sub_category, error = categoryService.subCategoryRepository.CreateSubCategory(sub_category)
 			category.SubCategory = sub_category
 		}
 	}

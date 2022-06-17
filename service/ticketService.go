@@ -156,7 +156,7 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 		}
 
 		if request.EmailNotification == "true" {
-			wg.Add(1)
+			// wg.Add(1)
 
 			sender := NewSMTP()
 			message := NewMessage(&model.SmtpRequest{
@@ -174,7 +174,7 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 			})
 			message.To = []string{request.Email}
 			message.AttachFile(path+attachment1, path+attachment2)
-			error = sender.Send(&wg, message)
+			sender.Send(&wg, message)
 		}
 
 	}
@@ -281,7 +281,7 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 				_, error = ticketService.ticketIsiRepository.CreateTicketIsi(reply_request)
 
 				if request.EmailNotification == "true" {
-					wg.Add(1)
+					// wg.Add(1)
 
 					sender := NewSMTP()
 					message := NewMessage(&model.SmtpRequest{
@@ -299,7 +299,7 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 					})
 					message.To = []string{ticket[0].Email}
 					message.AttachFile(path+attachment1, path+attachment2)
-					error = sender.Send(&wg, message)
+					sender.Send(&wg, message)
 				}
 			}
 		}
