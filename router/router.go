@@ -184,6 +184,7 @@ func AllRouter(db *gorm.DB) {
 				email_notif.POST("/add", emailNotifController.CreateEmailNotif)
 				email_notif.GET("/get", emailNotifController.GetEmailNotif)
 				email_notif.PUT("/update", emailNotifController.UpdateEmailNotif)
+				email_notif.DELETE("/delete/:id", emailNotifController.DeleteEmailNotif)
 			}
 		}
 	}
