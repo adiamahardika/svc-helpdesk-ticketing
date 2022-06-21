@@ -9,6 +9,7 @@ type EmailNotifRepositoryInterface interface {
 	GetEmailNotif() ([]entity.EmailNotif, error)
 	UpdateEmailNotif(request entity.EmailNotif) (entity.EmailNotif, error)
 	DeleteEmailNotif(id int) error
+	GetDetailEmailNotif(id int) ([]entity.EmailNotif, error)
 }
 
 func (repo *repository) CreateEmailNotif(request entity.EmailNotif) error {
@@ -41,4 +42,12 @@ func (repo *repository) DeleteEmailNotif(id int) error {
 	error := repo.db.Raw("DELETE FROM email_notif WHERE id = ? RETURNING email_notif.*", id).Find(&email_notif).Error
 
 	return error
+}
+
+func (repo *repository) GetDetailEmailNotif(id int) ([]entity.EmailNotif, error) {
+	var email_notif []entity.EmailNotif
+
+	error := repo.db.Raw("SELECT * FROM email_notif WHERE id = ? ORDER BY email ASC", id).Find(&email_notif).Error
+
+	return email_notif, error
 }

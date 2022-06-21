@@ -11,6 +11,7 @@ type EmailNotifServiceInterface interface {
 	GetEmailNotif() ([]entity.EmailNotif, error)
 	UpdateEmailNotif(request entity.EmailNotif) (entity.EmailNotif, error)
 	DeleteEmailNotif(id int) error
+	GetDetailEmailNotif(id int) ([]entity.EmailNotif, error)
 }
 
 type emailNotifService struct {
@@ -52,4 +53,11 @@ func (emailNotifService *emailNotifService) DeleteEmailNotif(id int) error {
 	error := emailNotifService.emailNotifRepository.DeleteEmailNotif(id)
 
 	return error
+}
+
+func (emailNotifService *emailNotifService) GetDetailEmailNotif(id int) ([]entity.EmailNotif, error) {
+
+	email_notif, error := emailNotifService.emailNotifRepository.GetDetailEmailNotif(id)
+
+	return email_notif, error
 }

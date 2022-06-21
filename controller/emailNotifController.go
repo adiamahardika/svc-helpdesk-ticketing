@@ -62,8 +62,8 @@ func (controller *emailNotifController) CreateEmailNotif(context *gin.Context) {
 				Description:    description,
 			}
 			context.JSON(http.StatusOK, gin.H{
-				"status":      status,
-				"email_notif": email_notif,
+				"status":     status,
+				"emailNotif": email_notif,
 			})
 
 		} else {
@@ -107,8 +107,8 @@ func (controller *emailNotifController) GetEmailNotif(context *gin.Context) {
 			Description:    description,
 		}
 		context.JSON(http.StatusOK, gin.H{
-			"status":      status,
-			"email_notif": email_notif,
+			"status":     status,
+			"emailNotif": email_notif,
 		})
 
 	} else {
@@ -171,8 +171,8 @@ func (controller *emailNotifController) UpdateEmailNotif(context *gin.Context) {
 				Description:    description,
 			}
 			context.JSON(http.StatusOK, gin.H{
-				"status":      status,
-				"email_notif": email_notif,
+				"status":     status,
+				"emailNotif": email_notif,
 			})
 
 		} else {
@@ -238,5 +238,51 @@ func (controller *emailNotifController) DeleteEmailNotif(context *gin.Context) {
 	}
 	parse_status, _ := json.Marshal(status)
 	var result = fmt.Sprintf("{\"status\": %s}", string(parse_status))
+	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
+}
+
+func (controller *emailNotifController) GetDetailEmailNotif(context *gin.Context) {
+
+	id, error := strconv.Atoi(context.Param("id"))
+
+	description := []string{}
+	http_status := http.StatusOK
+	var status model.StandardResponse
+	var email_notif []entity.EmailNotif
+
+	email_notif, error = controller.emailNotifService.GetDetailEmailNotif(id)
+
+	if error == nil {
+
+		description = append(description, "Success")
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusOK,
+			ResponseCode:   general.SuccessStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"status":     status,
+			"emailNotif": email_notif,
+		})
+
+	} else {
+
+		description = append(description, error.Error())
+		http_status = http.StatusBadRequest
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusBadRequest,
+			ResponseCode:   general.ErrorStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusBadRequest, gin.H{
+			"status": status,
+		})
+
+	}
+	parse_status, _ := json.Marshal(status)
+	parse_email_notif, _ := json.Marshal(email_notif)
+	var result = fmt.Sprintf("{\"status\": %s, \"email_notif\": %s}", string(parse_status), string(parse_email_notif))
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 }
