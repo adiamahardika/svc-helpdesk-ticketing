@@ -24,12 +24,13 @@ type TicketServiceInterface interface {
 }
 
 type ticketService struct {
-	ticketRepository    repository.TicketRepositoryInterface
-	ticketIsiRepository repository.TicketIsiRepositoryInterface
+	ticketRepository     repository.TicketRepositoryInterface
+	ticketIsiRepository  repository.TicketIsiRepositoryInterface
+	emailNotifRepository repository.EmailNotifRepositoryInterface
 }
 
-func TicketService(ticketRepository repository.TicketRepositoryInterface, ticketIsiRepository repository.TicketIsiRepositoryInterface) *ticketService {
-	return &ticketService{ticketRepository, ticketIsiRepository}
+func TicketService(ticketRepository repository.TicketRepositoryInterface, ticketIsiRepository repository.TicketIsiRepositoryInterface, emailNotifRepository repository.EmailNotifRepositoryInterface) *ticketService {
+	return &ticketService{ticketRepository, ticketIsiRepository, emailNotifRepository}
 }
 
 func (ticketService *ticketService) GetTicket(request model.GetTicketRequest) ([]entity.Ticket, int, error) {
@@ -157,7 +158,7 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 
 		if request.EmailNotification == "true" {
 			// wg.Add(1)
-
+			email_notif, _ := ticketService.emailNotifRepository.GetAllEmailNotif()
 			sender := NewSMTP()
 			message := NewMessage(&model.SmtpRequest{
 				Judul:           request.Judul,
@@ -173,6 +174,7 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 				Type:            "New",
 			})
 			message.To = []string{request.Email}
+			message.CC = email_notif
 			message.AttachFile(path+attachment1, path+attachment2)
 			sender.Send(&wg, message)
 		}
