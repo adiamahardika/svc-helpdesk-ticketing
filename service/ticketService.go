@@ -284,7 +284,7 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 
 				if request.EmailNotification == "true" {
 					// wg.Add(1)
-
+					email_notif, _ := ticketService.emailNotifRepository.GetAllEmailNotif()
 					sender := NewSMTP()
 					message := NewMessage(&model.SmtpRequest{
 						Judul:           ticket[0].Judul,
@@ -300,6 +300,7 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 						Type:            "Reply",
 					})
 					message.To = []string{ticket[0].Email}
+					message.CC = email_notif
 					message.AttachFile(path+attachment1, path+attachment2)
 					sender.Send(&wg, message)
 				}

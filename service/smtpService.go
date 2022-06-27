@@ -48,7 +48,7 @@ func NewSMTP() *Sender {
 func (s *Sender) Send(wg *sync.WaitGroup, m *Message) error {
 	// defer wg.Done()
 	smtpAddr := fmt.Sprintf("%s:%s", host, port)
-	return smtp.SendMail(smtpAddr, nil, auth_email, m.To, m.ToBytes())
+	return smtp.SendMail(smtpAddr, nil, auth_email, append(m.To, m.CC...), m.ToBytes())
 }
 
 func NewMessage(request *model.SmtpRequest) *Message {
