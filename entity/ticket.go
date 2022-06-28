@@ -25,5 +25,6 @@ type Ticket struct {
 	GrapariName       string    `json:"grapariName" gorm:"->"`
 	TerminalId        string    `json:"terminalId"`
 	Lokasi            string    `json:"lokasi"`
+	CategoryName      string    `json:"categoryName" gorm:"->"`
 	SubCategory       string    `json:"subCategory"`
 }
