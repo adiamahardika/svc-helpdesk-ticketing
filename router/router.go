@@ -72,6 +72,9 @@ func AllRouter(db *gorm.DB) {
 	emailNotifService := service.EmailNotifService(repository)
 	emailNotifController := controller.EmailNotifController(emailNotifService, logService)
 
+	subCategoryService := service.SubCategoryService(repository)
+	subCategoryController := controller.SubCategoryController(subCategoryService, logService)
+
 	dir := os.Getenv("FILE_DIR")
 	router.Static("/assets", dir)
 
@@ -186,6 +189,12 @@ func AllRouter(db *gorm.DB) {
 				email_notif.PUT("/update", emailNotifController.UpdateEmailNotif)
 				email_notif.DELETE("/delete/:id", emailNotifController.DeleteEmailNotif)
 				email_notif.GET("/get/:id", emailNotifController.GetDetailEmailNotif)
+			}
+
+			sub_category := v1.Group("/sub-category")
+			{
+				sub_category.Use(authService.Authentication(), authService.Authorization())
+				sub_category.GET("/get", subCategoryController.GetSubCategory)
 			}
 		}
 	}

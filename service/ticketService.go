@@ -255,12 +255,9 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 		update_ticket := model.UpdateTicketRequest{
 			AssignedTo:       ticket[0].AssignedTo,
 			Email:            ticket[0].Email,
-			Judul:            ticket[0].Judul,
 			Category:         ticket[0].Category,
-			Lokasi:           ticket[0].Lokasi,
 			Prioritas:        ticket[0].Prioritas,
 			Status:           request.Status,
-			TerminalId:       ticket[0].TerminalId,
 			TicketCode:       request.TicketCode,
 			TotalWaktu:       total_waktu,
 			UsernamePembalas: request.UsernamePengirim,
