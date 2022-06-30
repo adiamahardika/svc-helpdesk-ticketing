@@ -173,8 +173,8 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 				Isi:             request.Isi,
 				Type:            "New",
 			})
-			message.To = []string{request.Email}
-			message.CC = email_notif
+			message.CC = []string{request.Email}
+			message.To = email_notif
 			message.AttachFile(path+attachment1, path+attachment2)
 			sender.Send(&wg, message)
 		}
@@ -208,7 +208,6 @@ func (ticketService *ticketService) UpdateTicket(request model.UpdateTicketReque
 }
 
 func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error) {
-	var wg sync.WaitGroup
 	var ticket []entity.Ticket
 
 	date_now := time.Now()
@@ -257,6 +256,7 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 			Email:            ticket[0].Email,
 			Category:         ticket[0].Category,
 			Prioritas:        ticket[0].Prioritas,
+			SubCategory:      ticket[0].SubCategory,
 			Status:           request.Status,
 			TicketCode:       request.TicketCode,
 			TotalWaktu:       total_waktu,
@@ -279,28 +279,28 @@ func (ticketService *ticketService) ReplyTicket(request model.ReplyTicket, conte
 			if error == nil {
 				_, error = ticketService.ticketIsiRepository.CreateTicketIsi(reply_request)
 
-				if request.EmailNotification == "true" {
-					// wg.Add(1)
-					email_notif, _ := ticketService.emailNotifRepository.GetAllEmailNotif()
-					sender := NewSMTP()
-					message := NewMessage(&model.SmtpRequest{
-						Judul:           ticket[0].Judul,
-						Prioritas:       ticket[0].Prioritas,
-						UsernamePembuat: ticket[0].UsernamePembuat,
-						Author:          request.UsernamePengirim,
-						Status:          request.Status,
-						TicketCode:      request.TicketCode,
-						Lokasi:          ticket[0].Lokasi,
-						TerminalId:      ticket[0].TerminalId,
-						Email:           ticket[0].Email,
-						Isi:             request.Isi,
-						Type:            "Reply",
-					})
-					message.To = []string{ticket[0].Email}
-					message.CC = email_notif
-					message.AttachFile(path+attachment1, path+attachment2)
-					sender.Send(&wg, message)
-				}
+				// if request.EmailNotification == "true" {
+				// 	// wg.Add(1)
+				// 	email_notif, _ := ticketService.emailNotifRepository.GetAllEmailNotif()
+				// 	sender := NewSMTP()
+				// 	message := NewMessage(&model.SmtpRequest{
+				// 		Judul:           ticket[0].Judul,
+				// 		Prioritas:       ticket[0].Prioritas,
+				// 		UsernamePembuat: ticket[0].UsernamePembuat,
+				// 		Author:          request.UsernamePengirim,
+				// 		Status:          request.Status,
+				// 		TicketCode:      request.TicketCode,
+				// 		Lokasi:          ticket[0].Lokasi,
+				// 		TerminalId:      ticket[0].TerminalId,
+				// 		Email:           ticket[0].Email,
+				// 		Isi:             request.Isi,
+				// 		Type:            "Reply",
+				// 	})
+				// 	message.CC = []string{ticket[0].Email}
+				// 	message.To = email_notif
+				// 	message.AttachFile(path+attachment1, path+attachment2)
+				// 	sender.Send(&wg, message)
+				// }
 			}
 		}
 
