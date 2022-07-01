@@ -11,7 +11,7 @@ type SubCategoryRepositoryInterface interface {
 func (repo *repository) CreateSubCategory(request []entity.SubCategory) ([]entity.SubCategory, error) {
 	var sub_category []entity.SubCategory
 
-	error := repo.db.Table("sub_category").Create(&request).Find(&sub_category).Error
+	error := repo.db.Table("ticketing_sub_category").Create(&request).Find(&sub_category).Error
 
 	return sub_category, error
 }
@@ -19,7 +19,7 @@ func (repo *repository) CreateSubCategory(request []entity.SubCategory) ([]entit
 func (repo *repository) DeleteSubCategory(id_category int) error {
 	var sub_category entity.SubCategory
 
-	error := repo.db.Raw("DELETE FROM sub_category WHERE id_category = ? RETURNING sub_category.*", id_category).Find(&sub_category).Error
+	error := repo.db.Raw("DELETE FROM ticketing_sub_category WHERE id_category = ? RETURNING ticketing_sub_category.*", id_category).Find(&sub_category).Error
 
 	return error
 }
@@ -27,7 +27,7 @@ func (repo *repository) DeleteSubCategory(id_category int) error {
 func (repo *repository) GetSubCategory() ([]entity.SubCategory, error) {
 	var sub_category []entity.SubCategory
 
-	error := repo.db.Raw("SELECT * FROM sub_category ORDER BY name ASC").Find(&sub_category).Error
+	error := repo.db.Raw("SELECT * FROM ticketing_sub_category ORDER BY name ASC").Find(&sub_category).Error
 
 	return sub_category, error
 }

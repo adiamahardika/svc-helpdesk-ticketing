@@ -21,7 +21,7 @@ type UserRepositoryInterface interface {
 func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, error) {
 	var user []entity.User
 
-	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', role.id, 'name', role.name)) AS roles FROM users LEFT OUTER JOIN user_has_role ON (users.id = user_has_role.id_user) LEFT OUTER JOIN role ON (role.id = user_has_role.id_role) WHERE users.name LIKE @Search OR users.username LIKE @Search OR users.email LIKE @Search GROUP BY user_has_role.id_user, users.id ORDER BY users.name ASC LIMIT @Size OFFSET @StartIndex", model.GetUserRequest{
+	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', ticketing_role.id, 'name', ticketing_role.name)) AS roles FROM users LEFT OUTER JOIN ticketing_user_has_role ON (users.id = ticketing_user_has_role.id_user) LEFT OUTER JOIN ticketing_role ON (ticketing_role.id = ticketing_user_has_role.id_role) WHERE users.name LIKE @Search OR users.username LIKE @Search OR users.email LIKE @Search GROUP BY ticketing_user_has_role.id_user, users.id ORDER BY users.name ASC LIMIT @Size OFFSET @StartIndex", model.GetUserRequest{
 		Search:     "%" + request.Search + "%",
 		Size:       request.Size,
 		StartIndex: request.StartIndex,
@@ -33,7 +33,7 @@ func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, er
 func (repo *repository) CountUser(request model.GetUserRequest) (int, error) {
 	var total_data int
 
-	error := repo.db.Raw("SELECT COUNT(*) as total_data FROM users LEFT OUTER JOIN user_has_role ON (users.id = user_has_role.id_user) LEFT OUTER JOIN role ON (role.id = user_has_role.id_role) WHERE users.name LIKE @Search OR users.username LIKE @Search OR users.email LIKE @Search", model.GetUserRequest{
+	error := repo.db.Raw("SELECT COUNT(*) as total_data FROM users LEFT OUTER JOIN ticketing_user_has_role ON (users.id = ticketing_user_has_role.id_user) LEFT OUTER JOIN ticketing_role ON (ticketing_role.id = ticketing_user_has_role.id_role) WHERE users.name LIKE @Search OR users.username LIKE @Search OR users.email LIKE @Search", model.GetUserRequest{
 		Search: "%" + request.Search + "%",
 	}).Find(&total_data).Error
 
@@ -43,7 +43,7 @@ func (repo *repository) CountUser(request model.GetUserRequest) (int, error) {
 func (repo *repository) GetUserDetail(request string) (entity.User, error) {
 	var user entity.User
 
-	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', role.id, 'name', role.name)) AS roles, JSON_AGG(DISTINCT user_has_area.area) AS area_code, JSON_AGG(DISTINCT user_has_region.regional) AS regional, JSON_AGG(DISTINCT user_has_grapari.grapari_id) AS grapari_id FROM users LEFT OUTER JOIN user_has_role ON (users.id = user_has_role.id_user) LEFT OUTER JOIN role ON (role.id = user_has_role.id_role) LEFT OUTER JOIN user_has_area ON (users.username = user_has_area.username) LEFT OUTER JOIN user_has_region ON (users.username = user_has_region.username) LEFT OUTER JOIN user_has_grapari ON (users.username = user_has_grapari.username) WHERE users.username = ? GROUP BY user_has_role.id_user, users.id ORDER BY users.name ASC", request).Find(&user).Error
+	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', ticketing_role.id, 'name', ticketing_role.name)) AS roles, JSON_AGG(DISTINCT user_has_area.area) AS area_code, JSON_AGG(DISTINCT user_has_region.regional) AS regional, JSON_AGG(DISTINCT user_has_grapari.grapari_id) AS grapari_id FROM users LEFT OUTER JOIN ticketing_user_has_role ON (users.id = ticketing_user_has_role.id_user) LEFT OUTER JOIN ticketing_role ON (ticketing_role.id = ticketing_user_has_role.id_role) LEFT OUTER JOIN user_has_area ON (users.username = user_has_area.username) LEFT OUTER JOIN user_has_region ON (users.username = user_has_region.username) LEFT OUTER JOIN user_has_grapari ON (users.username = user_has_grapari.username) WHERE users.username = ? GROUP BY ticketing_user_has_role.id_user, users.id ORDER BY users.name ASC", request).Find(&user).Error
 
 	return user, error
 }
@@ -103,7 +103,7 @@ func (repo *repository) UpdateUserStatus(request model.UpdateUserStatus) (entity
 func (repo *repository) GetUserGroupByRole() ([]model.GetUserGroupByRole, error) {
 	var user []model.GetUserGroupByRole
 
-	error := repo.db.Raw("SELECT role.id, role.name AS label, JSON_AGG(JSON_BUILD_OBJECT('label', users.name, 'value', users.username)) AS options FROM user_has_role INNER JOIN role ON (role.id = user_has_role.id_role) INNER JOIN users ON (users.id = user_has_role.id_user) WHERE role.is_active = 'true' AND users.status = 'Active'  GROUP BY role.name, role.id ORDER BY role.name ASC").Find(&user).Error
+	error := repo.db.Raw("SELECT ticketing_role.id, ticketing_role.name AS label, JSON_AGG(JSON_BUILD_OBJECT('label', users.name, 'value', users.username)) AS options FROM ticketing_user_has_role INNER JOIN ticketing_role ON (ticketing_role.id = ticketing_user_has_role.id_role) INNER JOIN users ON (users.id = ticketing_user_has_role.id_user) WHERE role.is_active = 'true' AND users.status = 'Active'  GROUP BY ticketing_role.name, ticketing_role.id ORDER BY ticketing_role.name ASC").Find(&user).Error
 
 	return user, error
 }

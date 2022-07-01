@@ -9,7 +9,7 @@ type PermissionRepositoryInterface interface {
 func (repo *repository) GetPermission() ([]entity.Permission, error) {
 	var permission []entity.Permission
 
-	error := repo.db.Raw("SELECT * FROM permission ORDER BY name ASC").Find(&permission).Error
+	error := repo.db.Raw("SELECT * FROM ticketing_permission ORDER BY name ASC").Find(&permission).Error
 
 	return permission, error
 }

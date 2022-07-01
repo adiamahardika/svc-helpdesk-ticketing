@@ -19,7 +19,7 @@ type CategoryRepositoryInterface interface {
 func (repo *repository) GetCategory(request model.GetCategoryRequest) ([]entity.Category, error) {
 	var category []entity.Category
 
-	error := repo.db.Raw("SELECT category.*, JSON_AGG(JSON_BUILD_OBJECT('id', sub_category.id, 'idCategory', sub_category.id_category, 'name', sub_category.name, 'priority', sub_category.priority)) AS sub_category FROM category LEFT OUTER JOIN sub_category ON (category.id = sub_category.id_category) WHERE is_active LIKE @IsActive GROUP BY category.id ORDER BY name ASC LIMIT @Size OFFSET @StartIndex", model.GetCategoryRequest{
+	error := repo.db.Raw("SELECT ticketing_category.*, JSON_AGG(JSON_BUILD_OBJECT('id', ticketing_sub_category.id, 'idCategory', ticketing_sub_category.id_category, 'name', ticketing_sub_category.name, 'priority', ticketing_sub_category.priority)) AS sub_category FROM ticketing_category LEFT OUTER JOIN ticketing_sub_category ON (ticketing_category.id = ticketing_sub_category.id_category) WHERE is_active LIKE @IsActive GROUP BY ticketing_category.id ORDER BY name ASC LIMIT @Size OFFSET @StartIndex", model.GetCategoryRequest{
 		IsActive:   "%" + request.IsActive + "%",
 		Size:       request.Size,
 		StartIndex: request.StartIndex,
@@ -31,7 +31,7 @@ func (repo *repository) GetCategory(request model.GetCategoryRequest) ([]entity.
 func (repo *repository) CountCategory(request model.GetCategoryRequest) (int, error) {
 	var total_data int
 
-	error := repo.db.Raw("SELECT COUNT(*) as total_data FROM category WHERE is_active LIKE @IsActive", model.GetCategoryRequest{
+	error := repo.db.Raw("SELECT COUNT(*) as total_data FROM ticketing_category WHERE is_active LIKE @IsActive", model.GetCategoryRequest{
 		IsActive: "%" + request.IsActive + "%",
 	}).Find(&total_data).Error
 
@@ -41,7 +41,7 @@ func (repo *repository) CountCategory(request model.GetCategoryRequest) (int, er
 func (repo *repository) CreateCategory(request model.CreateCategoryRequest) (model.CreateCategoryRequest, error) {
 	var category model.CreateCategoryRequest
 
-	error := repo.db.Raw("INSERT INTO category(name, is_active, update_at) VALUES(@Name, @IsActive, @UpdateAt) RETURNING category.*", request).Find(&category).Error
+	error := repo.db.Raw("INSERT INTO ticketing_category(name, is_active, update_at) VALUES(@Name, @IsActive, @UpdateAt) RETURNING ticketing_category.*", request).Find(&category).Error
 
 	return category, error
 }
@@ -50,7 +50,7 @@ func (repo *repository) UpdateCategory(request model.CreateCategoryRequest) (mod
 
 	var category model.CreateCategoryRequest
 
-	error := repo.db.Raw("UPDATE category SET name = @Name, update_at = @UpdateAt WHERE id = @Id RETURNING category.*", request).Find(&category).Error
+	error := repo.db.Raw("UPDATE ticketing_category SET name = @Name, update_at = @UpdateAt WHERE id = @Id RETURNING ticketing_category.*", request).Find(&category).Error
 
 	return category, error
 }
@@ -58,7 +58,7 @@ func (repo *repository) UpdateCategory(request model.CreateCategoryRequest) (mod
 func (repo *repository) DeleteCategory(Id int) error {
 	var category entity.Category
 
-	error := repo.db.Raw("UPDATE category SET is_active = ? WHERE id = ? RETURNING category.*", "false", Id).Find(&category).Error
+	error := repo.db.Raw("UPDATE ticketing_category SET is_active = ? WHERE id = ? RETURNING ticketing_category.*", "false", Id).Find(&category).Error
 
 	return error
 }
@@ -66,7 +66,7 @@ func (repo *repository) DeleteCategory(Id int) error {
 func (repo *repository) GetDetailCategory(request string) ([]entity.Category, error) {
 	var category []entity.Category
 
-	error := repo.db.Raw("SELECT category.*, JSON_AGG(JSON_BUILD_OBJECT('id', sub_category.id, 'idCategory', sub_category.id_category, 'name', sub_category.name, 'priority', sub_category.priority)) AS sub_category FROM category LEFT OUTER JOIN sub_category ON (category.id = sub_category.id_category) WHERE category.id = ? GROUP BY category.id", request).Find(&category).Error
+	error := repo.db.Raw("SELECT ticketing_category.*, JSON_AGG(JSON_BUILD_OBJECT('id', ticketing_sub_category.id, 'idCategory', ticketing_sub_category.id_category, 'name', ticketing_sub_category.name, 'priority', ticketing_sub_category.priority)) AS sub_category FROM ticketing_category LEFT OUTER JOIN ticketing_sub_category ON (ticketing_category.id = ticketing_sub_category.id_category) WHERE ticketing_category.id = ? GROUP BY ticketing_category.id", request).Find(&category).Error
 
 	return category, error
 }
@@ -74,7 +74,7 @@ func (repo *repository) GetDetailCategory(request string) ([]entity.Category, er
 func (repo *repository) GetCategoryByParentDesc(request string) ([]entity.Category, error) {
 	var category []entity.Category
 
-	error := repo.db.Raw("SELECT * FROM category WHERE parent = ? ORDER BY update_at DESC", request).Find(&category).Error
+	error := repo.db.Raw("SELECT * FROM ticketing_category WHERE parent = ? ORDER BY update_at DESC", request).Find(&category).Error
 
 	return category, error
 }
@@ -82,7 +82,7 @@ func (repo *repository) GetCategoryByParentDesc(request string) ([]entity.Catego
 func (repo *repository) GetCategoryByParentAsc(request string) ([]entity.Category, error) {
 	var category []entity.Category
 
-	error := repo.db.Raw("SELECT * FROM category WHERE parent = ? ORDER BY update_at ASC", request).Find(&category).Error
+	error := repo.db.Raw("SELECT * FROM ticketing_category WHERE parent = ? ORDER BY update_at ASC", request).Find(&category).Error
 
 	return category, error
 }

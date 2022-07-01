@@ -7,7 +7,7 @@ type LogRepositoryInterface interface {
 }
 
 func (repo *repository) CreateLog(request entity.LgServiceActivities) error {
-	error := repo.db.Table("lg_service_activities").Create(&request).Error
+	error := repo.db.Table("ticketing_lg_service_activities").Create(&request).Error
 
 	return error
 }
