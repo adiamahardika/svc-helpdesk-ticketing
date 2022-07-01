@@ -5,6 +5,6 @@ import "svc-myg-ticketing/entity"
 type GetRoleResponse struct {
 	Id             int                 `json:"id" gorm:"primaryKey"`
 	Name           string              `json:"name"`
-	IsActive       string              `json:"isActive"`
+	GuardName      string              `json:"guardName"`
 	ListPermission []entity.Permission `json:"listPermission" gorm:"foreignKey:Id"`
 }

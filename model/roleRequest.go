@@ -14,5 +14,5 @@ type UpdateRoleRequest struct {
 }
 
 type GetRoleRequest struct {
-	IdUser int `json:"idUser"`
+	Id int `json:"id"`
 }

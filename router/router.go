@@ -96,9 +96,9 @@ func AllRouter(db *gorm.DB) {
 			{
 				role.Use(authService.Authentication(), authService.Authorization())
 				role.GET("/get", roleController.GetRole)
-				role.POST("/add", roleController.CreateRole)
-				role.PUT("/update", roleController.UpdateRole)
-				role.DELETE("/delete/:role-id", roleController.DeleteRole)
+				// role.POST("/add", roleController.CreateRole)
+				// role.PUT("/update", roleController.UpdateRole)
+				// role.DELETE("/delete/:role-id", roleController.DeleteRole)
 			}
 
 			permission := v1.Group("/permission")
@@ -112,13 +112,13 @@ func AllRouter(db *gorm.DB) {
 				user.Use(authService.Authentication(), authService.Authorization())
 				user.GET("/get/:search/:size/:page_no", userController.GetUser)
 				user.GET("/get-detail/:username", userController.GetUserDetail)
-				user.DELETE("/delete/:user-id", userController.DeleteUser)
-				user.POST("/add", userController.CreateUser)
-				user.PUT("/update", userController.UpdateUser)
-				user.POST("/change-pass", userController.ChangePassword)
-				user.POST("/reset-pass", userController.ResetPassword)
-				user.PUT("/update-profile", userController.UpdateProfile)
-				user.PUT("/update-status", userController.UpdateUserStatus)
+				// user.DELETE("/delete/:user-id", userController.DeleteUser)
+				// user.POST("/add", userController.CreateUser)
+				// user.PUT("/update", userController.UpdateUser)
+				// user.POST("/change-pass", userController.ChangePassword)
+				// user.POST("/reset-pass", userController.ResetPassword)
+				// user.PUT("/update-profile", userController.UpdateProfile)
+				// user.PUT("/update-status", userController.UpdateUserStatus)
 				user.GET("/get-group-by-role", userController.GetUserGroupByRole)
 			}
 

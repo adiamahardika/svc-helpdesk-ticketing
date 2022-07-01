@@ -49,7 +49,7 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 			var parse_role []model.GetRoleResponse
 			var role []entity.Role
 
-			role, error = authService.roleRepository.GetDetailRole(model.GetRoleRequest{IdUser: user.Id})
+			role, error = authService.roleRepository.GetDetailRole(model.GetRoleRequest{Id: user.RuleId})
 
 			for _, value := range role {
 				var list_permission []entity.Permission
@@ -59,7 +59,7 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 					Name:           value.Name,
 					Id:             value.Id,
 					ListPermission: list_permission,
-					IsActive:       value.IsActive,
+					GuardName:      value.GuardName,
 				})
 			}
 			expirationTime := time.Now().Add(time.Minute * 60)

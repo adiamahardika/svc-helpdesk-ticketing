@@ -3,6 +3,6 @@ package entity
 type Role struct {
 	Id             int    `json:"id" gorm:"primaryKey"`
 	Name           string `json:"name"`
-	IsActive       string `json:"isActive"`
+	GuardName      string `json:"guardName"`
 	ListPermission string `json:"listPermission"`
 }
