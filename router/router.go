@@ -97,7 +97,7 @@ func AllRouter(db *gorm.DB) {
 				role.Use(authService.Authentication(), authService.Authorization())
 				role.GET("/get", roleController.GetRole)
 				// role.POST("/add", roleController.CreateRole)
-				// role.PUT("/update", roleController.UpdateRole)
+				role.PUT("/update", roleController.UpdateRole)
 				// role.DELETE("/delete/:role-id", roleController.DeleteRole)
 			}
 

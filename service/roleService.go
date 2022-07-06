@@ -10,7 +10,7 @@ import (
 type RoleServiceInterface interface {
 	GetRole() ([]model.GetRoleResponse, error)
 	CreateRole(request model.CreateRoleRequest) ([]entity.Role, error)
-	UpdateRole(request model.UpdateRoleRequest) ([]model.GetRoleResponse, error)
+	UpdateRole(request model.UpdateRoleRequest) (model.GetRoleResponse, error)
 	DeleteRole(Id int) error
 }
 
@@ -51,21 +51,23 @@ func (roleService *roleService) CreateRole(request model.CreateRoleRequest) ([]e
 	return role, error
 }
 
-func (roleService *roleService) UpdateRole(request model.UpdateRoleRequest) ([]model.GetRoleResponse, error) {
+func (roleService *roleService) UpdateRole(request model.UpdateRoleRequest) (model.GetRoleResponse, error) {
 	var rhp_request []model.CreateRoleHasPermissionRequest
-	role, error := roleService.roleRepository.UpdateRole(request)
+	var role model.GetRoleResponse
+	detail_role, error := roleService.roleRepository.GetDetailRole(model.GetRoleRequest{Id: request.Id})
 
 	if error == nil {
 		error = roleService.roleHasPermissionRepository.DeleteRoleHasPermission(request.Id)
 
 		if error == nil {
 			for _, value := range request.ListPermission {
-				rhp_request = append(rhp_request, model.CreateRoleHasPermissionRequest{IdRole: role[0].Id, IdPermission: value.Id})
+				rhp_request = append(rhp_request, model.CreateRoleHasPermissionRequest{IdRole: detail_role[0].Id, IdPermission: value.Id})
 			}
 			error = roleService.roleHasPermissionRepository.CreateRoleHasPermission(rhp_request)
 		}
-
-		role[0].ListPermission = request.ListPermission
+		role.Name = detail_role[0].Name
+		role.GuardName = detail_role[0].GuardName
+		role.ListPermission = request.ListPermission
 	}
 
 	return role, error

@@ -9,7 +9,6 @@ type CreateRoleRequest struct {
 
 type UpdateRoleRequest struct {
 	Id             int                 `json:"id" gorm:"primaryKey"`
-	Name           string              `json:"name"`
 	ListPermission []entity.Permission `json:"listPermission" gorm:"foreignKey:Id"`
 }
 
