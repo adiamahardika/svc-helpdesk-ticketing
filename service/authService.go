@@ -49,7 +49,7 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 			var parse_role []model.GetRoleResponse
 			var role []entity.Role
 
-			role, error = authService.roleRepository.GetDetailRole(model.GetRoleRequest{Id: user.RuleId})
+			role, error = authService.roleRepository.GetDetailRole(user.RuleId)
 
 			for _, value := range role {
 				var list_permission []entity.Permission

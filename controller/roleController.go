@@ -238,3 +238,44 @@ func (controller *roleController) DeleteRole(context *gin.Context) {
 	var result = fmt.Sprintf("{\"status\": %s}", string(parse_status))
 	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
 }
+
+func (controller *roleController) GetDetailRole(context *gin.Context) {
+
+	description := []string{}
+	http_status := http.StatusOK
+	var status model.StandardResponse
+	id, error := strconv.Atoi(context.Param("id"))
+
+	role, error := controller.roleService.GetDetailRole(id)
+
+	if error == nil {
+		description = append(description, "Success")
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusOK,
+			ResponseCode:   general.SuccessStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusOK, gin.H{
+			"status":   status,
+			"listRole": role,
+		})
+	} else {
+		description = append(description, error.Error())
+		http_status = http.StatusBadRequest
+
+		status = model.StandardResponse{
+			HttpStatusCode: http.StatusBadRequest,
+			ResponseCode:   general.ErrorStatusCode,
+			Description:    description,
+		}
+		context.JSON(http.StatusBadRequest, gin.H{
+			"status": status,
+		})
+	}
+
+	parse_status, _ := json.Marshal(status)
+	parse_role, _ := json.Marshal(role)
+	var result = fmt.Sprintf("{\"status\": %s, \"listRole\": %s}", string(parse_status), string(parse_role))
+	controller.logService.CreateLog(context, "", result, time.Now(), http_status)
+}

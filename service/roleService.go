@@ -12,6 +12,7 @@ type RoleServiceInterface interface {
 	CreateRole(request model.CreateRoleRequest) ([]entity.Role, error)
 	UpdateRole(request model.UpdateRoleRequest) (model.GetRoleResponse, error)
 	DeleteRole(Id int) error
+	GetDetailRole(Id int) ([]model.GetRoleResponse, error)
 }
 
 type roleService struct {
@@ -54,7 +55,7 @@ func (roleService *roleService) CreateRole(request model.CreateRoleRequest) ([]e
 func (roleService *roleService) UpdateRole(request model.UpdateRoleRequest) (model.GetRoleResponse, error) {
 	var rhp_request []model.CreateRoleHasPermissionRequest
 	var role model.GetRoleResponse
-	detail_role, error := roleService.roleRepository.GetDetailRole(model.GetRoleRequest{Id: request.Id})
+	detail_role, error := roleService.roleRepository.GetDetailRole(request.Id)
 
 	if error == nil {
 		error = roleService.roleHasPermissionRepository.DeleteRoleHasPermission(request.Id)
@@ -78,4 +79,18 @@ func (roleService *roleService) DeleteRole(Id int) error {
 	error := roleService.roleRepository.DeleteRole(Id)
 
 	return error
+}
+
+func (roleService *roleService) GetDetailRole(Id int) ([]model.GetRoleResponse, error) {
+	var response []model.GetRoleResponse
+	role, error := roleService.roleRepository.GetDetailRole(Id)
+
+	for _, value := range role {
+		var list_permission []entity.Permission
+		json.Unmarshal([]byte(value.ListPermission), &list_permission)
+
+		response = append(response, model.GetRoleResponse{Name: value.Name, Id: value.Id, ListPermission: list_permission, GuardName: value.GuardName})
+	}
+
+	return response, error
 }
