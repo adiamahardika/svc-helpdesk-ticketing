@@ -7,11 +7,11 @@ import (
 )
 
 type GrapariRepositotyInterface interface {
-	GetGrapari(request model.GetGrapariRequest) ([]entity.MsGrapari, error)
+	GetGrapari(request *model.GetGrapariRequest) ([]*entity.MsGrapari, error)
 }
 
-func (repo *repository) GetGrapari(request model.GetGrapariRequest) ([]entity.MsGrapari, error) {
-	var result []entity.MsGrapari
+func (repo *repository) GetGrapari(request *model.GetGrapariRequest) ([]*entity.MsGrapari, error) {
+	var result []*entity.MsGrapari
 	var area_code string
 	var regional string
 	var grapari_id string
