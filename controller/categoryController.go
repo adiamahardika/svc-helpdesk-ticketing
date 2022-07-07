@@ -30,7 +30,7 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 	sort_by := context.Param("sort_by")
 	order_by := context.Param("order_by")
 
-	request := model.GetCategoryRequest{
+	request := &model.GetCategoryRequest{
 		Size:     size,
 		PageNo:   page_no,
 		SortBy:   sort_by,
@@ -40,7 +40,7 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
 	category, total_pages, error := controller.categoryService.GetCategory(request)
 
@@ -48,7 +48,7 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -64,7 +64,7 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -83,13 +83,13 @@ func (controller *categoryController) GetCategory(context *gin.Context) {
 
 func (controller *categoryController) CreateCategory(context *gin.Context) {
 
-	var request model.CreateCategoryRequest
+	var request *model.CreateCategoryRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var category model.CreateCategoryRequest
+	var status *model.StandardResponse
+	var category *model.CreateCategoryRequest
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -98,7 +98,7 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -114,7 +114,7 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -129,7 +129,7 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -148,13 +148,13 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 }
 
 func (controller *categoryController) UpdateCategory(context *gin.Context) {
-	var request model.CreateCategoryRequest
+	var request *model.CreateCategoryRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var category model.CreateCategoryRequest
+	var status *model.StandardResponse
+	var category *model.CreateCategoryRequest
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -163,7 +163,7 @@ func (controller *categoryController) UpdateCategory(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -179,7 +179,7 @@ func (controller *categoryController) UpdateCategory(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -194,7 +194,7 @@ func (controller *categoryController) UpdateCategory(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -218,15 +218,15 @@ func (controller *categoryController) DeleteCategory(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
-	error = controller.categoryService.DeleteCategory(id)
+	error = controller.categoryService.DeleteCategory(&id)
 
 	if error == nil {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -240,7 +240,7 @@ func (controller *categoryController) DeleteCategory(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -261,15 +261,15 @@ func (controller *categoryController) GetDetailCategory(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
-	category, error := controller.categoryService.GetDetailCategory(id)
+	category, error := controller.categoryService.GetDetailCategory(&id)
 
 	if error == nil {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -284,7 +284,7 @@ func (controller *categoryController) GetDetailCategory(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,

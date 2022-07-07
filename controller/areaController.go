@@ -25,13 +25,13 @@ func AreaController(areaService service.AreaServiceInterface, logService service
 
 func (controller *areaController) GetArea(context *gin.Context) {
 
-	var request model.GetAreaRequest
+	var request *model.GetAreaRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var area []entity.MsArea
+	var status *model.StandardResponse
+	var area []*entity.MsArea
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -40,7 +40,7 @@ func (controller *areaController) GetArea(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -56,7 +56,7 @@ func (controller *areaController) GetArea(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -71,7 +71,7 @@ func (controller *areaController) GetArea(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,

@@ -7,7 +7,7 @@ import (
 )
 
 type AreaServiceInterface interface {
-	GetArea(request model.GetAreaRequest) ([]entity.MsArea, error)
+	GetArea(request *model.GetAreaRequest) ([]*entity.MsArea, error)
 }
 
 type areaService struct {
@@ -18,7 +18,7 @@ func AreaService(repository repository.AreaRepositoryInterface) *areaService {
 	return &areaService{repository}
 }
 
-func (areaService *areaService) GetArea(request model.GetAreaRequest) ([]entity.MsArea, error) {
+func (areaService *areaService) GetArea(request *model.GetAreaRequest) ([]*entity.MsArea, error) {
 
 	area, error := areaService.repository.GetArea(request)
 

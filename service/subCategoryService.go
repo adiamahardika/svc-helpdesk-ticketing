@@ -6,7 +6,7 @@ import (
 )
 
 type SubCategoryServiceInterface interface {
-	GetSubCategory() ([]entity.SubCategory, error)
+	GetSubCategory() ([]*entity.SubCategory, error)
 }
 
 type subCategoryService struct {
@@ -17,7 +17,7 @@ func SubCategoryService(subCategoryRepository repository.SubCategoryRepositoryIn
 	return &subCategoryService{subCategoryRepository}
 }
 
-func (subCategoryService *subCategoryService) GetSubCategory() ([]entity.SubCategory, error) {
+func (subCategoryService *subCategoryService) GetSubCategory() ([]*entity.SubCategory, error) {
 
 	sub_category, error := subCategoryService.subCategoryRepository.GetSubCategory()
 
