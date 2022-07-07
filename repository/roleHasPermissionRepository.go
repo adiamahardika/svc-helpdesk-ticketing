@@ -6,20 +6,20 @@ import (
 )
 
 type RoleHasPermissionRepositoryInterface interface {
-	CreateRoleHasPermission(request []model.CreateRoleHasPermissionRequest) error
-	DeleteRoleHasPermission(id_role int) error
+	CreateRoleHasPermission(request []*model.CreateRoleHasPermissionRequest) error
+	DeleteRoleHasPermission(id_role *int) error
 }
 
-func (repo *repository) CreateRoleHasPermission(request []model.CreateRoleHasPermissionRequest) error {
+func (repo *repository) CreateRoleHasPermission(request []*model.CreateRoleHasPermissionRequest) error {
 
 	error := repo.db.Table("ticketing_role_has_permission").Create(&request).Error
 
 	return error
 }
 
-func (repo *repository) DeleteRoleHasPermission(id_role int) error {
+func (repo *repository) DeleteRoleHasPermission(id_role *int) error {
 
-	var role_has_permission entity.RoleHasPermission
+	var role_has_permission *entity.RoleHasPermission
 
 	error := repo.db.Raw("DELETE FROM ticketing_role_has_permission WHERE id_role = ? RETURNING ticketing_role_has_permission.*", id_role).Find(&role_has_permission).Error
 

@@ -39,12 +39,12 @@ func (roleService *roleService) GetRole() ([]model.GetRoleResponse, error) {
 }
 
 func (roleService *roleService) CreateRole(request model.CreateRoleRequest) ([]entity.Role, error) {
-	var rhp_request []model.CreateRoleHasPermissionRequest
+	var rhp_request []*model.CreateRoleHasPermissionRequest
 	role, error := roleService.roleRepository.CreateRole(request)
 
 	if error == nil {
 		for _, value := range request.ListPermission {
-			rhp_request = append(rhp_request, model.CreateRoleHasPermissionRequest{IdRole: role[0].Id, IdPermission: value.Id})
+			rhp_request = append(rhp_request, &model.CreateRoleHasPermissionRequest{IdRole: role[0].Id, IdPermission: value.Id})
 		}
 		error = roleService.roleHasPermissionRepository.CreateRoleHasPermission(rhp_request)
 	}
@@ -53,16 +53,16 @@ func (roleService *roleService) CreateRole(request model.CreateRoleRequest) ([]e
 }
 
 func (roleService *roleService) UpdateRole(request model.UpdateRoleRequest) (model.GetRoleResponse, error) {
-	var rhp_request []model.CreateRoleHasPermissionRequest
+	var rhp_request []*model.CreateRoleHasPermissionRequest
 	var role model.GetRoleResponse
 	detail_role, error := roleService.roleRepository.GetDetailRole(request.Id)
 
 	if error == nil {
-		error = roleService.roleHasPermissionRepository.DeleteRoleHasPermission(request.Id)
+		error = roleService.roleHasPermissionRepository.DeleteRoleHasPermission(&request.Id)
 
 		if error == nil {
 			for _, value := range request.ListPermission {
-				rhp_request = append(rhp_request, model.CreateRoleHasPermissionRequest{IdRole: detail_role[0].Id, IdPermission: value.Id})
+				rhp_request = append(rhp_request, &model.CreateRoleHasPermissionRequest{IdRole: detail_role[0].Id, IdPermission: value.Id})
 			}
 			error = roleService.roleHasPermissionRepository.CreateRoleHasPermission(rhp_request)
 		}
