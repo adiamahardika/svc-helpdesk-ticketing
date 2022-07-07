@@ -134,7 +134,7 @@ func (userService *userService) CreateUser(request model.CreateUserRequest) (ent
 			user, error = userService.userRepository.CreateUser(request)
 			user.Password = ""
 			if error == nil {
-				error = userService.userHasRoleRepository.CreateUserHasRole(user.Id, id_role)
+				error = userService.userHasRoleRepository.CreateUserHasRole(&user.Id, &id_role)
 			}
 		}
 	}
@@ -153,10 +153,10 @@ func (userService *userService) UpdateUser(request model.UpdateUserRequest) (ent
 	user.Password = ""
 
 	if error == nil {
-		error = userService.userHasRoleRepository.DeleteUserHasRole(request.Id)
+		error = userService.userHasRoleRepository.DeleteUserHasRole(&request.Id)
 
 		if error == nil {
-			error = userService.userHasRoleRepository.CreateUserHasRole(user.Id, id_role)
+			error = userService.userHasRoleRepository.CreateUserHasRole(&user.Id, &id_role)
 		}
 	}
 
