@@ -6,7 +6,7 @@ import (
 )
 
 type PermissionServiceInterface interface {
-	GetPermission() ([]entity.Permission, error)
+	GetPermission() ([]*entity.Permission, error)
 }
 
 type permissionService struct {
@@ -17,7 +17,7 @@ func PermissionService(permissionRepository repository.PermissionRepositoryInter
 	return &permissionService{permissionRepository}
 }
 
-func (permissionService *permissionService) GetPermission() ([]entity.Permission, error) {
+func (permissionService *permissionService) GetPermission() ([]*entity.Permission, error) {
 
 	permission, error := permissionService.permissionRepository.GetPermission()
 

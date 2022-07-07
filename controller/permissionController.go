@@ -24,14 +24,14 @@ func PermissionController(permissionService service.PermissionServiceInterface, 
 func (controller *permissionController) GetPermission(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
 	permission, error := controller.permissionService.GetPermission()
 
 	if error == nil {
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -44,7 +44,7 @@ func (controller *permissionController) GetPermission(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
