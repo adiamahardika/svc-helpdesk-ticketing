@@ -7,11 +7,11 @@ import (
 )
 
 type EmailNotifServiceInterface interface {
-	CreateEmailNotif(request entity.EmailNotif) (entity.EmailNotif, error)
-	GetEmailNotif() ([]entity.EmailNotif, error)
-	UpdateEmailNotif(request entity.EmailNotif) (entity.EmailNotif, error)
-	DeleteEmailNotif(id int) error
-	GetDetailEmailNotif(id int) ([]entity.EmailNotif, error)
+	CreateEmailNotif(request *entity.EmailNotif) (*entity.EmailNotif, error)
+	GetEmailNotif() ([]*entity.EmailNotif, error)
+	UpdateEmailNotif(request *entity.EmailNotif) (*entity.EmailNotif, error)
+	DeleteEmailNotif(id *int) error
+	GetDetailEmailNotif(id *int) ([]*entity.EmailNotif, error)
 }
 
 type emailNotifService struct {
@@ -22,7 +22,7 @@ func EmailNotifService(emailNotifRepository repository.EmailNotifRepositoryInter
 	return &emailNotifService{emailNotifRepository}
 }
 
-func (emailNotifService *emailNotifService) CreateEmailNotif(request entity.EmailNotif) (entity.EmailNotif, error) {
+func (emailNotifService *emailNotifService) CreateEmailNotif(request *entity.EmailNotif) (*entity.EmailNotif, error) {
 	date_now := time.Now()
 
 	request.CreatedAt = date_now
@@ -32,14 +32,14 @@ func (emailNotifService *emailNotifService) CreateEmailNotif(request entity.Emai
 	return request, error
 }
 
-func (emailNotifService *emailNotifService) GetEmailNotif() ([]entity.EmailNotif, error) {
+func (emailNotifService *emailNotifService) GetEmailNotif() ([]*entity.EmailNotif, error) {
 
 	email_notif, error := emailNotifService.emailNotifRepository.GetEmailNotif()
 
 	return email_notif, error
 }
 
-func (emailNotifService *emailNotifService) UpdateEmailNotif(request entity.EmailNotif) (entity.EmailNotif, error) {
+func (emailNotifService *emailNotifService) UpdateEmailNotif(request *entity.EmailNotif) (*entity.EmailNotif, error) {
 	date_now := time.Now()
 
 	request.UpdatedAt = date_now
@@ -48,14 +48,14 @@ func (emailNotifService *emailNotifService) UpdateEmailNotif(request entity.Emai
 	return email_notif, error
 }
 
-func (emailNotifService *emailNotifService) DeleteEmailNotif(id int) error {
+func (emailNotifService *emailNotifService) DeleteEmailNotif(id *int) error {
 
 	error := emailNotifService.emailNotifRepository.DeleteEmailNotif(id)
 
 	return error
 }
 
-func (emailNotifService *emailNotifService) GetDetailEmailNotif(id int) ([]entity.EmailNotif, error) {
+func (emailNotifService *emailNotifService) GetDetailEmailNotif(id *int) ([]*entity.EmailNotif, error) {
 
 	email_notif, error := emailNotifService.emailNotifRepository.GetDetailEmailNotif(id)
 

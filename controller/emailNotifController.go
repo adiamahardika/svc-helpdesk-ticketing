@@ -26,12 +26,12 @@ func EmailNotifController(emailNotifService service.EmailNotifServiceInterface, 
 
 func (controller *emailNotifController) CreateEmailNotif(context *gin.Context) {
 
-	var email_notif entity.EmailNotif
+	var email_notif *entity.EmailNotif
 
 	error := context.ShouldBind(&email_notif)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -40,7 +40,7 @@ func (controller *emailNotifController) CreateEmailNotif(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -56,7 +56,7 @@ func (controller *emailNotifController) CreateEmailNotif(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -71,7 +71,7 @@ func (controller *emailNotifController) CreateEmailNotif(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -93,7 +93,7 @@ func (controller *emailNotifController) GetEmailNotif(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
 	email_notif, error := controller.emailNotifService.GetEmailNotif()
 
@@ -101,7 +101,7 @@ func (controller *emailNotifController) GetEmailNotif(context *gin.Context) {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -116,7 +116,7 @@ func (controller *emailNotifController) GetEmailNotif(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -135,12 +135,12 @@ func (controller *emailNotifController) GetEmailNotif(context *gin.Context) {
 
 func (controller *emailNotifController) UpdateEmailNotif(context *gin.Context) {
 
-	var email_notif entity.EmailNotif
+	var email_notif *entity.EmailNotif
 
 	error := context.ShouldBind(&email_notif)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -149,7 +149,7 @@ func (controller *emailNotifController) UpdateEmailNotif(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -165,7 +165,7 @@ func (controller *emailNotifController) UpdateEmailNotif(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -180,7 +180,7 @@ func (controller *emailNotifController) UpdateEmailNotif(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -204,15 +204,15 @@ func (controller *emailNotifController) DeleteEmailNotif(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
-	error = controller.emailNotifService.DeleteEmailNotif(id)
+	error = controller.emailNotifService.DeleteEmailNotif(&id)
 
 	if error == nil {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -226,7 +226,7 @@ func (controller *emailNotifController) DeleteEmailNotif(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -247,16 +247,16 @@ func (controller *emailNotifController) GetDetailEmailNotif(context *gin.Context
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var email_notif []entity.EmailNotif
+	var status *model.StandardResponse
+	var email_notif []*entity.EmailNotif
 
-	email_notif, error = controller.emailNotifService.GetDetailEmailNotif(id)
+	email_notif, error = controller.emailNotifService.GetDetailEmailNotif(&id)
 
 	if error == nil {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -271,7 +271,7 @@ func (controller *emailNotifController) GetDetailEmailNotif(context *gin.Context
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,

@@ -174,7 +174,7 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 				Type:            "New",
 			})
 			message.CC = []string{request.Email}
-			message.To = email_notif
+			message.To = *email_notif
 			message.AttachFile(path+attachment1, path+attachment2)
 			sender.Send(&wg, message)
 		}
