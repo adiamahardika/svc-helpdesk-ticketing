@@ -18,8 +18,8 @@ import (
 )
 
 type AuthServiceInterface interface {
-	Login(request model.LoginRequest) (model.LoginResponse, error)
-	RefreshToken(context *gin.Context) (model.LoginResponse, error)
+	Login(request *model.LoginRequest) (*model.LoginResponse, error)
+	RefreshToken(context *gin.Context) (*model.LoginResponse, error)
 }
 
 type authService struct {
@@ -31,8 +31,8 @@ func AuthService(userRepository repository.UserRepositoryInterface, roleReposito
 	return &authService{userRepository, roleRepository}
 }
 
-func (authService *authService) Login(request model.LoginRequest) (model.LoginResponse, error) {
-	var user_response model.LoginResponse
+func (authService *authService) Login(request *model.LoginRequest) (*model.LoginResponse, error) {
+	var user_response *model.LoginResponse
 	user, error := authService.userRepository.GetUserDetail(request.Username)
 
 	if user.Username == "" {
@@ -46,16 +46,16 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 			error = fmt.Errorf("Password Not Match")
 		}
 		if error == nil {
-			var parse_role []model.GetRoleResponse
-			var role []entity.Role
+			var parse_role []*model.GetRoleResponse
+			var role []*entity.Role
 
-			role, error = authService.roleRepository.GetDetailRole(user.RuleId)
+			role, error = authService.roleRepository.GetDetailRole(&user.RuleId)
 
 			for _, value := range role {
-				var list_permission []entity.Permission
+				var list_permission []*entity.Permission
 				json.Unmarshal([]byte(value.ListPermission), &list_permission)
 
-				parse_role = append(parse_role, model.GetRoleResponse{
+				parse_role = append(parse_role, &model.GetRoleResponse{
 					Name:           value.Name,
 					Id:             value.Id,
 					ListPermission: list_permission,
@@ -84,7 +84,7 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 			var grapariId []string
 			json.Unmarshal([]byte(user.GrapariId), &grapariId)
 
-			user_response = model.LoginResponse{
+			user_response = &model.LoginResponse{
 				Id:          user.Id,
 				Name:        user.Name,
 				Username:    user.Username,
@@ -102,13 +102,13 @@ func (authService *authService) Login(request model.LoginRequest) (model.LoginRe
 	return user_response, error
 }
 
-func (authService *authService) RefreshToken(context *gin.Context) (model.LoginResponse, error) {
+func (authService *authService) RefreshToken(context *gin.Context) (*model.LoginResponse, error) {
 
 	token_string := context.Request.Header.Get("token")
 	claims := &model.Claims{}
 	jwtKey := []byte(os.Getenv("API_SECRET"))
 	var user []entity.User
-	var login_response model.LoginResponse
+	var login_response *model.LoginResponse
 
 	decode_token, error := jwt.ParseWithClaims(token_string, claims,
 		func(token *jwt.Token) (interface{}, error) {
@@ -142,7 +142,7 @@ func (authService *authService) RefreshToken(context *gin.Context) (model.LoginR
 			error = err
 		}
 
-		login_response = model.LoginResponse{
+		login_response = &model.LoginResponse{
 			AccessToken: tokenString,
 		}
 	}

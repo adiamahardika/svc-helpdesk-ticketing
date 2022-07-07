@@ -28,14 +28,14 @@ func (controller *roleController) GetRole(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
 	role, error := controller.roleService.GetRole()
 
 	if error == nil {
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -48,7 +48,7 @@ func (controller *roleController) GetRole(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -66,13 +66,13 @@ func (controller *roleController) GetRole(context *gin.Context) {
 
 func (controller *roleController) CreateRole(context *gin.Context) {
 
-	var request model.CreateRoleRequest
+	var request *model.CreateRoleRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var role []entity.Role
+	var status *model.StandardResponse
+	var role []*entity.Role
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -81,7 +81,7 @@ func (controller *roleController) CreateRole(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -97,7 +97,7 @@ func (controller *roleController) CreateRole(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -112,7 +112,7 @@ func (controller *roleController) CreateRole(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -132,13 +132,13 @@ func (controller *roleController) CreateRole(context *gin.Context) {
 
 func (controller *roleController) UpdateRole(context *gin.Context) {
 
-	var request model.UpdateRoleRequest
+	var request *model.UpdateRoleRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var role model.GetRoleResponse
+	var status *model.StandardResponse
+	var role *model.GetRoleResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -147,7 +147,7 @@ func (controller *roleController) UpdateRole(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -163,7 +163,7 @@ func (controller *roleController) UpdateRole(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -178,7 +178,7 @@ func (controller *roleController) UpdateRole(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -202,15 +202,15 @@ func (controller *roleController) DeleteRole(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
-	error = controller.roleService.DeleteRole(id)
+	error = controller.roleService.DeleteRole(&id)
 
 	if error == nil {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -224,7 +224,7 @@ func (controller *roleController) DeleteRole(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -243,15 +243,15 @@ func (controller *roleController) GetDetailRole(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 	id, error := strconv.Atoi(context.Param("id"))
 
-	role, error := controller.roleService.GetDetailRole(id)
+	role, error := controller.roleService.GetDetailRole(&id)
 
 	if error == nil {
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -264,7 +264,7 @@ func (controller *roleController) GetDetailRole(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,

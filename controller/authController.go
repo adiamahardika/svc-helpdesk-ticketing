@@ -23,13 +23,13 @@ func AuthController(authService service.AuthServiceInterface, logService service
 }
 
 func (controller *authController) Login(context *gin.Context) {
-	var request model.LoginRequest
+	var request *model.LoginRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var user model.LoginResponse
+	var status *model.StandardResponse
+	var user *model.LoginResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -38,7 +38,7 @@ func (controller *authController) Login(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -54,7 +54,7 @@ func (controller *authController) Login(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -69,7 +69,7 @@ func (controller *authController) Login(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,

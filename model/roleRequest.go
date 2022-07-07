@@ -8,8 +8,8 @@ type CreateRoleRequest struct {
 }
 
 type UpdateRoleRequest struct {
-	Id             int                 `json:"id" gorm:"primaryKey"`
-	ListPermission []entity.Permission `json:"listPermission" gorm:"foreignKey:Id"`
+	Id             int                  `json:"id" gorm:"primaryKey"`
+	ListPermission []*entity.Permission `json:"listPermission" gorm:"foreignKey:Id"`
 }
 
 type GetRoleRequest struct {
