@@ -25,14 +25,14 @@ func TicketController(ticketService service.TicketServiceInterface, logService s
 
 func (controller *ticketController) GetTicket(context *gin.Context) {
 
-	var request model.GetTicketRequest
+	var request *model.GetTicketRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var ticket []entity.Ticket
-	var total_pages int
+	var status *model.StandardResponse
+	var ticket []*entity.Ticket
+	var total_pages *int
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -41,7 +41,7 @@ func (controller *ticketController) GetTicket(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -57,7 +57,7 @@ func (controller *ticketController) GetTicket(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -74,7 +74,7 @@ func (controller *ticketController) GetTicket(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -88,7 +88,7 @@ func (controller *ticketController) GetTicket(context *gin.Context) {
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_ticket, _ := json.Marshal(ticket)
-	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s, \"page\": %d, \"totalPages\": %d}", string(parse_status), string(parse_ticket), request.PageNo, int(total_pages))
+	var result = fmt.Sprintf("{\"status\": %s, \"content\": %s, \"page\": %d, \"totalPages\": %d}", string(parse_status), string(parse_ticket), request.PageNo, total_pages)
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
@@ -98,15 +98,15 @@ func (controller *ticketController) GetDetailTicket(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
-	ticket, error := controller.ticketService.GetDetailTicket(ticket_code)
+	ticket, error := controller.ticketService.GetDetailTicket(&ticket_code)
 
 	if error == nil {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -122,7 +122,7 @@ func (controller *ticketController) GetDetailTicket(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -142,14 +142,14 @@ func (controller *ticketController) GetDetailTicket(context *gin.Context) {
 
 func (controller *ticketController) CreateTicket(context *gin.Context) {
 
-	var request model.CreateTicketRequest
+	var request *model.CreateTicketRequest
 
 	error := context.ShouldBind(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var ticket entity.Ticket
-	var ticket_isi entity.TicketIsi
+	var status *model.StandardResponse
+	var ticket *entity.Ticket
+	var ticket_isi *entity.TicketIsi
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -158,7 +158,7 @@ func (controller *ticketController) CreateTicket(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -174,7 +174,7 @@ func (controller *ticketController) CreateTicket(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -190,7 +190,7 @@ func (controller *ticketController) CreateTicket(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -211,13 +211,13 @@ func (controller *ticketController) CreateTicket(context *gin.Context) {
 
 func (controller *ticketController) UpdateTicket(context *gin.Context) {
 
-	var request model.UpdateTicketRequest
+	var request *model.UpdateTicketRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var ticket []entity.Ticket
+	var status *model.StandardResponse
+	var ticket []*entity.Ticket
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -226,7 +226,7 @@ func (controller *ticketController) UpdateTicket(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -242,7 +242,7 @@ func (controller *ticketController) UpdateTicket(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -257,7 +257,7 @@ func (controller *ticketController) UpdateTicket(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -277,13 +277,13 @@ func (controller *ticketController) UpdateTicket(context *gin.Context) {
 
 func (controller *ticketController) ReplyTicket(context *gin.Context) {
 
-	var request model.ReplyTicket
+	var request *model.ReplyTicket
 
 	error := context.ShouldBind(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var ticket []entity.Ticket
+	var status *model.StandardResponse
+	var ticket []*entity.Ticket
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -292,7 +292,7 @@ func (controller *ticketController) ReplyTicket(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -308,7 +308,7 @@ func (controller *ticketController) ReplyTicket(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -323,7 +323,7 @@ func (controller *ticketController) ReplyTicket(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -343,13 +343,13 @@ func (controller *ticketController) ReplyTicket(context *gin.Context) {
 
 func (controller *ticketController) UpdateTicketStatus(context *gin.Context) {
 
-	var request model.UpdateTicketStatusRequest
+	var request *model.UpdateTicketStatusRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var ticket []entity.Ticket
+	var status *model.StandardResponse
+	var ticket []*entity.Ticket
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -358,7 +358,7 @@ func (controller *ticketController) UpdateTicketStatus(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -374,7 +374,7 @@ func (controller *ticketController) UpdateTicketStatus(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -389,7 +389,7 @@ func (controller *ticketController) UpdateTicketStatus(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
