@@ -41,15 +41,15 @@ func (controller *userController) GetUser(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
-	user, total_pages, error := controller.userService.GetUser(request)
+	user, total_pages, error := controller.userService.GetUser(&request)
 
 	if error == nil {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -65,7 +65,7 @@ func (controller *userController) GetUser(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -78,7 +78,7 @@ func (controller *userController) GetUser(context *gin.Context) {
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_user, _ := json.Marshal(user)
-	var result = fmt.Sprintf("{\"status\": %s, \"listUser\": %s, \"page\": %d, \"totalPages\": %d}", string(parse_status), string(parse_user), page_no, int(total_pages))
+	var result = fmt.Sprintf("{\"status\": %s, \"listUser\": %s, \"page\": %d, \"totalPages\": %d}", string(parse_status), string(parse_user), page_no, total_pages)
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 
@@ -88,15 +88,15 @@ func (controller *userController) GetUserDetail(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
-	user, error := controller.userService.GetUserDetail(username)
+	user, error := controller.userService.GetUserDetail(&username)
 
 	if error == nil {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -111,7 +111,7 @@ func (controller *userController) GetUserDetail(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -135,7 +135,7 @@ func (controller *userController) DeleteUser(context *gin.Context) {
 	http_status := http.StatusOK
 	var status model.StandardResponse
 
-	error = controller.userService.DeleteUser(id)
+	error = controller.userService.DeleteUser(&id)
 
 	if error == nil {
 
@@ -172,13 +172,13 @@ func (controller *userController) DeleteUser(context *gin.Context) {
 
 func (controller *userController) CreateUser(context *gin.Context) {
 
-	var request model.CreateUserRequest
+	var request *model.CreateUserRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var user entity.User
+	var status *model.StandardResponse
+	var user *entity.User
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -187,7 +187,7 @@ func (controller *userController) CreateUser(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -203,7 +203,7 @@ func (controller *userController) CreateUser(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -218,7 +218,7 @@ func (controller *userController) CreateUser(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -238,13 +238,13 @@ func (controller *userController) CreateUser(context *gin.Context) {
 
 func (controller *userController) UpdateUser(context *gin.Context) {
 
-	var request model.UpdateUserRequest
+	var request *model.UpdateUserRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var user entity.User
+	var status *model.StandardResponse
+	var user *entity.User
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -253,7 +253,7 @@ func (controller *userController) UpdateUser(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -269,7 +269,7 @@ func (controller *userController) UpdateUser(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -284,7 +284,7 @@ func (controller *userController) UpdateUser(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -304,13 +304,13 @@ func (controller *userController) UpdateUser(context *gin.Context) {
 
 func (controller *userController) ChangePassword(context *gin.Context) {
 
-	var request model.ChangePassRequest
+	var request *model.ChangePassRequest
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var user model.GetUserResponse
+	var status *model.StandardResponse
+	var user *model.GetUserResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -319,7 +319,7 @@ func (controller *userController) ChangePassword(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -335,7 +335,7 @@ func (controller *userController) ChangePassword(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -350,7 +350,7 @@ func (controller *userController) ChangePassword(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -370,13 +370,13 @@ func (controller *userController) ChangePassword(context *gin.Context) {
 
 func (controller *userController) ResetPassword(context *gin.Context) {
 
-	var request model.ResetPassword
+	var request *model.ResetPassword
 
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var user model.GetUserResponse
+	var status *model.StandardResponse
+	var user *model.GetUserResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -385,7 +385,7 @@ func (controller *userController) ResetPassword(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -401,7 +401,7 @@ func (controller *userController) ResetPassword(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -416,7 +416,7 @@ func (controller *userController) ResetPassword(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -436,12 +436,12 @@ func (controller *userController) ResetPassword(context *gin.Context) {
 
 func (controller *userController) UpdateProfile(context *gin.Context) {
 
-	var request model.UpdateUserRequest
+	var request *model.UpdateUserRequest
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var user entity.User
+	var status *model.StandardResponse
+	var user *entity.User
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -450,7 +450,7 @@ func (controller *userController) UpdateProfile(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -466,7 +466,7 @@ func (controller *userController) UpdateProfile(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -481,7 +481,7 @@ func (controller *userController) UpdateProfile(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -501,12 +501,12 @@ func (controller *userController) UpdateProfile(context *gin.Context) {
 
 func (controller *userController) UpdateUserStatus(context *gin.Context) {
 
-	var request model.UpdateUserStatus
+	var request *model.UpdateUserStatus
 	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
-	var user entity.User
+	var status *model.StandardResponse
+	var user *entity.User
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -515,7 +515,7 @@ func (controller *userController) UpdateUserStatus(context *gin.Context) {
 		}
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -531,7 +531,7 @@ func (controller *userController) UpdateUserStatus(context *gin.Context) {
 
 			description = append(description, "Success")
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusOK,
 				ResponseCode:   general.SuccessStatusCode,
 				Description:    description,
@@ -546,7 +546,7 @@ func (controller *userController) UpdateUserStatus(context *gin.Context) {
 			description = append(description, error.Error())
 			http_status = http.StatusBadRequest
 
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusBadRequest,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
@@ -568,7 +568,7 @@ func (controller *userController) GetUserGroupByRole(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 
 	user, error := controller.userService.GetUserGroupByRole()
 
@@ -576,7 +576,7 @@ func (controller *userController) GetUserGroupByRole(context *gin.Context) {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -590,7 +590,7 @@ func (controller *userController) GetUserGroupByRole(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,

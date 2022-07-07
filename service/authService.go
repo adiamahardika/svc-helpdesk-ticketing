@@ -33,7 +33,7 @@ func AuthService(userRepository repository.UserRepositoryInterface, roleReposito
 
 func (authService *authService) Login(request *model.LoginRequest) (*model.LoginResponse, error) {
 	var user_response *model.LoginResponse
-	user, error := authService.userRepository.GetUserDetail(request.Username)
+	user, error := authService.userRepository.GetUserDetail(&request.Username)
 
 	if user.Username == "" {
 		error = fmt.Errorf("Username Not Found!")
@@ -107,7 +107,7 @@ func (authService *authService) RefreshToken(context *gin.Context) (*model.Login
 	token_string := context.Request.Header.Get("token")
 	claims := &model.Claims{}
 	jwtKey := []byte(os.Getenv("API_SECRET"))
-	var user []entity.User
+	var user []*entity.User
 	var login_response *model.LoginResponse
 
 	decode_token, error := jwt.ParseWithClaims(token_string, claims,
@@ -125,7 +125,7 @@ func (authService *authService) RefreshToken(context *gin.Context) (*model.Login
 	}
 
 	if error == nil {
-		user, error = authService.userRepository.CheckUsername(claims.Username)
+		user, error = authService.userRepository.CheckUsername(&claims.Username)
 
 		expirationTime := time.Now().Add(time.Minute * 60)
 		generate_token := &model.Claims{
@@ -202,14 +202,14 @@ func (authService *authService) Authorization() gin.HandlerFunc {
 		claims := &model.Claims{}
 		description := []string{}
 		jwtKey := []byte(os.Getenv("API_SECRET"))
-		var status model.StandardResponse
+		var status *model.StandardResponse
 
 		_, error := jwt.ParseWithClaims(token_string, claims,
 			func(token *jwt.Token) (interface{}, error) {
 				return jwtKey, nil
 			})
 
-		user, error := authService.userRepository.CheckUsername(claims.Username)
+		user, error := authService.userRepository.CheckUsername(&claims.Username)
 		generate_sk := general.GetMD5Hash(claims.Username, strconv.Itoa(user[0].Id))
 
 		if signature_key == "" {
@@ -220,7 +220,7 @@ func (authService *authService) Authorization() gin.HandlerFunc {
 
 		if error != nil {
 			description = append(description, error.Error())
-			status = model.StandardResponse{
+			status = &model.StandardResponse{
 				HttpStatusCode: http.StatusUnauthorized,
 				ResponseCode:   general.ErrorStatusCode,
 				Description:    description,
