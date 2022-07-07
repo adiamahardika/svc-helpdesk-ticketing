@@ -42,7 +42,7 @@ func (logService *logService) CreateLog(context *gin.Context, request string, re
 	conv_start_time, _ := strconv.Atoi(start_time)
 
 	parse_ip := check.ReplaceAllString(context.ClientIP(), "")
-	log_request := entity.LgServiceActivities{
+	log_request := &entity.LgServiceActivities{
 		LogId:          parse_ip + start.Format("20060102150405"),
 		RequestFrom:    request_by,
 		RequestTo:      context.Request.RequestURI,
