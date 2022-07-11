@@ -7,7 +7,7 @@ import (
 
 type CategoryRepositoryInterface interface {
 	GetCategory(request *model.GetCategoryRequest) ([]*entity.Category, error)
-	CountCategory(request *model.GetCategoryRequest) (*int, error)
+	CountCategory(request *model.GetCategoryRequest) (int, error)
 	CreateCategory(request *model.CreateCategoryRequest) (*model.CreateCategoryRequest, error)
 	UpdateCategory(request *model.CreateCategoryRequest) (*model.CreateCategoryRequest, error)
 	DeleteCategory(Id *int) error
@@ -28,8 +28,8 @@ func (repo *repository) GetCategory(request *model.GetCategoryRequest) ([]*entit
 	return category, error
 }
 
-func (repo *repository) CountCategory(request *model.GetCategoryRequest) (*int, error) {
-	var total_data *int
+func (repo *repository) CountCategory(request *model.GetCategoryRequest) (int, error) {
+	var total_data int
 
 	error := repo.db.Raw("SELECT COUNT(*) as total_data FROM ticketing_category WHERE is_active LIKE @IsActive", model.GetCategoryRequest{
 		IsActive: "%" + request.IsActive + "%",

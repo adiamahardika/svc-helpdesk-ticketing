@@ -7,7 +7,7 @@ import (
 
 type TicketRepositoryInterface interface {
 	GetTicket(request *model.GetTicketRequest) ([]*entity.Ticket, error)
-	CountTicket(request *model.GetTicketRequest) (*int, error)
+	CountTicket(request *model.GetTicketRequest) (int, error)
 	GetDetailTicket(ticket_code *string) (*entity.Ticket, error)
 	CreateTicket(request *entity.Ticket) (*entity.Ticket, error)
 	CheckTicketCode(request *string) ([]*entity.Ticket, error)
@@ -41,8 +41,8 @@ func (repo *repository) GetTicket(request *model.GetTicketRequest) ([]*entity.Ti
 	return ticket, error
 }
 
-func (repo *repository) CountTicket(request *model.GetTicketRequest) (*int, error) {
-	var total_data *int
+func (repo *repository) CountTicket(request *model.GetTicketRequest) (int, error) {
+	var total_data int
 	var query string
 
 	if len(request.Category) == 0 {

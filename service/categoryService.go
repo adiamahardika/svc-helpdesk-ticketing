@@ -34,7 +34,8 @@ func (categoryService *categoryService) GetCategory(request *model.GetCategoryRe
 	}
 	request.StartIndex = request.PageNo * request.Size
 	total_data, error := categoryService.categoryRepository.CountCategory(request)
-	total_pages := math.Ceil(float64(*total_data) / float64(request.Size))
+
+	total_pages := math.Ceil(float64(total_data) / float64(request.Size))
 
 	category, error := categoryService.categoryRepository.GetCategory(request)
 
