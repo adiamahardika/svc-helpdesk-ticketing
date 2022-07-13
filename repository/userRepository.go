@@ -41,9 +41,17 @@ func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, er
 
 func (repo *repository) CountUser(request model.GetUserRequest) (int, error) {
 	var total_data int
+	var role string
 
-	error := repo.db.Raw("SELECT COUNT(*) as total_data FROM users LEFT OUTER JOIN model_has_roles ON (users.id = model_has_roles.model_id) LEFT OUTER JOIN roles ON (roles.id = model_has_roles.role_id) WHERE users.name LIKE @Search OR users.username LIKE @Search OR users.email LIKE @Search", model.GetUserRequest{
+	if request.Role != 0 {
+		role = "WHERE model_has_roles.role_id = @Role"
+	}
+
+	query := fmt.Sprintf("SELECT COUNT(*) as total_data FROM (SELECT users.* FROM users LEFT OUTER JOIN model_has_roles ON (users.id = model_has_roles.model_id) LEFT OUTER JOIN roles ON (roles.id = model_has_roles.role_id) %s) AS tbl WHERE tbl.name LIKE @Search OR tbl.username LIKE @Search OR tbl.email LIKE @Search", role)
+
+	error := repo.db.Raw(query, model.GetUserRequest{
 		Search: "%" + request.Search + "%",
+		Role:   request.Role,
 	}).Find(&total_data).Error
 
 	return total_data, error
