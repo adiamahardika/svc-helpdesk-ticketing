@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
 )
@@ -20,9 +21,17 @@ type UserRepositoryInterface interface {
 
 func (repo *repository) GetUser(request model.GetUserRequest) ([]entity.User, error) {
 	var user []entity.User
+	var role string
 
-	error := repo.db.Raw("SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', roles.id, 'name', roles.name)) AS roles FROM users LEFT OUTER JOIN model_has_roles ON (users.id = model_has_roles.model_id) LEFT OUTER JOIN roles ON (roles.id = model_has_roles.role_id) WHERE users.name LIKE @Search OR users.username LIKE @Search OR users.email LIKE @Search GROUP BY model_has_roles.model_id, users.id ORDER BY users.name ASC LIMIT @Size OFFSET @StartIndex", model.GetUserRequest{
+	if request.Role != 0 {
+		role = "WHERE model_has_roles.role_id = @Role"
+	}
+
+	query := fmt.Sprintf("SELECT * FROM (SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', roles.id, 'name', roles.name)) AS roles FROM users LEFT OUTER JOIN model_has_roles ON (users.id = model_has_roles.model_id) LEFT OUTER JOIN roles ON (roles.id = model_has_roles.role_id) %s GROUP BY model_has_roles.model_id, users.id ORDER BY users.name ASC) AS tbl WHERE tbl.name LIKE @Search OR tbl.username LIKE @Search OR tbl.email LIKE @Search LIMIT @Size OFFSET @StartIndex", role)
+
+	error := repo.db.Raw(query, model.GetUserRequest{
 		Search:     "%" + request.Search + "%",
+		Role:       request.Role,
 		Size:       request.Size,
 		StartIndex: request.StartIndex,
 	}).Find(&user).Error

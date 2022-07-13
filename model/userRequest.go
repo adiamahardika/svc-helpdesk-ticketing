@@ -7,6 +7,7 @@ type GetUserRequest struct {
 	Size       int    `json:"size"`
 	PageNo     int    `json:"pageNo"`
 	StartIndex int    `json:"startIndex"`
+	Role       int    `json:"role"`
 }
 
 type CreateUserRequest struct {
