@@ -54,27 +54,78 @@ func (s *Sender) Send(wg *sync.WaitGroup, m *Message) error {
 func NewMessage(request *model.SmtpRequest) *Message {
 
 	subject := fmt.Sprintf("%s [%s] %s", request.Type, request.TicketCode, request.Judul)
-	message := fmt.Sprintf(`<html>
+	message := fmt.Sprintf(`
+<html>
 	<body>
-	  <div
+	  <table
 		style="
 		  font-family: 'Poppins', sans-serif;
 		  font-weight: 400;
+		  border-collapse: separate;
+		  border-spacing: 0 16px;
 		"
 	  >
-		<p style="font-size: 12px;">
-		  Lokasi: %s<br />
-		  Terminal Id: %s<br />
-		  Status: %s<br />
-		  Prioritas: %s<br />
-		  Pembuat tiket: %s<br />
-		  Penulis: %s
-		</p>
-		<br />
-		<p style="white-space: pre-line;font-size: 14px;">%s</p>
-	  </div>
+		<tbody>
+		  <tr>
+			<td colspan="3">
+			  <h3 style="margin: 0px; font-weight: 600; margin-bottom: 16px">
+			[%s]  %s
+			  </h3>
+			</td>
+		  </tr>
+		  <tr style="font-size: 12px">
+			<td style="width: 20vw">
+			  Area
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			  Regional
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			</td>
+			<td style="width: 60vw">
+			  Grapari
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			  Location
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			</td>
+			<td style="width: 20vw">
+			  Terminal Id
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			  &nbsp; <br />
+			  &nbsp;
+			</td>
+		  </tr>
+		  <tr style="font-size: 12px">
+			<td>
+			  Status
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			  Prioritas
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			</td>
+			<td>
+			  Category
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			  Sub Category
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			</td>
+			<td>
+			  Dibuat oleh
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			  Assign To
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">%s</p>
+			</td>
+		  </tr>
+		  <tr>
+			<td style="font-size: 12px; margin-top: 16px" colspan="3">
+			  Message
+			  <p style="font-size: 14px; font-weight: 500; margin: 0px">
+				%s
+			  </p>
+			</td>
+		  </tr>
+		</tbody>
+	  </table>
 	</body>
-  </html>`, request.Lokasi, request.TerminalId, request.Status, request.Prioritas, request.UsernamePembuat, request.Author, request.Isi)
+  </html>`, request.TicketCode, request.Judul, request.AreaName, request.Regional, request.GrapariName, request.Lokasi, request.TerminalId, request.Status, request.Prioritas, request.CategoryName, request.SubCategory, request.UserPembuat, request.Assignee, request.Isi)
+
 	return &Message{Subject: subject, Body: message, Attachments1: make(map[string][]byte), Attachments2: make(map[string][]byte)}
 }
 
