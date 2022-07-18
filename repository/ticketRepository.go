@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
 )
@@ -18,12 +19,13 @@ type TicketRepositoryInterface interface {
 func (repo *repository) GetTicket(request model.GetTicketRequest) ([]entity.Ticket, error) {
 	var ticket []entity.Ticket
 	var query string
+	var category string
 
-	if len(request.Category) == 0 {
-		query = "SELECT * FROM (SELECT ticket.*, ticketing_category.name AS category_name, ms_area.area_name, ms_grapari.name AS grapari_name FROM ticket LEFT OUTER JOIN ticketing_category ON (ticket.category = CAST(ticketing_category.id AS varchar(10))) LEFT OUTER JOIN ms_area ON (ticket.area_code = ms_area.area_code) LEFT OUTER JOIN ms_grapari ON (ticket.grapari_id = ms_grapari.grapari_id) WHERE prioritas LIKE @Priority AND ticket.status LIKE @Status AND assigned_to LIKE @AssignedTo AND username_pembuat LIKE @UsernamePembuat AND tgl_dibuat >= @StartDate AND tgl_dibuat <= @EndDate ORDER BY tgl_diperbarui DESC) as tbl WHERE judul LIKE @Search OR ticket_code LIKE @Search OR lokasi LIKE @Search OR terminal_id LIKE @Search OR email LIKE @Search LIMIT @PageSize OFFSET @StartIndex"
-	} else {
-		query = "SELECT * FROM (SELECT ticket.*, ticketing_category.name AS category_name, ms_area.area_name, ms_grapari.name AS grapari_name FROM ticket LEFT OUTER JOIN ticketing_category ON (ticket.category = CAST(ticketing_category.id AS varchar(10))) LEFT OUTER JOIN ms_area ON (ticket.area_code = ms_area.area_code) LEFT OUTER JOIN ms_grapari ON (ticket.grapari_id = ms_grapari.grapari_id) WHERE prioritas LIKE @Priority AND ticket.status LIKE @Status AND assigned_to LIKE @AssignedTo AND username_pembuat LIKE @UsernamePembuat AND category IN @Category AND tgl_dibuat >= @StartDate AND tgl_dibuat <= @EndDate ORDER BY tgl_diperbarui DESC) as tbl WHERE judul LIKE @Search OR ticket_code LIKE @Search OR lokasi LIKE @Search OR terminal_id LIKE @Search OR email LIKE @Search LIMIT @PageSize OFFSET @StartIndex"
+	if len(request.Category) > 0 {
+		category = "AND category IN @Category"
 	}
+
+	query = fmt.Sprintf("SELECT * FROM (SELECT ticket.*, ticketing_category.name AS category_name, ms_area.area_name, ms_grapari.name AS grapari_name, users1.name AS user_pembuat, users2.name AS assignee FROM ticket LEFT OUTER JOIN ticketing_category ON (ticket.category = CAST(ticketing_category.id AS varchar(10))) LEFT OUTER JOIN ms_area ON (ticket.area_code = ms_area.area_code) LEFT OUTER JOIN ms_grapari ON (ticket.grapari_id = ms_grapari.grapari_id) LEFT OUTER JOIN users users1 ON (ticket.username_pembuat = users1.username) LEFT OUTER JOIN users users2 ON (ticket.assigned_to = users2.username) WHERE prioritas LIKE @Priority AND ticket.status LIKE @Status AND assigned_to LIKE @AssignedTo AND username_pembuat LIKE @UsernamePembuat %s AND tgl_dibuat >= @StartDate AND tgl_dibuat <= @EndDate ORDER BY tgl_diperbarui DESC) as tbl WHERE judul LIKE @Search OR ticket_code LIKE @Search OR lokasi LIKE @Search OR terminal_id LIKE @Search OR email LIKE @Search LIMIT @PageSize OFFSET @StartIndex", category)
 
 	error := repo.db.Raw(query, model.GetTicketRequest{
 		AssignedTo:      "%" + request.AssignedTo + "%",
@@ -44,12 +46,13 @@ func (repo *repository) GetTicket(request model.GetTicketRequest) ([]entity.Tick
 func (repo *repository) CountTicket(request model.GetTicketRequest) (int, error) {
 	var total_data int
 	var query string
+	var category string
 
-	if len(request.Category) == 0 {
-		query = "SELECT COUNT(*) as total_data FROM (SELECT * FROM ticket WHERE prioritas LIKE @Priority AND status LIKE @Status AND assigned_to LIKE @AssignedTo AND username_pembuat LIKE @UsernamePembuat AND tgl_dibuat >= @StartDate AND tgl_dibuat <= @EndDate ORDER BY tgl_diperbarui DESC) as tbl WHERE judul LIKE @Search OR ticket_code LIKE @Search OR lokasi LIKE @Search OR terminal_id LIKE @Search OR email LIKE @Search"
-	} else {
-		query = "SELECT COUNT(*) as total_data FROM (SELECT * FROM ticket WHERE prioritas LIKE @Priority AND status LIKE @Status AND assigned_to LIKE @AssignedTo AND username_pembuat LIKE @UsernamePembuat AND category IN @Category AND tgl_dibuat >= @StartDate AND tgl_dibuat <= @EndDate ORDER BY tgl_diperbarui DESC) as tbl WHERE judul LIKE @Search OR ticket_code LIKE @Search OR lokasi LIKE @Search OR terminal_id LIKE @Search OR email LIKE @Search"
+	if len(request.Category) > 0 {
+		category = "AND category IN @Category"
 	}
+
+	query = fmt.Sprintf("SELECT COUNT(*) as total_data FROM (SELECT * FROM ticket WHERE prioritas LIKE @Priority AND status LIKE @Status AND assigned_to LIKE @AssignedTo AND username_pembuat LIKE @UsernamePembuat %s AND tgl_dibuat >= @StartDate AND tgl_dibuat <= @EndDate ORDER BY tgl_diperbarui DESC) as tbl WHERE judul LIKE @Search OR ticket_code LIKE @Search OR lokasi LIKE @Search OR terminal_id LIKE @Search OR email LIKE @Search", category)
 
 	error := repo.db.Raw(query, model.GetTicketRequest{
 		AssignedTo:      "%" + request.AssignedTo + "%",
@@ -70,7 +73,7 @@ func (repo *repository) CountTicket(request model.GetTicketRequest) (int, error)
 func (repo *repository) GetDetailTicket(ticket_code string) (entity.Ticket, error) {
 	var ticket entity.Ticket
 
-	error := repo.db.Raw("SELECT ticket.*, ms_area.area_name, ms_grapari.name AS grapari_name, ticketing_category.name AS category_name FROM ticket LEFT OUTER JOIN ms_area ON (ticket.area_code = ms_area.area_code) LEFT OUTER JOIN ms_grapari ON (ticket.grapari_id = ms_grapari.grapari_id) LEFT OUTER JOIN ticketing_category ON (ticket.category = CAST(ticketing_category.id AS varchar(10))) WHERE ticket_code = ?", ticket_code).Find(&ticket).Error
+	error := repo.db.Raw("SELECT ticket.*, ms_area.area_name, ms_grapari.name AS grapari_name, ticketing_category.name AS category_name, users1.name AS user_pembuat, users2.name AS assignee FROM ticket LEFT OUTER JOIN ms_area ON (ticket.area_code = ms_area.area_code) LEFT OUTER JOIN ms_grapari ON (ticket.grapari_id = ms_grapari.grapari_id) LEFT OUTER JOIN ticketing_category ON (ticket.category = CAST(ticketing_category.id AS varchar(10))) LEFT OUTER JOIN users users1 ON (ticket.username_pembuat = users1.username) LEFT OUTER JOIN users users2 ON (ticket.assigned_to = users2.username) WHERE ticket_code = ?", ticket_code).Find(&ticket).Error
 
 	return ticket, error
 }
