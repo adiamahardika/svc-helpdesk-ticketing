@@ -160,6 +160,11 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 			// wg.Add(1)
 			var detail_ticket entity.Ticket
 			detail_ticket, error = ticketService.ticketRepository.GetDetailTicket(request.TicketCode)
+			assignee := detail_ticket.Assignee
+
+			if len(assignee) == 0 {
+				assignee = "Unassigned"
+			}
 
 			email_notif, _ := ticketService.emailNotifRepository.GetAllEmailNotif()
 			sender := NewSMTP()
@@ -179,7 +184,7 @@ func (ticketService *ticketService) CreateTicket(request model.CreateTicketReque
 				CategoryName:    detail_ticket.CategoryName,
 				SubCategory:     detail_ticket.SubCategory,
 				UserPembuat:     detail_ticket.UserPembuat,
-				Assignee:        detail_ticket.Assignee,
+				Assignee:        assignee,
 				Type:            "New",
 			})
 			message.CC = []string{request.Email}
