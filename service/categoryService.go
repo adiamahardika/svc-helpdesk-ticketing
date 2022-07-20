@@ -40,7 +40,7 @@ func (categoryService *categoryService) GetCategory(request *model.GetCategoryRe
 	category, error := categoryService.categoryRepository.GetCategory(request)
 
 	for _, value := range category {
-		var sub_category []*entity.SubCategory
+		var sub_category []entity.SubCategory
 		json.Unmarshal([]byte(value.SubCategory), &sub_category)
 
 		response = append(response, model.CreateCategoryRequest{
@@ -56,7 +56,8 @@ func (categoryService *categoryService) GetCategory(request *model.GetCategoryRe
 }
 
 func (categoryService *categoryService) CreateCategory(request *model.CreateCategoryRequest) (model.CreateCategoryRequest, error) {
-	var sub_category []*entity.SubCategory
+	var request_sc []*entity.SubCategory
+	var response_sc []entity.SubCategory
 	var response model.CreateCategoryRequest
 	date_now := time.Now()
 
@@ -67,7 +68,7 @@ func (categoryService *categoryService) CreateCategory(request *model.CreateCate
 
 	if error == nil {
 		for _, value := range request.SubCategory {
-			sub_category = append(sub_category, &entity.SubCategory{
+			request_sc = append(request_sc, &entity.SubCategory{
 				Name:       value.Name,
 				IdCategory: category.Id,
 				Priority:   value.Priority,
@@ -75,12 +76,12 @@ func (categoryService *categoryService) CreateCategory(request *model.CreateCate
 				UpdatedAt:  date_now,
 			})
 		}
-		sub_category, error = categoryService.subCategoryRepository.CreateSubCategory(sub_category)
+		response_sc, error = categoryService.subCategoryRepository.CreateSubCategory(request_sc)
 
 		response = model.CreateCategoryRequest{
 			Id:          category.Id,
 			Name:        category.Name,
-			SubCategory: sub_category,
+			SubCategory: response_sc,
 			IsActive:    category.IsActive,
 			UpdateAt:    category.UpdateAt,
 		}
@@ -90,7 +91,8 @@ func (categoryService *categoryService) CreateCategory(request *model.CreateCate
 }
 
 func (categoryService *categoryService) UpdateCategory(request *model.CreateCategoryRequest) (model.CreateCategoryRequest, error) {
-	var sub_category []*entity.SubCategory
+	var request_sc []*entity.SubCategory
+	var response_sc []entity.SubCategory
 	date_now := time.Now()
 
 	request.UpdateAt = date_now
@@ -101,7 +103,7 @@ func (categoryService *categoryService) UpdateCategory(request *model.CreateCate
 
 		if error == nil {
 			for _, value := range request.SubCategory {
-				sub_category = append(sub_category, &entity.SubCategory{
+				request_sc = append(request_sc, &entity.SubCategory{
 					Name:       value.Name,
 					IdCategory: request.Id,
 					Priority:   value.Priority,
@@ -110,8 +112,8 @@ func (categoryService *categoryService) UpdateCategory(request *model.CreateCate
 				})
 			}
 
-			sub_category, error = categoryService.subCategoryRepository.CreateSubCategory(sub_category)
-			category.SubCategory = sub_category
+			response_sc, error = categoryService.subCategoryRepository.CreateSubCategory(request_sc)
+			category.SubCategory = response_sc
 		}
 	}
 
@@ -131,7 +133,7 @@ func (categoryService *categoryService) GetDetailCategory(request *string) ([]mo
 	category, error := categoryService.categoryRepository.GetDetailCategory(request)
 
 	for _, value := range category {
-		var sub_category []*entity.SubCategory
+		var sub_category []entity.SubCategory
 		json.Unmarshal([]byte(value.SubCategory), &sub_category)
 
 		response = append(response, model.CreateCategoryRequest{

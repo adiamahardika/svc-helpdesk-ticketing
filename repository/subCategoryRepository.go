@@ -3,13 +3,13 @@ package repository
 import "svc-myg-ticketing/entity"
 
 type SubCategoryRepositoryInterface interface {
-	CreateSubCategory(request []*entity.SubCategory) ([]*entity.SubCategory, error)
+	CreateSubCategory(request []*entity.SubCategory) ([]entity.SubCategory, error)
 	DeleteSubCategory(id_category *int) error
-	GetSubCategory() ([]*entity.SubCategory, error)
+	GetSubCategory() ([]entity.SubCategory, error)
 }
 
-func (repo *repository) CreateSubCategory(request []*entity.SubCategory) ([]*entity.SubCategory, error) {
-	var sub_category []*entity.SubCategory
+func (repo *repository) CreateSubCategory(request []*entity.SubCategory) ([]entity.SubCategory, error) {
+	var sub_category []entity.SubCategory
 
 	error := repo.db.Table("ticketing_sub_category").Create(&request).Find(&sub_category).Error
 
@@ -24,8 +24,8 @@ func (repo *repository) DeleteSubCategory(id_category *int) error {
 	return error
 }
 
-func (repo *repository) GetSubCategory() ([]*entity.SubCategory, error) {
-	var sub_category []*entity.SubCategory
+func (repo *repository) GetSubCategory() ([]entity.SubCategory, error) {
+	var sub_category []entity.SubCategory
 
 	error := repo.db.Raw("SELECT * FROM ticketing_sub_category ORDER BY name ASC").Find(&sub_category).Error
 
