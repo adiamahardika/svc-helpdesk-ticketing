@@ -7,11 +7,11 @@ import (
 )
 
 type TerminalRepositoryInterface interface {
-	GetTerminal(request *model.GetTerminalRequest) ([]*entity.MsTerminal, error)
+	GetTerminal(request *model.GetTerminalRequest) ([]entity.MsTerminal, error)
 }
 
-func (repo *repository) GetTerminal(request *model.GetTerminalRequest) ([]*entity.MsTerminal, error) {
-	var result []*entity.MsTerminal
+func (repo *repository) GetTerminal(request *model.GetTerminalRequest) ([]entity.MsTerminal, error) {
+	var result []entity.MsTerminal
 	var area_code string
 	var regional string
 	var grapari_id string

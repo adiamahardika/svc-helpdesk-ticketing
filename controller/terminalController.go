@@ -31,7 +31,7 @@ func (controller *terminalController) GetTerminal(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var terminal []*entity.MsTerminal
+	var terminal []entity.MsTerminal
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
