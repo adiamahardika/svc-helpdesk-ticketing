@@ -31,7 +31,7 @@ func (controller *areaController) GetArea(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var area []*entity.MsArea
+	var area []entity.MsArea
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {

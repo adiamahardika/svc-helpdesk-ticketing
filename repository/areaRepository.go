@@ -7,11 +7,11 @@ import (
 )
 
 type AreaRepositoryInterface interface {
-	GetArea(request *model.GetAreaRequest) ([]*entity.MsArea, error)
+	GetArea(request *model.GetAreaRequest) ([]entity.MsArea, error)
 }
 
-func (repo *repository) GetArea(request *model.GetAreaRequest) ([]*entity.MsArea, error) {
-	var area []*entity.MsArea
+func (repo *repository) GetArea(request *model.GetAreaRequest) ([]entity.MsArea, error) {
+	var area []entity.MsArea
 	var area_code string
 
 	if len(request.AreaCode) > 0 {
