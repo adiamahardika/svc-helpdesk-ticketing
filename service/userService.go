@@ -14,16 +14,16 @@ import (
 )
 
 type UserServiceInterface interface {
-	GetUser(request *model.GetUserRequest) ([]*model.GetUserResponse, float64, error)
-	GetUserDetail(request *string) (*model.GetUserResponse, error)
+	GetUser(request *model.GetUserRequest) ([]model.GetUserResponse, float64, error)
+	GetUserDetail(request *string) (model.GetUserResponse, error)
 	DeleteUser(id *int) error
-	CreateUser(request *model.CreateUserRequest) (*entity.User, error)
-	UpdateUser(request *model.UpdateUserRequest) (*entity.User, error)
-	ChangePassword(request *model.ChangePassRequest) (*model.GetUserResponse, error)
-	ResetPassword(request *model.ResetPassword) (*model.GetUserResponse, error)
-	UpdateProfile(request *model.UpdateUserRequest) (*entity.User, error)
-	UpdateUserStatus(request *model.UpdateUserStatus) (*entity.User, error)
-	GetUserGroupByRole() ([]*model.GetUserGroupByRoleResponse, error)
+	CreateUser(request *model.CreateUserRequest) (entity.User, error)
+	UpdateUser(request *model.UpdateUserRequest) (entity.User, error)
+	ChangePassword(request *model.ChangePassRequest) (model.GetUserResponse, error)
+	ResetPassword(request *model.ResetPassword) (model.GetUserResponse, error)
+	UpdateProfile(request *model.UpdateUserRequest) (entity.User, error)
+	UpdateUserStatus(request *model.UpdateUserStatus) (entity.User, error)
+	GetUserGroupByRole() ([]model.GetUserGroupByRoleResponse, error)
 }
 
 type userService struct {
@@ -35,15 +35,15 @@ func UserService(userRepository repository.UserRepositoryInterface, userHasRoleR
 	return &userService{userRepository, userHasRoleRepository}
 }
 
-func (userService *userService) GetUser(request *model.GetUserRequest) ([]*model.GetUserResponse, float64, error) {
+func (userService *userService) GetUser(request *model.GetUserRequest) ([]model.GetUserResponse, float64, error) {
 
-	var response []*model.GetUserResponse
+	var response []model.GetUserResponse
 	if request.Size == 0 {
 		request.Size = math.MaxInt16
 	}
 	request.StartIndex = request.PageNo * request.Size
 	total_data, error := userService.userRepository.CountUser(request)
-	total_pages := math.Ceil(float64(*total_data) / float64(request.Size))
+	total_pages := math.Ceil(float64(total_data) / float64(request.Size))
 
 	user, error := userService.userRepository.GetUser(request)
 
@@ -51,7 +51,7 @@ func (userService *userService) GetUser(request *model.GetUserRequest) ([]*model
 		var role []entity.Role
 		json.Unmarshal([]byte(value.Roles), &role)
 
-		response = append(response, &model.GetUserResponse{
+		response = append(response, model.GetUserResponse{
 			Id:        value.Id,
 			Username:  value.Username,
 			Name:      value.Name,
@@ -68,9 +68,9 @@ func (userService *userService) GetUser(request *model.GetUserRequest) ([]*model
 	return response, total_pages, error
 }
 
-func (userService *userService) GetUserDetail(request *string) (*model.GetUserResponse, error) {
+func (userService *userService) GetUserDetail(request *string) (model.GetUserResponse, error) {
 
-	var response *model.GetUserResponse
+	var response model.GetUserResponse
 
 	user, error := userService.userRepository.GetUserDetail(request)
 
@@ -83,7 +83,7 @@ func (userService *userService) GetUserDetail(request *string) (*model.GetUserRe
 	var grapariId []string
 	json.Unmarshal([]byte(user.GrapariId), &grapariId)
 
-	response = &model.GetUserResponse{
+	response = model.GetUserResponse{
 		Id:         user.Id,
 		Username:   user.Username,
 		Name:       user.Name,
@@ -110,8 +110,8 @@ func (userService *userService) DeleteUser(id *int) error {
 	return error
 }
 
-func (userService *userService) CreateUser(request *model.CreateUserRequest) (*entity.User, error) {
-	var user *entity.User
+func (userService *userService) CreateUser(request *model.CreateUserRequest) (entity.User, error) {
+	var user entity.User
 	date_now := time.Now()
 
 	users, error := userService.userRepository.CheckUsername(&request.Username)
@@ -142,8 +142,8 @@ func (userService *userService) CreateUser(request *model.CreateUserRequest) (*e
 	return user, error
 }
 
-func (userService *userService) UpdateUser(request *model.UpdateUserRequest) (*entity.User, error) {
-	var user *entity.User
+func (userService *userService) UpdateUser(request *model.UpdateUserRequest) (entity.User, error) {
+	var user entity.User
 	date_now := time.Now()
 
 	request.UpdatedAt = date_now
@@ -163,9 +163,9 @@ func (userService *userService) UpdateUser(request *model.UpdateUserRequest) (*e
 	return user, error
 }
 
-func (userService *userService) ChangePassword(request *model.ChangePassRequest) (*model.GetUserResponse, error) {
+func (userService *userService) ChangePassword(request *model.ChangePassRequest) (model.GetUserResponse, error) {
 
-	var user *model.GetUserResponse
+	var user model.GetUserResponse
 	date_now := time.Now()
 
 	users, error := userService.userRepository.CheckUsername(&request.Username)
@@ -195,8 +195,8 @@ func (userService *userService) ChangePassword(request *model.ChangePassRequest)
 	return user, error
 }
 
-func (userService *userService) ResetPassword(request *model.ResetPassword) (*model.GetUserResponse, error) {
-	var user *model.GetUserResponse
+func (userService *userService) ResetPassword(request *model.ResetPassword) (model.GetUserResponse, error) {
+	var user model.GetUserResponse
 	date_now := time.Now()
 
 	users, error := userService.userRepository.CheckUsername(&request.Username)
@@ -224,8 +224,8 @@ func (userService *userService) ResetPassword(request *model.ResetPassword) (*mo
 	return user, error
 }
 
-func (userService *userService) UpdateProfile(request *model.UpdateUserRequest) (*entity.User, error) {
-	var user *entity.User
+func (userService *userService) UpdateProfile(request *model.UpdateUserRequest) (entity.User, error) {
+	var user entity.User
 	date_now := time.Now()
 
 	request.UpdatedAt = date_now
@@ -236,8 +236,8 @@ func (userService *userService) UpdateProfile(request *model.UpdateUserRequest) 
 	return user, error
 }
 
-func (userService *userService) UpdateUserStatus(request *model.UpdateUserStatus) (*entity.User, error) {
-	var user *entity.User
+func (userService *userService) UpdateUserStatus(request *model.UpdateUserStatus) (entity.User, error) {
+	var user entity.User
 	date_now := time.Now()
 
 	request.UpdatedAt = date_now
@@ -248,15 +248,15 @@ func (userService *userService) UpdateUserStatus(request *model.UpdateUserStatus
 	return user, error
 }
 
-func (userService *userService) GetUserGroupByRole() ([]*model.GetUserGroupByRoleResponse, error) {
-	var response []*model.GetUserGroupByRoleResponse
+func (userService *userService) GetUserGroupByRole() ([]model.GetUserGroupByRoleResponse, error) {
+	var response []model.GetUserGroupByRoleResponse
 	user, error := userService.userRepository.GetUserGroupByRole()
 
 	for _, value := range user {
 		var user_options []model.UserOptions
 		json.Unmarshal([]byte(value.Options), &user_options)
 
-		response = append(response, &model.GetUserGroupByRoleResponse{
+		response = append(response, model.GetUserGroupByRoleResponse{
 			Id:      value.Id,
 			Label:   value.Label,
 			Options: user_options,

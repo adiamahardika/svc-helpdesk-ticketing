@@ -189,7 +189,7 @@ func (controller *userController) CreateUser(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var user *entity.User
+	var user entity.User
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -255,7 +255,7 @@ func (controller *userController) UpdateUser(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var user *entity.User
+	var user entity.User
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -321,7 +321,7 @@ func (controller *userController) ChangePassword(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var user *model.GetUserResponse
+	var user model.GetUserResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -387,7 +387,7 @@ func (controller *userController) ResetPassword(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var user *model.GetUserResponse
+	var user model.GetUserResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -452,7 +452,7 @@ func (controller *userController) UpdateProfile(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var user *entity.User
+	var user entity.User
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -517,7 +517,7 @@ func (controller *userController) UpdateUserStatus(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var user *entity.User
+	var user entity.User
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {

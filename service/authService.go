@@ -107,7 +107,7 @@ func (authService *authService) RefreshToken(context *gin.Context) (*model.Login
 	token_string := context.Request.Header.Get("token")
 	claims := &model.Claims{}
 	jwtKey := []byte(os.Getenv("API_SECRET"))
-	var user []*entity.User
+	var user []entity.User
 	var login_response *model.LoginResponse
 
 	decode_token, error := jwt.ParseWithClaims(token_string, claims,
