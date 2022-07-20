@@ -26,7 +26,7 @@ func EmailNotifController(emailNotifService service.EmailNotifServiceInterface, 
 
 func (controller *emailNotifController) CreateEmailNotif(context *gin.Context) {
 
-	var email_notif *entity.EmailNotif
+	var email_notif entity.EmailNotif
 
 	error := context.ShouldBind(&email_notif)
 	description := []string{}
@@ -50,7 +50,7 @@ func (controller *emailNotifController) CreateEmailNotif(context *gin.Context) {
 		})
 	} else {
 
-		email_notif, error = controller.emailNotifService.CreateEmailNotif(email_notif)
+		email_notif, error = controller.emailNotifService.CreateEmailNotif(&email_notif)
 
 		if error == nil {
 
@@ -135,7 +135,7 @@ func (controller *emailNotifController) GetEmailNotif(context *gin.Context) {
 
 func (controller *emailNotifController) UpdateEmailNotif(context *gin.Context) {
 
-	var email_notif *entity.EmailNotif
+	var email_notif entity.EmailNotif
 
 	error := context.ShouldBind(&email_notif)
 	description := []string{}
@@ -159,7 +159,7 @@ func (controller *emailNotifController) UpdateEmailNotif(context *gin.Context) {
 		})
 	} else {
 
-		email_notif, error = controller.emailNotifService.UpdateEmailNotif(email_notif)
+		email_notif, error = controller.emailNotifService.UpdateEmailNotif(&email_notif)
 
 		if error == nil {
 
@@ -248,7 +248,7 @@ func (controller *emailNotifController) GetDetailEmailNotif(context *gin.Context
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var email_notif []*entity.EmailNotif
+	var email_notif []entity.EmailNotif
 
 	email_notif, error = controller.emailNotifService.GetDetailEmailNotif(&id)
 
