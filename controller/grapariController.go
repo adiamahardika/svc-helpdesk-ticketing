@@ -31,7 +31,7 @@ func (controller *grapariController) GetGrapari(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var grapari []*entity.MsGrapari
+	var grapari []entity.MsGrapari
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {

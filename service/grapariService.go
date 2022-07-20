@@ -7,7 +7,7 @@ import (
 )
 
 type GrapariServiceInterface interface {
-	GetGrapari(request *model.GetGrapariRequest) ([]*entity.MsGrapari, error)
+	GetGrapari(request *model.GetGrapariRequest) ([]entity.MsGrapari, error)
 }
 
 type grapariService struct {
@@ -18,7 +18,7 @@ func GrapariService(repository repository.GrapariRepositotyInterface) *grapariSe
 	return &grapariService{repository}
 }
 
-func (grapariService *grapariService) GetGrapari(request *model.GetGrapariRequest) ([]*entity.MsGrapari, error) {
+func (grapariService *grapariService) GetGrapari(request *model.GetGrapariRequest) ([]entity.MsGrapari, error) {
 
 	grapari, error := grapariService.repository.GetGrapari(request)
 
