@@ -7,11 +7,11 @@ import (
 )
 
 type ReportRepositoryInterface interface {
-	GetReport(request *model.GetReportRequest) ([]*entity.Ticket, error)
+	GetReport(request *model.GetReportRequest) ([]entity.Ticket, error)
 }
 
-func (repo *repository) GetReport(request *model.GetReportRequest) ([]*entity.Ticket, error) {
-	var ticket []*entity.Ticket
+func (repo *repository) GetReport(request *model.GetReportRequest) ([]entity.Ticket, error) {
+	var ticket []entity.Ticket
 	var query string
 	var category string
 	var created_by string
