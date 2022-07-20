@@ -89,7 +89,7 @@ func (controller *categoryController) CreateCategory(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var category *model.CreateCategoryRequest
+	var category model.CreateCategoryRequest
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -154,7 +154,7 @@ func (controller *categoryController) UpdateCategory(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var category *model.CreateCategoryRequest
+	var category model.CreateCategoryRequest
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
