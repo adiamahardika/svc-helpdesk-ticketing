@@ -7,11 +7,11 @@ import (
 )
 
 type RegionalRepositoryInterface interface {
-	GetRegional(request *model.GetRegionalRequest) ([]*entity.MsRegional, error)
+	GetRegional(request *model.GetRegionalRequest) ([]entity.MsRegional, error)
 }
 
-func (repo *repository) GetRegional(request *model.GetRegionalRequest) ([]*entity.MsRegional, error) {
-	var result []*entity.MsRegional
+func (repo *repository) GetRegional(request *model.GetRegionalRequest) ([]entity.MsRegional, error) {
+	var result []entity.MsRegional
 	var area_code string
 	var regional string
 

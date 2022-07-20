@@ -7,7 +7,7 @@ import (
 )
 
 type RegionalServiceInterface interface {
-	GetRegional(request *model.GetRegionalRequest) ([]*entity.MsRegional, error)
+	GetRegional(request *model.GetRegionalRequest) ([]entity.MsRegional, error)
 }
 
 type regionalService struct {
@@ -18,7 +18,7 @@ func RegionalService(repository repository.RegionalRepositoryInterface) *regiona
 	return &regionalService{repository}
 }
 
-func (regionalService *regionalService) GetRegional(request *model.GetRegionalRequest) ([]*entity.MsRegional, error) {
+func (regionalService *regionalService) GetRegional(request *model.GetRegionalRequest) ([]entity.MsRegional, error) {
 
 	regional, error := regionalService.repository.GetRegional(request)
 

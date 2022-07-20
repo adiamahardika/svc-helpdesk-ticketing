@@ -31,7 +31,7 @@ func (controller *regionalController) GetRegional(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var regional []*entity.MsRegional
+	var regional []entity.MsRegional
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
