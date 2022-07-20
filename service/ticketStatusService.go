@@ -6,7 +6,7 @@ import (
 )
 
 type TicketStatusServiceInterface interface {
-	GetTicketStatus() ([]*entity.TicketStatus, error)
+	GetTicketStatus() ([]entity.TicketStatus, error)
 }
 
 type ticketStatusService struct {
@@ -17,7 +17,7 @@ func TicketStatusService(ticketStatusRepository repository.TicketStatusRepositor
 	return &ticketStatusService{ticketStatusRepository}
 }
 
-func (ticketStatusService *ticketStatusService) GetTicketStatus() ([]*entity.TicketStatus, error) {
+func (ticketStatusService *ticketStatusService) GetTicketStatus() ([]entity.TicketStatus, error) {
 
 	ticket_status, error := ticketStatusService.ticketStatusRepository.GetTicketStatus()
 
