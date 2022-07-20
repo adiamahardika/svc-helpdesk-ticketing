@@ -47,7 +47,7 @@ func (authService *authService) Login(request *model.LoginRequest) (*model.Login
 		}
 		if error == nil {
 			var parse_role []*model.GetRoleResponse
-			var role []*entity.Role
+			var role []entity.Role
 
 			role, error = authService.roleRepository.GetDetailRole(&user.RuleId)
 

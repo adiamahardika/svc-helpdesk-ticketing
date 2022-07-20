@@ -72,7 +72,7 @@ func (controller *roleController) CreateRole(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var role []*entity.Role
+	var role []entity.Role
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
@@ -138,7 +138,7 @@ func (controller *roleController) UpdateRole(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var role *model.GetRoleResponse
+	var role model.GetRoleResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {
