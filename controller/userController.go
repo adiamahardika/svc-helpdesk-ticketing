@@ -26,43 +26,20 @@ func UserController(userService service.UserServiceInterface, logService service
 
 func (controller *userController) GetUser(context *gin.Context) {
 
-	search := context.Param("search")
-	size, error := strconv.Atoi(context.Param("size"))
-	page_no, error := strconv.Atoi(context.Param("page_no"))
+	var request *model.GetUserRequest
 
-	if search == "*" {
-		search = ""
-	}
-	request := model.GetUserRequest{
-		Search: search,
-		Size:   size,
-		PageNo: page_no,
-	}
-
+	error := context.ShouldBindJSON(&request)
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
+	var user entity.User
+	var totalPages float64
 
-	user, total_pages, error := controller.userService.GetUser(&request)
-
-	if error == nil {
-
-		description = append(description, "Success")
-
-		status = &model.StandardResponse{
-			HttpStatusCode: http.StatusOK,
-			ResponseCode:   general.SuccessStatusCode,
-			Description:    description,
+	if error != nil {
+		for _, value := range error.(validator.ValidationErrors) {
+			errorMessage := fmt.Sprintf("Error on field %s, condition: %s", value.Field(), value.ActualTag())
+			description = append(description, errorMessage)
 		}
-		context.JSON(http.StatusOK, gin.H{
-			"status":     status,
-			"listUser":   user,
-			"page":       page_no,
-			"totalPages": total_pages,
-		})
-	} else {
-
-		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
 		status = &model.StandardResponse{
@@ -73,12 +50,46 @@ func (controller *userController) GetUser(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"status": status,
 		})
+	} else {
+
+		user, total_pages, error := controller.userService.GetUser(request)
+
+		if error == nil {
+
+			description = append(description, "Success")
+			totalPages = total_pages
+
+			status = &model.StandardResponse{
+				HttpStatusCode: http.StatusOK,
+				ResponseCode:   general.SuccessStatusCode,
+				Description:    description,
+			}
+			context.JSON(http.StatusOK, gin.H{
+				"status":     status,
+				"listUser":   user,
+				"page":       request.PageNo,
+				"totalPages": total_pages,
+			})
+		} else {
+
+			description = append(description, error.Error())
+			http_status = http.StatusBadRequest
+
+			status = &model.StandardResponse{
+				HttpStatusCode: http.StatusBadRequest,
+				ResponseCode:   general.ErrorStatusCode,
+				Description:    description,
+			}
+			context.JSON(http.StatusBadRequest, gin.H{
+				"status": status,
+			})
+		}
 	}
 
 	parse_request, _ := json.Marshal(request)
 	parse_status, _ := json.Marshal(status)
 	parse_user, _ := json.Marshal(user)
-	var result = fmt.Sprintf("{\"status\": %s, \"listUser\": %s, \"page\": %d, \"totalPages\": %d}", string(parse_status), string(parse_user), page_no, total_pages)
+	var result = fmt.Sprintf("{\"status\": %s, \"listUser\": %s, \"page\": %d, \"totalPages\": %d}", string(parse_status), string(parse_user), request.PageNo, int(totalPages))
 	controller.logService.CreateLog(context, string(parse_request), result, time.Now(), http_status)
 }
 

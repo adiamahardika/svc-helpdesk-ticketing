@@ -14,7 +14,7 @@ import (
 )
 
 type UserServiceInterface interface {
-	GetUser(request *model.GetUserRequest) ([]*model.GetUserResponse, *float64, error)
+	GetUser(request *model.GetUserRequest) ([]*model.GetUserResponse, float64, error)
 	GetUserDetail(request *string) (*model.GetUserResponse, error)
 	DeleteUser(id *int) error
 	CreateUser(request *model.CreateUserRequest) (*entity.User, error)
@@ -35,7 +35,7 @@ func UserService(userRepository repository.UserRepositoryInterface, userHasRoleR
 	return &userService{userRepository, userHasRoleRepository}
 }
 
-func (userService *userService) GetUser(request *model.GetUserRequest) ([]*model.GetUserResponse, *float64, error) {
+func (userService *userService) GetUser(request *model.GetUserRequest) ([]*model.GetUserResponse, float64, error) {
 
 	var response []*model.GetUserResponse
 	if request.Size == 0 {
@@ -65,7 +65,7 @@ func (userService *userService) GetUser(request *model.GetUserRequest) ([]*model
 		})
 	}
 
-	return response, &total_pages, error
+	return response, total_pages, error
 }
 
 func (userService *userService) GetUserDetail(request *string) (*model.GetUserResponse, error) {

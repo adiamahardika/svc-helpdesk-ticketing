@@ -159,19 +159,33 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 
 		if request.EmailNotification == "true" {
 			// wg.Add(1)
+			var detail_ticket *entity.Ticket
+			detail_ticket, error = ticketService.ticketRepository.GetDetailTicket(&request.TicketCode)
+			assignee := detail_ticket.Assignee
+
+			if len(assignee) == 0 {
+				assignee = "Unassigned"
+			}
+
 			email_notif, _ := ticketService.emailNotifRepository.GetAllEmailNotif()
 			sender := NewSMTP()
 			message := NewMessage(&model.SmtpRequest{
 				Judul:           request.Judul,
 				Prioritas:       request.Prioritas,
 				UsernamePembuat: request.UserPembuat,
-				Author:          request.UserPembuat,
 				Status:          request.Status,
 				TicketCode:      request.TicketCode,
 				Lokasi:          request.Lokasi,
 				TerminalId:      request.TerminalId,
 				Email:           request.Email,
 				Isi:             request.Isi,
+				AreaName:        detail_ticket.AreaName,
+				Regional:        detail_ticket.Regional,
+				GrapariName:     detail_ticket.GrapariName,
+				CategoryName:    detail_ticket.CategoryName,
+				SubCategory:     detail_ticket.SubCategory,
+				UserPembuat:     detail_ticket.UserPembuat,
+				Assignee:        assignee,
 				Type:            "New",
 			})
 			message.CC = []string{request.Email}
