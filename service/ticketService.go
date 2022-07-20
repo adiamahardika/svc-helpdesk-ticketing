@@ -15,12 +15,12 @@ import (
 )
 
 type TicketServiceInterface interface {
-	GetTicket(request *model.GetTicketRequest) ([]*entity.Ticket, *int, error)
-	GetDetailTicket(ticket_code *string) (*model.GetDetailTicketResponse, error)
-	CreateTicket(request *model.CreateTicketRequest, context *gin.Context) (*entity.Ticket, *entity.TicketIsi, error)
-	UpdateTicket(request *model.UpdateTicketRequest) ([]*entity.Ticket, error)
-	ReplyTicket(request *model.ReplyTicket, context *gin.Context) ([]*entity.Ticket, error)
-	UpdateTicketStatus(request *model.UpdateTicketStatusRequest) ([]*entity.Ticket, error)
+	GetTicket(request *model.GetTicketRequest) ([]entity.Ticket, int, error)
+	GetDetailTicket(ticket_code *string) (model.GetDetailTicketResponse, error)
+	CreateTicket(request *model.CreateTicketRequest, context *gin.Context) (entity.Ticket, entity.TicketIsi, error)
+	UpdateTicket(request *model.UpdateTicketRequest) ([]entity.Ticket, error)
+	ReplyTicket(request *model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error)
+	UpdateTicketStatus(request *model.UpdateTicketStatusRequest) ([]entity.Ticket, error)
 }
 
 type ticketService struct {
@@ -33,7 +33,7 @@ func TicketService(ticketRepository repository.TicketRepositoryInterface, ticket
 	return &ticketService{ticketRepository, ticketIsiRepository, emailNotifRepository}
 }
 
-func (ticketService *ticketService) GetTicket(request *model.GetTicketRequest) ([]*entity.Ticket, *int, error) {
+func (ticketService *ticketService) GetTicket(request *model.GetTicketRequest) ([]entity.Ticket, int, error) {
 
 	if request.PageSize == 0 {
 		request.PageSize = math.MaxInt16
@@ -46,12 +46,12 @@ func (ticketService *ticketService) GetTicket(request *model.GetTicketRequest) (
 	ticket, error := ticketService.ticketRepository.GetTicket(request)
 	parse_tp := int(total_pages)
 
-	return ticket, &parse_tp, error
+	return ticket, parse_tp, error
 }
 
-func (ticketService *ticketService) GetDetailTicket(ticket_code *string) (*model.GetDetailTicketResponse, error) {
+func (ticketService *ticketService) GetDetailTicket(ticket_code *string) (model.GetDetailTicketResponse, error) {
 
-	var reponse *model.GetDetailTicketResponse
+	var reponse model.GetDetailTicketResponse
 
 	detail_ticket, error := ticketService.ticketRepository.GetDetailTicket(ticket_code)
 	reply_ticket, error := ticketService.ticketIsiRepository.GetTicketIsi(ticket_code)
@@ -79,9 +79,9 @@ func (ticketService *ticketService) GetDetailTicket(ticket_code *string) (*model
 	return reponse, error
 }
 
-func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequest, context *gin.Context) (*entity.Ticket, *entity.TicketIsi, error) {
+func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequest, context *gin.Context) (entity.Ticket, entity.TicketIsi, error) {
 	var wg sync.WaitGroup
-	var ticket []*entity.Ticket
+	var ticket []entity.Ticket
 
 	date_now := time.Now()
 	dir := os.Getenv("FILE_DIR")
@@ -159,7 +159,7 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 
 		if request.EmailNotification == "true" {
 			// wg.Add(1)
-			var detail_ticket *entity.Ticket
+			var detail_ticket entity.Ticket
 			detail_ticket, error = ticketService.ticketRepository.GetDetailTicket(&request.TicketCode)
 			assignee := detail_ticket.Assignee
 
@@ -196,11 +196,11 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 
 	}
 
-	return &ticket_request, &ticket_isi_request, error
+	return ticket_request, ticket_isi_request, error
 
 }
 
-func (ticketService *ticketService) UpdateTicket(request *model.UpdateTicketRequest) ([]*entity.Ticket, error) {
+func (ticketService *ticketService) UpdateTicket(request *model.UpdateTicketRequest) ([]entity.Ticket, error) {
 	date_now := time.Now()
 
 	ticket, error := ticketService.ticketRepository.CheckTicketCode(&request.TicketCode)
@@ -222,8 +222,8 @@ func (ticketService *ticketService) UpdateTicket(request *model.UpdateTicketRequ
 	return ticket, error
 }
 
-func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, context *gin.Context) ([]*entity.Ticket, error) {
-	var ticket []*entity.Ticket
+func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error) {
+	var ticket []entity.Ticket
 
 	date_now := time.Now()
 	dir := os.Getenv("FILE_DIR")
@@ -324,7 +324,7 @@ func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, cont
 	return ticket, error
 }
 
-func (ticketService *ticketService) UpdateTicketStatus(request *model.UpdateTicketStatusRequest) ([]*entity.Ticket, error) {
+func (ticketService *ticketService) UpdateTicketStatus(request *model.UpdateTicketStatusRequest) ([]entity.Ticket, error) {
 	date_now := time.Now()
 
 	ticket, error := ticketService.ticketRepository.CheckTicketCode(&request.TicketCode)
