@@ -28,7 +28,7 @@ var store = base64Captcha.DefaultMemStore
 func (controller *captchaController) GenerateCaptcha(context *gin.Context) {
 
 	decoder := json.NewDecoder(context.Request.Body)
-	var request model.ConfigJsonBody
+	var request *model.ConfigJsonBody
 	error := decoder.Decode(&request)
 	if error != nil {
 		log.Println(error)
@@ -37,7 +37,7 @@ func (controller *captchaController) GenerateCaptcha(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 	var response map[string]interface{}
 	var id string
 	var b64s string
@@ -50,7 +50,7 @@ func (controller *captchaController) GenerateCaptcha(context *gin.Context) {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -65,7 +65,7 @@ func (controller *captchaController) GenerateCaptcha(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,
@@ -85,7 +85,7 @@ func (controller *captchaController) GenerateCaptcha(context *gin.Context) {
 func (controller *captchaController) CaptchaVerify(context *gin.Context) {
 
 	decoder := json.NewDecoder(context.Request.Body)
-	var request model.ConfigJsonBody
+	var request *model.ConfigJsonBody
 	error := decoder.Decode(&request)
 	if error != nil {
 		log.Println(error)
@@ -94,7 +94,7 @@ func (controller *captchaController) CaptchaVerify(context *gin.Context) {
 
 	description := []string{}
 	http_status := http.StatusOK
-	var status model.StandardResponse
+	var status *model.StandardResponse
 	var response map[string]interface{}
 	var id string
 	var b64s string
@@ -107,7 +107,7 @@ func (controller *captchaController) CaptchaVerify(context *gin.Context) {
 
 		description = append(description, "Success")
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusOK,
 			ResponseCode:   general.SuccessStatusCode,
 			Description:    description,
@@ -122,7 +122,7 @@ func (controller *captchaController) CaptchaVerify(context *gin.Context) {
 		description = append(description, error.Error())
 		http_status = http.StatusBadRequest
 
-		status = model.StandardResponse{
+		status = &model.StandardResponse{
 			HttpStatusCode: http.StatusBadRequest,
 			ResponseCode:   general.ErrorStatusCode,
 			Description:    description,

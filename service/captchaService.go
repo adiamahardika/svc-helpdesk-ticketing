@@ -8,8 +8,8 @@ import (
 )
 
 type CaptchaServiceInterface interface {
-	GenerateCaptcha(param model.ConfigJsonBody) (string, string, error)
-	CaptchaVerify(request model.ConfigJsonBody) (bool, error)
+	GenerateCaptcha(param *model.ConfigJsonBody) (string, string, error)
+	CaptchaVerify(request *model.ConfigJsonBody) (bool, error)
 }
 
 type captchaService struct{}
@@ -20,7 +20,7 @@ func CapthcaService() *captchaService {
 
 var store = base64Captcha.DefaultMemStore
 
-func (captchaService *captchaService) GenerateCaptcha(request model.ConfigJsonBody) (string, string, error) {
+func (captchaService *captchaService) GenerateCaptcha(request *model.ConfigJsonBody) (string, string, error) {
 
 	var driver base64Captcha.Driver
 
@@ -33,7 +33,7 @@ func (captchaService *captchaService) GenerateCaptcha(request model.ConfigJsonBo
 	return id, b64s, error
 }
 
-func (captchaService *captchaService) CaptchaVerify(request model.ConfigJsonBody) (bool, error) {
+func (captchaService *captchaService) CaptchaVerify(request *model.ConfigJsonBody) (bool, error) {
 
 	is_valid := false
 	error := fmt.Errorf("Captcha Not Match")
