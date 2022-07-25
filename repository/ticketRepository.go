@@ -101,7 +101,7 @@ func (repo *repository) CheckTicketCode(request *string) ([]entity.Ticket, error
 func (repo *repository) UpdateTicket(request *model.UpdateTicketRequest) ([]entity.Ticket, error) {
 	var ticket []entity.Ticket
 
-	error := repo.db.Raw("UPDATE ticket SET assigned_to =  @AssignedTo, email = @Email, category = @Category, sub_category = @SubCategory,  prioritas = @Prioritas, status = @Status, username_pembalas = @UsernamePembalas, tgl_diperbarui = @TglDiperbarui WHERE ticket_code = @TicketCode RETURNING ticket.*", request).Find(&ticket).Error
+	error := repo.db.Raw("UPDATE ticket SET assigned_to =  @AssignedTo, email = @Email, category = @Category, sub_category = @SubCategory,  prioritas = @Prioritas, status = @Status, updated_by = @UpdatedBy, tgl_diperbarui = @TglDiperbarui, assigning_time = @AssigningTime, assigning_by = @AssigningBy WHERE ticket_code = @TicketCode RETURNING ticket.*", request).Find(&ticket).Error
 
 	return ticket, error
 }

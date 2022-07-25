@@ -43,22 +43,25 @@ type CreateTicketRequest struct {
 }
 
 type UpdateTicketRequest struct {
-	AssignedTo       string    `json:"assignedTo" form:"assignedTo"`
-	Email            string    `json:"email" form:"email"`
-	Category         string    `json:"category" form:"category"`
-	SubCategory      string    `json:"subCategory" form:"subCategory"`
-	Prioritas        string    `json:"prioritas" form:"prioritas"`
-	Status           string    `json:"status" form:"status"`
-	TicketCode       string    `json:"ticketCode" form:"ticketCode"`
-	TotalWaktu       string    `json:"totalWaktu" form:"totalWaktu"`
-	UsernamePembalas string    `json:"usernamePembalas"`
-	TglDiperbarui    time.Time `json:"tglDiperbarui"`
+	AssignedTo    string    `json:"assignedTo" form:"assignedTo"`
+	Email         string    `json:"email" form:"email"`
+	Category      string    `json:"category" form:"category"`
+	SubCategory   string    `json:"subCategory" form:"subCategory"`
+	Prioritas     string    `json:"prioritas" form:"prioritas"`
+	Status        string    `json:"status" form:"status"`
+	TicketCode    string    `json:"ticketCode" form:"ticketCode"`
+	TotalWaktu    string    `json:"totalWaktu" form:"totalWaktu"`
+	UpdatedBy     string    `json:"updatedBy" form:"updatedBy"`
+	TglDiperbarui time.Time `json:"tglDiperbarui" form:"tglDiperbarui"`
+	AssigningTime time.Time `json:"assigningTime" form:"assigningTime"`
+	AssigningBy   string    `json:"assigningBy" form:"assigningBy"`
 }
 
 type ReplyTicket struct {
 	ReplyType         string                `json:"replyType" form:"replyType"`
 	TicketCode        string                `json:"ticketCode" form:"ticketCode"`
 	UsernamePengirim  string                `json:"usernamePengirim" form:"usernamePengirim"`
+	UpdatedBy         string                `json:"updatedBy" form:"updatedBy"`
 	EmailNotification string                `json:"emailNotification" form:"emailNotification"`
 	Status            string                `json:"status" form:"status"`
 	Isi               string                `json:"isi" form:"isi"`

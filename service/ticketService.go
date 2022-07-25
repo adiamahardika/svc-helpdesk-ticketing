@@ -122,7 +122,7 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 	ticket_request := entity.Ticket{
 		Judul:             request.Judul,
 		UsernamePembuat:   request.UserPembuat,
-		UsernamePembalas:  request.UserPembuat,
+		UpdatedBy:         request.UserPembuat,
 		Prioritas:         request.Prioritas,
 		TotalWaktu:        total_waktu,
 		Status:            request.Status,
@@ -222,6 +222,13 @@ func (ticketService *ticketService) UpdateTicket(request *model.UpdateTicketRequ
 
 		request.TotalWaktu = total_waktu
 		request.TglDiperbarui = date_now
+		request.AssigningTime = ticket[0].AssigningTime
+		request.AssigningBy = ticket[0].AssigningBy
+
+		if request.AssignedTo != ticket[0].AssignedTo {
+			request.AssigningTime = date_now
+			request.AssigningBy = request.UpdatedBy
+		}
 
 		ticket, error = ticketService.ticketRepository.UpdateTicket(request)
 	}
@@ -273,35 +280,6 @@ func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, cont
 		year, month, day, hour, min, sec := general.TimeDifference(past_date, date_now)
 		total_waktu := fmt.Sprintf("%dy %dm %dd %dh %dmm %ds", year, month, day, hour, min, sec)
 
-		update_ticket := model.UpdateTicketRequest{
-			AssignedTo:       ticket[0].AssignedTo,
-			Email:            ticket[0].Email,
-			Category:         ticket[0].Category,
-			Prioritas:        ticket[0].Prioritas,
-			SubCategory:      ticket[0].SubCategory,
-			Status:           request.Status,
-			TicketCode:       request.TicketCode,
-			TotalWaktu:       total_waktu,
-			UsernamePembalas: request.UsernamePengirim,
-			TglDiperbarui:    date_now,
-		}
-
-		reply_request := entity.TicketIsi{
-			TicketCode:       request.TicketCode,
-			UsernamePengirim: request.UsernamePengirim,
-			Isi:              request.Isi,
-			Attachment1:      attachment1,
-			Attachment2:      attachment2,
-			TglDibuat:        date_now,
-		}
-
-		if error == nil {
-			_, error = ticketService.ticketRepository.UpdateTicket(&update_ticket)
-		}
-		if error == nil {
-			_, error = ticketService.ticketIsiRepository.CreateTicketIsi(&reply_request)
-		}
-
 		if strings.EqualFold(request.ReplyType, "start") {
 			start_req := model.StartTicketRequest{
 				TicketCode: request.TicketCode,
@@ -319,6 +297,34 @@ func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, cont
 			}
 
 			_, error = ticketService.ticketRepository.CloseTicket(&close_req)
+		}
+
+		update_ticket := model.UpdateTicketRequest{
+			AssignedTo:    ticket[0].AssignedTo,
+			Email:         ticket[0].Email,
+			Category:      ticket[0].Category,
+			Prioritas:     ticket[0].Prioritas,
+			SubCategory:   ticket[0].SubCategory,
+			Status:        request.Status,
+			TicketCode:    request.TicketCode,
+			TotalWaktu:    total_waktu,
+			UpdatedBy:     request.UpdatedBy,
+			TglDiperbarui: date_now,
+		}
+		if error == nil {
+			_, error = ticketService.ticketRepository.UpdateTicket(&update_ticket)
+		}
+
+		reply_request := entity.TicketIsi{
+			TicketCode:       request.TicketCode,
+			UsernamePengirim: request.UsernamePengirim,
+			Isi:              request.Isi,
+			Attachment1:      attachment1,
+			Attachment2:      attachment2,
+			TglDibuat:        date_now,
+		}
+		if error == nil {
+			_, error = ticketService.ticketIsiRepository.CreateTicketIsi(&reply_request)
 		}
 
 	}

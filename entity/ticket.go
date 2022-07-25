@@ -6,7 +6,7 @@ type Ticket struct {
 	Id                int       `json:"id" gorm:"primaryKey"`
 	Judul             string    `json:"judul"`
 	UsernamePembuat   string    `json:"usernamePembuat"`
-	UsernamePembalas  string    `json:"usernamePembalas"`
+	UpdatedBy         string    `json:"updatedBy" form:"updatedBy"`
 	Prioritas         string    `json:"prioritas"`
 	TglDibuat         time.Time `json:"tglDibuat"`
 	TglDiperbarui     time.Time `json:"tglDiperbarui"`
