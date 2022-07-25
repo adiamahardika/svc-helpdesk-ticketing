@@ -89,6 +89,7 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 	error := fmt.Errorf("error")
 	attachment1 := "-"
 	attachment2 := "-"
+	assigning_time := date_now
 
 	_, check_dir_error := os.Stat(path)
 
@@ -114,6 +115,9 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 		error = nil
 	}
 	total_waktu := "0y 0m 0d 0h 0mm 0s"
+	if request.AssignedTo == "Unassigned" {
+		assigning_time = time.Date(1970, time.Month(1), 0, 0, 0, 0, 0, time.UTC)
+	}
 	ticket_request := entity.Ticket{
 		Judul:             request.Judul,
 		UsernamePembuat:   request.UserPembuat,
@@ -134,6 +138,8 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 		EmailNotification: request.EmailNotification,
 		TglDibuat:         date_now,
 		TglDiperbarui:     date_now,
+		AssigningTime:     assigning_time,
+		AssigningBy:       request.UserPembuat,
 	}
 
 	ticket_isi_request := entity.TicketIsi{

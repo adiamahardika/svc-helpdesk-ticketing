@@ -29,4 +29,10 @@ type Ticket struct {
 	UserPembuat       string    `json:"userPembuat" gorm:"->"`
 	Assignee          string    `json:"assignee" gorm:"->"`
 	SubCategory       string    `json:"subCategory"`
+	StartTime         time.Time `json:"startTime" gorm:"->"`
+	StartBy           string    `json:"startBy" gorm:"->"`
+	CloseTime         time.Time `json:"closeTime" gorm:"->"`
+	CloseBy           string    `json:"closeBy" gorm:"->"`
+	AssigningTime     time.Time `json:"assigningTime"`
+	AssigningBy       string    `json:"assigningBy"`
 }
