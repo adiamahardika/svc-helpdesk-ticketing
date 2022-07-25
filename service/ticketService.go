@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strings"
 	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/general"
 	"svc-myg-ticketing/model"
@@ -265,7 +266,7 @@ func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, cont
 	ticket, error = ticketService.ticketRepository.CheckTicketCode(&request.TicketCode)
 
 	if len(ticket) == 0 {
-		error = fmt.Errorf("Ticket code doesnt exist!")
+		error = fmt.Errorf("Ticket code does'nt exist!")
 	} else {
 		tgl := ticket[0].TglDibuat
 		past_date := time.Date(tgl.Year(), tgl.Month(), tgl.Day(), tgl.Hour(), tgl.Minute(), tgl.Second(), tgl.Nanosecond(), time.Local)
@@ -296,33 +297,28 @@ func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, cont
 
 		if error == nil {
 			_, error = ticketService.ticketRepository.UpdateTicket(&update_ticket)
+		}
+		if error == nil {
+			_, error = ticketService.ticketIsiRepository.CreateTicketIsi(&reply_request)
+		}
 
-			if error == nil {
-				_, error = ticketService.ticketIsiRepository.CreateTicketIsi(&reply_request)
-
-				// if request.EmailNotification == "true" {
-				// 	// wg.Add(1)
-				// 	email_notif, _ := ticketService.emailNotifRepository.GetAllEmailNotif()
-				// 	sender := NewSMTP()
-				// 	message := NewMessage(&model.SmtpRequest{
-				// 		Judul:           ticket[0].Judul,
-				// 		Prioritas:       ticket[0].Prioritas,
-				// 		UsernamePembuat: ticket[0].UsernamePembuat,
-				// 		Author:          request.UsernamePengirim,
-				// 		Status:          request.Status,
-				// 		TicketCode:      request.TicketCode,
-				// 		Lokasi:          ticket[0].Lokasi,
-				// 		TerminalId:      ticket[0].TerminalId,
-				// 		Email:           ticket[0].Email,
-				// 		Isi:             request.Isi,
-				// 		Type:            "Reply",
-				// 	})
-				// 	message.CC = []string{ticket[0].Email}
-				// 	message.To = email_notif
-				// 	message.AttachFile(path+attachment1, path+attachment2)
-				// 	sender.Send(&wg, message)
-				// }
+		if strings.EqualFold(request.ReplyType, "start") {
+			start_req := model.StartTicketRequest{
+				TicketCode: request.TicketCode,
+				StartTime:  date_now,
+				StartBy:    request.UsernamePengirim,
 			}
+
+			_, error = ticketService.ticketRepository.StartTicket(&start_req)
+
+		} else if strings.EqualFold(request.ReplyType, "close") {
+			close_req := model.CloseTicketRequest{
+				TicketCode: request.TicketCode,
+				CloseTime:  date_now,
+				CloseBy:    request.UsernamePengirim,
+			}
+
+			_, error = ticketService.ticketRepository.CloseTicket(&close_req)
 		}
 
 	}

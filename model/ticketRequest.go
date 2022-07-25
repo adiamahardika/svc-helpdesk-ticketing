@@ -56,6 +56,7 @@ type UpdateTicketRequest struct {
 }
 
 type ReplyTicket struct {
+	ReplyType         string                `json:"replyType" form:"replyType"`
 	TicketCode        string                `json:"ticketCode" form:"ticketCode"`
 	UsernamePengirim  string                `json:"usernamePengirim" form:"usernamePengirim"`
 	EmailNotification string                `json:"emailNotification" form:"emailNotification"`
@@ -70,4 +71,16 @@ type UpdateTicketStatusRequest struct {
 	Status        string    `json:"status" form:"status"`
 	TicketCode    string    `json:"ticketCode" form:"ticketCode"`
 	TglDiperbarui time.Time `json:"tglDiperbarui"`
+}
+
+type StartTicketRequest struct {
+	TicketCode string    `json:"ticketCode"`
+	StartTime  time.Time `json:"startTime"`
+	StartBy    string    `json:"startBy"`
+}
+
+type CloseTicketRequest struct {
+	TicketCode string    `json:"ticketCode"`
+	CloseTime  time.Time `json:"closeTime"`
+	CloseBy    string    `json:"closeBy"`
 }

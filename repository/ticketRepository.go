@@ -14,6 +14,8 @@ type TicketRepositoryInterface interface {
 	CheckTicketCode(request *string) ([]entity.Ticket, error)
 	UpdateTicket(request *model.UpdateTicketRequest) ([]entity.Ticket, error)
 	UpdateTicketStatus(request *model.UpdateTicketStatusRequest) ([]entity.Ticket, error)
+	StartTicket(request *model.StartTicketRequest) ([]entity.Ticket, error)
+	CloseTicket(request *model.CloseTicketRequest) ([]entity.Ticket, error)
 }
 
 func (repo *repository) GetTicket(request *model.GetTicketRequest) ([]entity.Ticket, error) {
@@ -108,6 +110,22 @@ func (repo *repository) UpdateTicketStatus(request *model.UpdateTicketStatusRequ
 	var ticket []entity.Ticket
 
 	error := repo.db.Raw("UPDATE ticket SET status = @Status, tgl_diperbarui = @TglDiperbarui WHERE ticket_code = @TicketCode RETURNING ticket.*", request).Find(&ticket).Error
+
+	return ticket, error
+}
+
+func (repo *repository) StartTicket(request *model.StartTicketRequest) ([]entity.Ticket, error) {
+	var ticket []entity.Ticket
+
+	error := repo.db.Raw("UPDATE ticket SET start_time =  @StartTime, start_by = @StartBy WHERE ticket_code = @TicketCode RETURNING ticket.*", request).Find(&ticket).Error
+
+	return ticket, error
+}
+
+func (repo *repository) CloseTicket(request *model.CloseTicketRequest) ([]entity.Ticket, error) {
+	var ticket []entity.Ticket
+
+	error := repo.db.Raw("UPDATE ticket SET close_time =  @CloseTime, close_by = @CloseBy WHERE ticket_code = @TicketCode RETURNING ticket.*", request).Find(&ticket).Error
 
 	return ticket, error
 }
