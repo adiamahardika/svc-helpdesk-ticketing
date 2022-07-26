@@ -305,6 +305,8 @@ func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, cont
 			Category:      ticket[0].Category,
 			Prioritas:     ticket[0].Prioritas,
 			SubCategory:   ticket[0].SubCategory,
+			AssigningTime: ticket[0].AssigningTime,
+			AssigningBy:   ticket[0].AssigningBy,
 			Status:        request.Status,
 			TicketCode:    request.TicketCode,
 			TotalWaktu:    total_waktu,
