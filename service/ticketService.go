@@ -23,6 +23,7 @@ type TicketServiceInterface interface {
 	ReplyTicket(request *model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error)
 	UpdateTicketStatus(request *model.UpdateTicketStatusRequest) ([]entity.Ticket, error)
 	StartTicket(request *model.StartTicketRequest) ([]entity.Ticket, error)
+	CloseTicket(request *model.CloseTicketRequest) ([]entity.Ticket, error)
 }
 
 type ticketService struct {
@@ -216,7 +217,7 @@ func (ticketService *ticketService) UpdateTicket(request *model.UpdateTicketRequ
 	ticket, error := ticketService.ticketRepository.CheckTicketCode(&request.TicketCode)
 
 	if len(ticket) == 0 {
-		error = fmt.Errorf("Ticket code doesnt exist!")
+		error = fmt.Errorf("Ticket code does'nt exist!")
 	} else {
 		tgl := ticket[0].TglDibuat
 		past_date := time.Date(tgl.Year(), tgl.Month(), tgl.Day(), tgl.Hour(), tgl.Minute(), tgl.Second(), tgl.Nanosecond(), time.Local)
@@ -343,7 +344,7 @@ func (ticketService *ticketService) UpdateTicketStatus(request *model.UpdateTick
 	ticket, error := ticketService.ticketRepository.CheckTicketCode(&request.TicketCode)
 
 	if len(ticket) == 0 {
-		error = fmt.Errorf("Ticket code doesnt exist!")
+		error = fmt.Errorf("Ticket code does'nt exist!")
 	} else {
 
 		request.TglDiperbarui = date_now
@@ -383,6 +384,40 @@ func (ticketService *ticketService) StartTicket(request *model.StartTicketReques
 		request.StartTime = date_now
 		if error == nil {
 			ticket, error = ticketService.ticketRepository.StartTicket(request)
+		}
+	}
+	return ticket, error
+}
+
+func (ticketService *ticketService) CloseTicket(request *model.CloseTicketRequest) ([]entity.Ticket, error) {
+
+	ticket, error := ticketService.ticketRepository.CheckTicketCode(&request.TicketCode)
+
+	if len(ticket) == 0 {
+		error = fmt.Errorf("Ticket code does'nt exist!")
+	} else {
+		date_now := time.Now()
+		update_ticket := model.UpdateTicketRequest{
+			AssignedTo:    ticket[0].AssignedTo,
+			Email:         ticket[0].Email,
+			Category:      ticket[0].Category,
+			Prioritas:     ticket[0].Prioritas,
+			SubCategory:   ticket[0].SubCategory,
+			AssigningTime: ticket[0].AssigningTime,
+			AssigningBy:   ticket[0].AssigningBy,
+			Status:        "Finish",
+			TicketCode:    request.TicketCode,
+			TotalWaktu:    ticket[0].TotalWaktu,
+			UpdatedBy:     request.CloseBy,
+			TglDiperbarui: date_now,
+		}
+		if error == nil {
+			_, error = ticketService.ticketRepository.UpdateTicket(&update_ticket)
+		}
+
+		request.CloseTime = date_now
+		if error == nil {
+			ticket, error = ticketService.ticketRepository.CloseTicket(request)
 		}
 	}
 	return ticket, error
