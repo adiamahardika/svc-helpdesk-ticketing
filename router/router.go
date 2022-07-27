@@ -132,6 +132,7 @@ func AllRouter(db *gorm.DB) {
 				ticket.PUT("/update", ticketController.UpdateTicket)
 				ticket.POST("/reply", ticketController.ReplyTicket)
 				ticket.PUT("/update-ticket-status", ticketController.UpdateTicketStatus)
+				ticket.PUT("/start", ticketController.StartTicket)
 			}
 
 			report := v1.Group("/report")

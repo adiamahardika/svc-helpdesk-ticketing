@@ -22,6 +22,7 @@ type TicketServiceInterface interface {
 	UpdateTicket(request *model.UpdateTicketRequest) ([]entity.Ticket, error)
 	ReplyTicket(request *model.ReplyTicket, context *gin.Context) ([]entity.Ticket, error)
 	UpdateTicketStatus(request *model.UpdateTicketStatusRequest) ([]entity.Ticket, error)
+	StartTicket(request *model.StartTicketRequest) ([]entity.Ticket, error)
 }
 
 type ticketService struct {
@@ -350,5 +351,39 @@ func (ticketService *ticketService) UpdateTicketStatus(request *model.UpdateTick
 		ticket, error = ticketService.ticketRepository.UpdateTicketStatus(request)
 	}
 
+	return ticket, error
+}
+
+func (ticketService *ticketService) StartTicket(request *model.StartTicketRequest) ([]entity.Ticket, error) {
+
+	ticket, error := ticketService.ticketRepository.CheckTicketCode(&request.TicketCode)
+
+	if len(ticket) == 0 {
+		error = fmt.Errorf("Ticket code doesnt exist!")
+	} else {
+		date_now := time.Now()
+		update_ticket := model.UpdateTicketRequest{
+			AssignedTo:    ticket[0].AssignedTo,
+			Email:         ticket[0].Email,
+			Category:      ticket[0].Category,
+			Prioritas:     ticket[0].Prioritas,
+			SubCategory:   ticket[0].SubCategory,
+			AssigningTime: ticket[0].AssigningTime,
+			AssigningBy:   ticket[0].AssigningBy,
+			Status:        "Process",
+			TicketCode:    request.TicketCode,
+			TotalWaktu:    ticket[0].TotalWaktu,
+			UpdatedBy:     request.StartBy,
+			TglDiperbarui: date_now,
+		}
+		if error == nil {
+			_, error = ticketService.ticketRepository.UpdateTicket(&update_ticket)
+		}
+
+		request.StartTime = date_now
+		if error == nil {
+			ticket, error = ticketService.ticketRepository.StartTicket(request)
+		}
+	}
 	return ticket, error
 }
