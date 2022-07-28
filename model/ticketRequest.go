@@ -16,6 +16,9 @@ type GetTicketRequest struct {
 	SortBy          string   `json:"sortBy"`
 	SortType        string   `json:"sortType"`
 	Status          string   `json:"status"`
+	AreaCode        []string `json:"areaCode"`
+	Regional        []string `json:"regional"`
+	GrapariId       []string `json:"grapariId"`
 	UsernamePembuat string   `json:"usernamePembuat"`
 	StartDate       string   `json:"startDate" binding:"required"`
 	EndDate         string   `json:"endDate" binding:"required"`
