@@ -23,8 +23,8 @@ func (repo *repository) GetUser(request *model.GetUserRequest) ([]entity.User, e
 	var user []entity.User
 	var role string
 
-	if request.Role != 0 {
-		role = "WHERE model_has_roles.role_id = @Role"
+	if len(request.Role) > 0 {
+		role = "WHERE model_has_roles.role_id IN @Role"
 	}
 
 	query := fmt.Sprintf("SELECT * FROM (SELECT users.*, JSON_AGG(JSON_BUILD_OBJECT('id', roles.id, 'name', roles.name)) AS roles FROM users LEFT OUTER JOIN model_has_roles ON (users.id = model_has_roles.model_id) LEFT OUTER JOIN roles ON (roles.id = model_has_roles.role_id) %s GROUP BY model_has_roles.model_id, users.id ORDER BY users.name ASC) AS tbl WHERE tbl.name LIKE @Search OR tbl.username LIKE @Search OR tbl.email LIKE @Search LIMIT @Size OFFSET @StartIndex", role)
@@ -43,8 +43,8 @@ func (repo *repository) CountUser(request *model.GetUserRequest) (int, error) {
 	var total_data int
 	var role string
 
-	if request.Role != 0 {
-		role = "WHERE model_has_roles.role_id = @Role"
+	if len(request.Role) > 0 {
+		role = "WHERE model_has_roles.role_id IN @Role"
 	}
 
 	query := fmt.Sprintf("SELECT COUNT(*) as total_data FROM (SELECT users.* FROM users LEFT OUTER JOIN model_has_roles ON (users.id = model_has_roles.model_id) LEFT OUTER JOIN roles ON (roles.id = model_has_roles.role_id) %s) AS tbl WHERE tbl.name LIKE @Search OR tbl.username LIKE @Search OR tbl.email LIKE @Search", role)
