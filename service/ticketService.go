@@ -202,7 +202,7 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 			message.CC = []string{request.Email}
 			message.To = email_notif
 			message.AttachFile(path+attachment1, path+attachment2)
-			error = sender.Send(&wg, message)
+			sender.Send(&wg, message)
 		}
 
 	}

@@ -12,7 +12,6 @@ import (
 	"strings"
 	"svc-myg-ticketing/model"
 	"sync"
-	"time"
 )
 
 type SmtpServiceInterface interface{}
@@ -49,9 +48,7 @@ func NewSMTP() *Sender {
 func (s *Sender) Send(wg *sync.WaitGroup, m *Message) error {
 	// defer wg.Done()
 	smtpAddr := fmt.Sprintf("%s:%s", host, port)
-	smtp.SendMail(smtpAddr, nil, auth_email, append(m.To, m.CC...), m.ToBytes())
-	time.Sleep(2 * time.Second)
-	return nil
+	return smtp.SendMail(smtpAddr, nil, auth_email, append(m.To, m.CC...), m.ToBytes())
 }
 
 func NewMessage(request *model.SmtpRequest) *Message {
