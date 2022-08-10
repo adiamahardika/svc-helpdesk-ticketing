@@ -93,8 +93,6 @@ func (repo *repository) CountTicket(request *model.GetTicketRequest) (int, error
 		Search:          "%" + request.Search + "%",
 		Status:          "%" + request.Status + "%",
 		UsernamePembuat: "%" + request.UsernamePembuat + "%",
-		StartIndex:      request.StartIndex,
-		PageSize:        request.PageSize,
 		StartDate:       request.StartDate,
 		EndDate:         request.EndDate,
 	}).Find(&total_data).Error
