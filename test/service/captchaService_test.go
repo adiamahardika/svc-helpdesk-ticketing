@@ -85,6 +85,44 @@ func TestGenerateCaptcha(t *testing.T) {
 	}
 }
 
+func TestCaptchaVerify(t *testing.T) {
+
+	tests := []struct {
+		name          string
+		request       *model.ConfigJsonBody
+		expectedError error
+	}{
+		{
+			name: "Error With Filled Req",
+			request: &model.ConfigJsonBody{
+				CaptchaId:   "2RHFkONE8GODe913MAS9",
+				VerifyValue: "oa2tbe",
+			},
+			expectedError: errors.New("Captcha Not Match"),
+		},
+		{
+			name: "Error With Empty Req 1",
+			request: &model.ConfigJsonBody{
+				CaptchaId:   "",
+				VerifyValue: "",
+			},
+			expectedError: errors.New("Captcha Not Match"),
+		},
+		{
+			name:          "Error With Empty Req 2",
+			request:       &model.ConfigJsonBody{},
+			expectedError: errors.New("Captcha Not Match"),
+		},
+	}
+	for _, test := range tests {
+
+		t.Run(test.name, func(t *testing.T) {
+			_, error := captchaService.CaptchaVerify(test.request)
+			require.Equal(t, test.expectedError, error)
+		})
+	}
+}
+
 func BenchmarkGenerateCaptcha(b *testing.B) {
 	request := model.ConfigJsonBody{
 		CaptchaId:   "",
@@ -108,5 +146,15 @@ func BenchmarkGenerateCaptcha(b *testing.B) {
 	}
 	for index := 0; index < b.N; index++ {
 		captchaService.GenerateCaptcha(&request)
+	}
+}
+
+func BenchmarkCaptchaVerify(b *testing.B) {
+	request := model.ConfigJsonBody{
+		CaptchaId:   "",
+		VerifyValue: "",
+	}
+	for index := 0; index < b.N; index++ {
+		captchaService.CaptchaVerify(&request)
 	}
 }
