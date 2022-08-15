@@ -415,3 +415,72 @@ func BenchmarkGetCategoryService(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkCreateCategoryService(b *testing.B) {
+	date := time.Now()
+	benchmarks := []struct {
+		name           string
+		request        *model.CreateCategoryRequest
+		expectedReturn model.CreateCategoryRequest
+	}{{
+		name: "Benchmark Create Category",
+		request: &model.CreateCategoryRequest{
+			Name: "Bill Acceptor Rupiah",
+			SubCategory: []entity.SubCategory{
+				{
+					Name:     "Mati/error",
+					Priority: "Critical",
+				},
+				{
+					Name:     "Uang tersangkut di dalam Bill acceptor",
+					Priority: "High",
+				},
+			},
+			UpdateAt: date,
+		},
+		expectedReturn: model.CreateCategoryRequest{
+			Id:   78,
+			Name: "Bill Acceptor Rupiah",
+			SubCategory: []entity.SubCategory{
+				{
+					Id:         41,
+					Name:       "Mati/error",
+					IdCategory: 78,
+					Priority:   "Critical",
+					UpdatedAt:  date,
+				},
+				{
+					Id:         42,
+					Name:       "Uang tersangkut di dalam Bill acceptor",
+					IdCategory: 78,
+					Priority:   "High",
+					UpdatedAt:  date,
+				},
+			},
+			IsActive: "true",
+			UpdateAt: date,
+		},
+	}}
+
+	for _, benchmark := range benchmarks {
+		for index := 0; index < b.N; index++ {
+			var request_sc []*entity.SubCategory
+			for _, value := range benchmark.expectedReturn.SubCategory {
+				request_sc = append(request_sc, &entity.SubCategory{
+					Name:       value.Name,
+					IdCategory: benchmark.expectedReturn.Id,
+					Priority:   value.Priority,
+					CreatedAt:  date,
+					UpdatedAt:  date,
+				})
+			}
+
+			subCategoryRepository.Mock.On("CreateSubCategory", request_sc).Return(benchmark.expectedReturn.SubCategory, nil)
+			categoryRepository.Mock.On("CreateCategory", benchmark.request).Return(benchmark.expectedReturn, nil)
+
+			b.Run(benchmark.name, func(b *testing.B) {
+				categoryService.CreateCategory(benchmark.request)
+			})
+		}
+	}
+}
