@@ -2,17 +2,17 @@ package service_test
 
 import (
 	"svc-myg-ticketing/entity"
-	repositorymock_test "svc-myg-ticketing/mock/repository_mock"
+	repositoryMock "svc-myg-ticketing/mock/repository_mock"
 	"svc-myg-ticketing/model"
 	"svc-myg-ticketing/service"
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
-var areaRepository = &repositorymock_test.RepositoryMock{Mock: mock.Mock{}}
+var areaRepository = &repositoryMock.RepositoryMock{Mock: mock.Mock{}}
 var areaService = service.AreaService(areaRepository)
 
 func TestGetAreaService(t *testing.T) {
@@ -73,8 +73,8 @@ func TestGetAreaService(t *testing.T) {
 
 		t.Run(test.name, func(t *testing.T) {
 			result, error := areaService.GetArea(test.request)
-			assert.Equal(t, test.expectedReturn, result)
-			assert.Equal(t, test.expectedError, error)
+			require.Equal(t, test.expectedReturn, result)
+			require.Equal(t, test.expectedError, error)
 		})
 	}
 
