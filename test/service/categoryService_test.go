@@ -557,3 +557,25 @@ func BenchmarkUpdateCategoryService(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkDeleteCategoryService(b *testing.B) {
+
+	benchmarks := []struct {
+		name    string
+		request int
+	}{{
+		name:    "Benchmark Delete Category",
+		request: 70,
+	}}
+
+	for _, benchmark := range benchmarks {
+		for index := 0; index < b.N; index++ {
+
+			categoryRepository.Mock.On("DeleteCategory", &benchmark.request).Return(nil)
+
+			b.Run(benchmark.name, func(b *testing.B) {
+				categoryService.DeleteCategory(&benchmark.request)
+			})
+		}
+	}
+}
