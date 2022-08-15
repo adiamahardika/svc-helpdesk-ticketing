@@ -43,11 +43,7 @@ func (repo *RepositoryMock) UpdateCategory(request *model.CreateCategoryRequest)
 
 func (repo *RepositoryMock) DeleteCategory(id *int) error {
 
-	arguments := repo.Mock.Called(id)
-
-	category := arguments.Get(0).(error)
-
-	return category
+	return nil
 }
 
 func (repo *RepositoryMock) GetDetailCategory(request *string) ([]entity.Category, error) {

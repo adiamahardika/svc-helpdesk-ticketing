@@ -290,3 +290,26 @@ func TestUpdateCategoryService(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteCategoryService(t *testing.T) {
+
+	tests := []struct {
+		name          string
+		request       int
+		expectedError error
+	}{{
+		name:          "Success Delete Category",
+		request:       70,
+		expectedError: nil,
+	}}
+
+	for _, test := range tests {
+
+		categoryRepository.Mock.On("DeleteCategory", &test.request).Return(nil)
+
+		t.Run(test.name, func(t *testing.T) {
+			error := categoryService.DeleteCategory(&test.request)
+			require.Equal(t, test.expectedError, error)
+		})
+	}
+}
