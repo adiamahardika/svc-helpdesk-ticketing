@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"errors"
 	"image/color"
 	"svc-myg-ticketing/model"
 	"svc-myg-ticketing/service"
@@ -20,7 +21,7 @@ func TestGenerateCaptcha(t *testing.T) {
 		expectedError error
 	}{
 		{
-			name: "Success Generate Captcha",
+			name: "Success",
 			request: &model.ConfigJsonBody{
 				CaptchaId:   "",
 				VerifyValue: "",
@@ -41,6 +42,38 @@ func TestGenerateCaptcha(t *testing.T) {
 				},
 			},
 			expectedError: nil,
+		},
+		{
+			name: "Error Empty Request 1",
+			request: &model.ConfigJsonBody{
+				CaptchaId:    "",
+				VerifyValue:  "",
+				DriverString: &base64Captcha.DriverString{},
+			},
+			expectedError: errors.New("text must not be empty, there is nothing to draw"),
+		},
+		{
+			name: "Error Empty Request 2",
+			request: &model.ConfigJsonBody{
+				CaptchaId:   "",
+				VerifyValue: "",
+				DriverString: &base64Captcha.DriverString{
+					Height:          0,
+					Width:           0,
+					ShowLineOptions: 0,
+					NoiseCount:      0,
+					Source:          "",
+					Length:          0,
+					Fonts:           []string{"wqy-microhei.ttc"},
+					BgColor: &color.RGBA{
+						R: 0,
+						G: 0,
+						B: 0,
+						A: 0,
+					},
+				},
+			},
+			expectedError: errors.New("text must not be empty, there is nothing to draw"),
 		},
 	}
 	for _, test := range tests {
