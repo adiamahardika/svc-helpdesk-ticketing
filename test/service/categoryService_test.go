@@ -156,7 +156,6 @@ func TestCreateCategoryService(t *testing.T) {
 	}{{
 		name: "Success Create Category",
 		request: &model.CreateCategoryRequest{
-
 			Name: "Bill Acceptor Rupiah",
 			SubCategory: []entity.SubCategory{
 				{
@@ -168,6 +167,7 @@ func TestCreateCategoryService(t *testing.T) {
 					Priority: "High",
 				},
 			},
+			UpdateAt: date,
 		},
 		expectedReturn: model.CreateCategoryRequest{
 			Id:   78,
@@ -241,6 +241,7 @@ func TestUpdateCategoryService(t *testing.T) {
 					Priority: "High",
 				},
 			},
+			UpdateAt: date,
 		},
 		expectedReturn: model.CreateCategoryRequest{
 			Id:   78,
@@ -378,5 +379,39 @@ func TestGetDetailCategoryService(t *testing.T) {
 			require.Equal(t, test.expectedReturn, response)
 			require.Equal(t, test.expectedError, error)
 		})
+	}
+}
+
+func BenchmarkGetCategoryService(b *testing.B) {
+	date, _ := time.Parse("0001-01-01T00:00:00Z", time.RFC1123Z)
+	benchmarks := []struct {
+		name    string
+		request *model.GetCategoryRequest
+	}{{
+		name: "Benchmark Get Category",
+		request: &model.GetCategoryRequest{
+			Size:     100,
+			PageNo:   0,
+			IsActive: "true",
+		},
+	}}
+
+	for _, benchmark := range benchmarks {
+		for index := 0; index < b.N; index++ {
+			categoryRepository.Mock.On("CountCategory", benchmark.request).Return(int(1), nil)
+			categoryRepository.Mock.On("GetCategory", benchmark.request).Return([]entity.Category{
+				{
+					Id:          0,
+					Name:        "",
+					SubCategory: "",
+					IsActive:    "",
+					UpdateAt:    date,
+				},
+			}, nil)
+
+			b.Run(benchmark.name, func(b *testing.B) {
+				categoryService.GetCategory(benchmark.request)
+			})
+		}
 	}
 }

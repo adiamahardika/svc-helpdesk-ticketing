@@ -59,9 +59,13 @@ func (categoryService *categoryService) CreateCategory(request *model.CreateCate
 	var request_sc []*entity.SubCategory
 	var response_sc []entity.SubCategory
 	var response model.CreateCategoryRequest
-	date_now := time.Now()
+	date_now := request.UpdateAt
 
-	request.UpdateAt = date_now
+	if (request.UpdateAt == time.Time{}) {
+		date_now = time.Now()
+		request.UpdateAt = date_now
+	}
+
 	request.IsActive = "true"
 
 	category, error := categoryService.categoryRepository.CreateCategory(request)
@@ -93,9 +97,13 @@ func (categoryService *categoryService) CreateCategory(request *model.CreateCate
 func (categoryService *categoryService) UpdateCategory(request *model.CreateCategoryRequest) (model.CreateCategoryRequest, error) {
 	var request_sc []*entity.SubCategory
 	var response_sc []entity.SubCategory
-	date_now := time.Now()
+	date_now := request.UpdateAt
 
-	request.UpdateAt = date_now
+	if (request.UpdateAt == time.Time{}) {
+		date_now = time.Now()
+		request.UpdateAt = date_now
+	}
+
 	category, error := categoryService.categoryRepository.UpdateCategory(request)
 
 	if error == nil {
