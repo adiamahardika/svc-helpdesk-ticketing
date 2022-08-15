@@ -156,6 +156,7 @@ func TestCreateCategoryService(t *testing.T) {
 	}{{
 		name: "Success Create Category",
 		request: &model.CreateCategoryRequest{
+
 			Name: "Bill Acceptor Rupiah",
 			SubCategory: []entity.SubCategory{
 				{
@@ -210,6 +211,80 @@ func TestCreateCategoryService(t *testing.T) {
 
 		t.Run(test.name, func(t *testing.T) {
 			response, error := categoryService.CreateCategory(test.request)
+			require.Equal(t, test.expectedReturn, response)
+			require.Equal(t, test.expectedError, error)
+		})
+	}
+}
+
+func TestUpdateCategoryService(t *testing.T) {
+	date := time.Now()
+	tests := []struct {
+		name           string
+		request        *model.CreateCategoryRequest
+		expectedReturn model.CreateCategoryRequest
+		expectedError  error
+	}{{
+		name: "Success Update Category",
+		request: &model.CreateCategoryRequest{
+			Id:   78,
+			Name: "Bill Acceptor Rupiah",
+			SubCategory: []entity.SubCategory{
+				{
+					Id:       41,
+					Name:     "Mati/error",
+					Priority: "Critical",
+				},
+				{
+					Id:       42,
+					Name:     "Uang tersangkut di dalam Bill acceptor",
+					Priority: "High",
+				},
+			},
+		},
+		expectedReturn: model.CreateCategoryRequest{
+			Id:   78,
+			Name: "Bill Acceptor Rupiah",
+			SubCategory: []entity.SubCategory{
+				{
+					Id:         41,
+					Name:       "Mati/error",
+					IdCategory: 78,
+					Priority:   "Critical",
+					UpdatedAt:  date,
+				},
+				{
+					Id:         42,
+					Name:       "Uang tersangkut di dalam Bill acceptor",
+					IdCategory: 78,
+					Priority:   "High",
+					UpdatedAt:  date,
+				},
+			},
+			IsActive: "true",
+			UpdateAt: date,
+		},
+		expectedError: nil,
+	}}
+
+	for _, test := range tests {
+		var request_sc []*entity.SubCategory
+		for _, value := range test.expectedReturn.SubCategory {
+			request_sc = append(request_sc, &entity.SubCategory{
+				Name:       value.Name,
+				IdCategory: test.expectedReturn.Id,
+				Priority:   value.Priority,
+				CreatedAt:  date,
+				UpdatedAt:  date,
+			})
+		}
+
+		subCategoryRepository.Mock.On("DeleteSubCategory", &test.request.Id).Return(nil)
+		subCategoryRepository.Mock.On("CreateSubCategory", request_sc).Return(test.expectedReturn.SubCategory, test.expectedError)
+		categoryRepository.Mock.On("UpdateCategory", test.request).Return(test.expectedReturn, nil)
+
+		t.Run(test.name, func(t *testing.T) {
+			response, error := categoryService.UpdateCategory(test.request)
 			require.Equal(t, test.expectedReturn, response)
 			require.Equal(t, test.expectedError, error)
 		})
