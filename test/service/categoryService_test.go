@@ -579,3 +579,32 @@ func BenchmarkDeleteCategoryService(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkGetDetailCategoryService(b *testing.B) {
+	date, _ := time.Parse("0001-01-01T00:00:00Z", time.RFC1123Z)
+	benchmarks := []struct {
+		name    string
+		request string
+	}{{
+		name:    "Benchmark Get Category",
+		request: "78",
+	}}
+
+	for _, benchmark := range benchmarks {
+		for index := 0; index < b.N; index++ {
+			categoryRepository.Mock.On("GetDetailCategory", &benchmark.request).Return([]entity.Category{
+				{
+					Id:          78,
+					Name:        "Bill Acceptor Rupiah",
+					SubCategory: `[{"id":40,"name":"Tidak dapat menerima uang/uang tereject","idCategory":78,"priority":"High","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},{"id":41,"name":"Mati/error","idCategory":78,"priority":"Critical","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},{"id":42,"name":"Uang tersangkut di dalam Bill acceptor","idCategory":78,"priority":"High","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"}]`,
+					IsActive:    "true",
+					UpdateAt:    date,
+				},
+			}, nil)
+
+			b.Run(benchmark.name, func(b *testing.B) {
+				categoryService.GetDetailCategory(&benchmark.request)
+			})
+		}
+	}
+}
