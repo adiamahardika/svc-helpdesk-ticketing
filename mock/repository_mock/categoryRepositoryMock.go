@@ -54,21 +54,3 @@ func (repo *RepositoryMock) GetDetailCategory(request *string) ([]entity.Categor
 
 	return category, nil
 }
-
-func (repo *RepositoryMock) GetCategoryByParentDesc(request string) ([]entity.Category, error) {
-
-	arguments := repo.Mock.Called(request)
-
-	category := arguments.Get(0).([]entity.Category)
-
-	return category, nil
-}
-
-func (repo *RepositoryMock) GetCategoryByParentAsc(request string) ([]entity.Category, error) {
-
-	arguments := repo.Mock.Called(request)
-
-	category := arguments.Get(0).([]entity.Category)
-
-	return category, nil
-}

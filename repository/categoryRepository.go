@@ -12,8 +12,6 @@ type CategoryRepositoryInterface interface {
 	UpdateCategory(request *model.CreateCategoryRequest) (model.CreateCategoryRequest, error)
 	DeleteCategory(id *int) error
 	GetDetailCategory(request *string) ([]entity.Category, error)
-	GetCategoryByParentDesc(request string) ([]entity.Category, error)
-	GetCategoryByParentAsc(request string) ([]entity.Category, error)
 }
 
 func (repo *repository) GetCategory(request *model.GetCategoryRequest) ([]entity.Category, error) {
@@ -67,22 +65,6 @@ func (repo *repository) GetDetailCategory(request *string) ([]entity.Category, e
 	var category []entity.Category
 
 	error := repo.db.Raw("SELECT ticketing_category.*, JSON_AGG(JSON_BUILD_OBJECT('id', ticketing_sub_category.id, 'idCategory', ticketing_sub_category.id_category, 'name', ticketing_sub_category.name, 'priority', ticketing_sub_category.priority)) AS sub_category FROM ticketing_category LEFT OUTER JOIN ticketing_sub_category ON (ticketing_category.id = ticketing_sub_category.id_category) WHERE ticketing_category.id = ? GROUP BY ticketing_category.id", request).Find(&category).Error
-
-	return category, error
-}
-
-func (repo *repository) GetCategoryByParentDesc(request string) ([]entity.Category, error) {
-	var category []entity.Category
-
-	error := repo.db.Raw("SELECT * FROM ticketing_category WHERE parent = ? ORDER BY update_at DESC", request).Find(&category).Error
-
-	return category, error
-}
-
-func (repo *repository) GetCategoryByParentAsc(request string) ([]entity.Category, error) {
-	var category []entity.Category
-
-	error := repo.db.Raw("SELECT * FROM ticketing_category WHERE parent = ? ORDER BY update_at ASC", request).Find(&category).Error
 
 	return category, error
 }
