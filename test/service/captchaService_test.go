@@ -124,37 +124,75 @@ func TestCaptchaVerify(t *testing.T) {
 }
 
 func BenchmarkGenerateCaptcha(b *testing.B) {
-	request := model.ConfigJsonBody{
-		CaptchaId:   "",
-		VerifyValue: "",
-		DriverString: &base64Captcha.DriverString{
-			Height:          60,
-			Width:           240,
-			ShowLineOptions: 0,
-			NoiseCount:      40,
-			Source:          "1234567890qwertyuioplkjhgfdsazxcvbnm",
-			Length:          6,
-			Fonts:           []string{"wqy-microhei.ttc"},
-			BgColor: &color.RGBA{
+	benchmarks := []struct {
+		name    string
+		request model.ConfigJsonBody
+	}{{
+		name: "Generate Captcha",
+		request: model.ConfigJsonBody{
+			CaptchaId:   "",
+			VerifyValue: "",
+			DriverString: &base64Captcha.DriverString{
+				Height:          60,
+				Width:           240,
+				ShowLineOptions: 0,
+				NoiseCount:      40,
+				Source:          "1234567890qwertyuioplkjhgfdsazxcvbnm",
+				Length:          6,
+				Fonts:           []string{"wqy-microhei.ttc"},
+				BgColor: &color.RGBA{
 
-				R: 0,
-				G: 0,
-				B: 0,
-				A: 0,
+					R: 0,
+					G: 0,
+					B: 0,
+					A: 0,
+				},
 			},
 		},
-	}
-	for index := 0; index < b.N; index++ {
-		captchaService.GenerateCaptcha(&request)
+	}}
+
+	for _, benchmark := range benchmarks {
+		for index := 0; index < b.N; index++ {
+			b.Run(benchmark.name, func(b *testing.B) {
+				captchaService.GenerateCaptcha(&benchmark.request)
+			})
+		}
 	}
 }
 
 func BenchmarkCaptchaVerify(b *testing.B) {
-	request := model.ConfigJsonBody{
-		CaptchaId:   "",
-		VerifyValue: "",
-	}
-	for index := 0; index < b.N; index++ {
-		captchaService.CaptchaVerify(&request)
+	benchmarks := []struct {
+		name    string
+		request model.ConfigJsonBody
+	}{{
+		name: "Captcha Verify",
+		request: model.ConfigJsonBody{
+			CaptchaId:   "",
+			VerifyValue: "",
+			DriverString: &base64Captcha.DriverString{
+				Height:          60,
+				Width:           240,
+				ShowLineOptions: 0,
+				NoiseCount:      40,
+				Source:          "1234567890qwertyuioplkjhgfdsazxcvbnm",
+				Length:          6,
+				Fonts:           []string{"wqy-microhei.ttc"},
+				BgColor: &color.RGBA{
+
+					R: 0,
+					G: 0,
+					B: 0,
+					A: 0,
+				},
+			},
+		},
+	}}
+
+	for _, benchmark := range benchmarks {
+		for index := 0; index < b.N; index++ {
+			b.Run(benchmark.name, func(b *testing.B) {
+				captchaService.CaptchaVerify(&benchmark.request)
+			})
+		}
 	}
 }
