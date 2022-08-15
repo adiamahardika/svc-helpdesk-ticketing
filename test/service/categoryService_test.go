@@ -25,7 +25,7 @@ func TestGetCategoryService(t *testing.T) {
 		expectedTotalPage float64
 		expectedError     error
 	}{{
-		name: "Success Get Category",
+		name: "Success",
 		request: &model.GetCategoryRequest{
 			Size:     100,
 			PageNo:   0,
@@ -154,7 +154,7 @@ func TestCreateCategoryService(t *testing.T) {
 		expectedReturn model.CreateCategoryRequest
 		expectedError  error
 	}{{
-		name: "Success Create Category",
+		name: "Success",
 		request: &model.CreateCategoryRequest{
 			Name: "Bill Acceptor Rupiah",
 			SubCategory: []entity.SubCategory{
@@ -225,7 +225,7 @@ func TestUpdateCategoryService(t *testing.T) {
 		expectedReturn model.CreateCategoryRequest
 		expectedError  error
 	}{{
-		name: "Success Update Category",
+		name: "Success",
 		request: &model.CreateCategoryRequest{
 			Id:   78,
 			Name: "Bill Acceptor Rupiah",
@@ -299,7 +299,7 @@ func TestDeleteCategoryService(t *testing.T) {
 		request       int
 		expectedError error
 	}{{
-		name:          "Success Delete Category",
+		name:          "Success",
 		request:       70,
 		expectedError: nil,
 	}}
@@ -325,7 +325,7 @@ func TestGetDetailCategoryService(t *testing.T) {
 		expectedTotalPage float64
 		expectedError     error
 	}{{
-		name:    "Success Get Detail Category",
+		name:    "Success",
 		request: "78",
 		expectedReturn: []model.CreateCategoryRequest{
 			{
