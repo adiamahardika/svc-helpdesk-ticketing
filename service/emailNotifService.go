@@ -23,10 +23,14 @@ func EmailNotifService(emailNotifRepository repository.EmailNotifRepositoryInter
 }
 
 func (emailNotifService *emailNotifService) CreateEmailNotif(request *entity.EmailNotif) (entity.EmailNotif, error) {
-	date_now := time.Now()
+	date_now := request.CreatedAt
 
-	request.CreatedAt = date_now
-	request.UpdatedAt = date_now
+	if (request.CreatedAt == time.Time{} || request.UpdatedAt == time.Time{}) {
+		date_now = time.Now()
+		request.CreatedAt = date_now
+		request.UpdatedAt = date_now
+	}
+
 	error := emailNotifService.emailNotifRepository.CreateEmailNotif(request)
 
 	return *request, error
