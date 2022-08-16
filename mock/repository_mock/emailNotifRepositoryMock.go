@@ -27,11 +27,7 @@ func (repo *RepositoryMock) UpdateEmailNotif(request *entity.EmailNotif) (entity
 
 func (repo *RepositoryMock) DeleteEmailNotif(id *int) error {
 
-	arguments := repo.Mock.Called(id)
-
-	email_notif := arguments.Get(0).(error)
-
-	return email_notif
+	return nil
 }
 
 func (repo *RepositoryMock) GetDetailEmailNotif(id *int) ([]entity.EmailNotif, error) {

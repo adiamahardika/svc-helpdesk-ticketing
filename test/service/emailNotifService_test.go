@@ -117,3 +117,25 @@ func Test_Service_EmailNotif_Update(t *testing.T) {
 		})
 	}
 }
+
+func Test_Service_EmailNotif_Delete(t *testing.T) {
+
+	tests := []struct {
+		name          string
+		request       int
+		expectedError error
+	}{{
+		name:          "Success",
+		request:       1,
+		expectedError: nil,
+	}}
+
+	for _, test := range tests {
+		emailNotifRepository.Mock.On("DeleteEmailNotif", &test.request).Return(test.expectedError)
+
+		t.Run(test.name, func(t *testing.T) {
+			error := emailNotifService.DeleteEmailNotif(&test.request)
+			require.Equal(t, test.expectedError, error)
+		})
+	}
+}
