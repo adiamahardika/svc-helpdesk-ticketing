@@ -13,7 +13,7 @@ import (
 
 var captchaService = service.CapthcaService()
 
-func TestGenerateCaptcha(t *testing.T) {
+func Test_Service_Captcha_Generate(t *testing.T) {
 
 	tests := []struct {
 		name          string
@@ -85,7 +85,7 @@ func TestGenerateCaptcha(t *testing.T) {
 	}
 }
 
-func TestCaptchaVerify(t *testing.T) {
+func Test_Service_Captcha_Verify(t *testing.T) {
 
 	tests := []struct {
 		name          string
@@ -123,7 +123,7 @@ func TestCaptchaVerify(t *testing.T) {
 	}
 }
 
-func BenchmarkGenerateCaptcha(b *testing.B) {
+func Benchmark_Service_Captcha_Generate(b *testing.B) {
 	benchmarks := []struct {
 		name    string
 		request model.ConfigJsonBody
@@ -160,7 +160,7 @@ func BenchmarkGenerateCaptcha(b *testing.B) {
 	}
 }
 
-func BenchmarkCaptchaVerify(b *testing.B) {
+func Benchmark_Service_Captcha_Verify(b *testing.B) {
 	benchmarks := []struct {
 		name    string
 		request model.ConfigJsonBody

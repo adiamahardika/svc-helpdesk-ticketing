@@ -15,7 +15,7 @@ import (
 var areaRepository = &repositoryMock.RepositoryMock{Mock: mock.Mock{}}
 var areaService = service.AreaService(areaRepository)
 
-func TestGetAreaService(t *testing.T) {
+func Test_Service_Area_Get(t *testing.T) {
 
 	date := time.Now()
 	tests := []struct {
@@ -80,7 +80,7 @@ func TestGetAreaService(t *testing.T) {
 
 }
 
-func BenchmarkGetAreaService(b *testing.B) {
+func Benchmark_Service_Area_Get(b *testing.B) {
 
 	date := time.Now()
 	benchmarks := []struct {

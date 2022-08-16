@@ -16,7 +16,7 @@ var categoryRepository = &repositoryMock.RepositoryMock{Mock: mock.Mock{}}
 var subCategoryRepository = &repositoryMock.RepositoryMock{Mock: mock.Mock{}}
 var categoryService = service.CategoryService(categoryRepository, subCategoryRepository)
 
-func TestGetCategoryService(t *testing.T) {
+func Test_Service_Category_Get(t *testing.T) {
 	date, _ := time.Parse("0001-01-01T00:00:00Z", time.RFC1123Z)
 	tests := []struct {
 		name              string
@@ -146,7 +146,7 @@ func TestGetCategoryService(t *testing.T) {
 	}
 }
 
-func TestCreateCategoryService(t *testing.T) {
+func Test_Service_Category_Create(t *testing.T) {
 	date := time.Now()
 	tests := []struct {
 		name           string
@@ -217,7 +217,7 @@ func TestCreateCategoryService(t *testing.T) {
 	}
 }
 
-func TestUpdateCategoryService(t *testing.T) {
+func Test_Service_Category_Update(t *testing.T) {
 	date := time.Now()
 	tests := []struct {
 		name           string
@@ -292,7 +292,7 @@ func TestUpdateCategoryService(t *testing.T) {
 	}
 }
 
-func TestDeleteCategoryService(t *testing.T) {
+func Test_Service_Category_Delete(t *testing.T) {
 
 	tests := []struct {
 		name          string
@@ -315,7 +315,7 @@ func TestDeleteCategoryService(t *testing.T) {
 	}
 }
 
-func TestGetDetailCategoryService(t *testing.T) {
+func Test_Service_Category_GetDetail(t *testing.T) {
 
 	date, _ := time.Parse("0001-01-01T00:00:00Z", time.RFC1123Z)
 	tests := []struct {
@@ -382,7 +382,7 @@ func TestGetDetailCategoryService(t *testing.T) {
 	}
 }
 
-func BenchmarkGetCategoryService(b *testing.B) {
+func Benchmark_Service_Category_Get(b *testing.B) {
 	date, _ := time.Parse("0001-01-01T00:00:00Z", time.RFC1123Z)
 	benchmarks := []struct {
 		name    string
@@ -417,7 +417,7 @@ func BenchmarkGetCategoryService(b *testing.B) {
 	}
 }
 
-func BenchmarkCreateCategoryService(b *testing.B) {
+func Benchmark_Service_Category_Create(b *testing.B) {
 	date := time.Now()
 	benchmarks := []struct {
 		name           string
@@ -487,7 +487,7 @@ func BenchmarkCreateCategoryService(b *testing.B) {
 	}
 }
 
-func BenchmarkUpdateCategoryService(b *testing.B) {
+func Benchmark_Service_Category_Update(b *testing.B) {
 	date := time.Now()
 	benchmarks := []struct {
 		name           string
@@ -561,7 +561,7 @@ func BenchmarkUpdateCategoryService(b *testing.B) {
 	}
 }
 
-func BenchmarkDeleteCategoryService(b *testing.B) {
+func Benchmark_Service_Category_Delete(b *testing.B) {
 
 	benchmarks := []struct {
 		name    string
@@ -582,7 +582,7 @@ func BenchmarkDeleteCategoryService(b *testing.B) {
 	}
 }
 
-func BenchmarkGetDetailCategoryService(b *testing.B) {
+func Benchmark_Service_Category_GetDetail(b *testing.B) {
 	date, _ := time.Parse("0001-01-01T00:00:00Z", time.RFC1123Z)
 	benchmarks := []struct {
 		name    string
