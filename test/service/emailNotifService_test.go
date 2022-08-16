@@ -83,3 +83,37 @@ func Test_Service_EmailNotif_Get(t *testing.T) {
 		})
 	}
 }
+
+func Test_Service_EmailNotif_Update(t *testing.T) {
+	date := time.Now()
+	tests := []struct {
+		name           string
+		request        *entity.EmailNotif
+		expectedReturn entity.EmailNotif
+		expectedError  error
+	}{{
+		name: "Success",
+		request: &entity.EmailNotif{
+			Email:     "devt@mail.com",
+			CreatedAt: date,
+			UpdatedAt: date,
+		},
+		expectedReturn: entity.EmailNotif{
+			Id:        0,
+			Email:     "devt@mail.com",
+			CreatedAt: date,
+			UpdatedAt: date,
+		},
+		expectedError: nil,
+	}}
+
+	for _, test := range tests {
+		emailNotifRepository.Mock.On("UpdateEmailNotif", test.request).Return(test.expectedReturn, test.expectedError)
+
+		t.Run(test.name, func(t *testing.T) {
+			result, error := emailNotifService.UpdateEmailNotif(test.request)
+			require.Equal(t, test.expectedReturn, result)
+			require.Equal(t, test.expectedError, error)
+		})
+	}
+}
