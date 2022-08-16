@@ -25,7 +25,7 @@ func TestGetAreaService(t *testing.T) {
 		expectedError  error
 	}{
 		{
-			name: "Success Get Area",
+			name: "Success",
 			request: &model.GetAreaRequest{
 				AreaCode: []string{""},
 				AreaName: "",
@@ -78,4 +78,67 @@ func TestGetAreaService(t *testing.T) {
 		})
 	}
 
+}
+
+func BenchmarkGetAreaService(b *testing.B) {
+
+	date := time.Now()
+	benchmarks := []struct {
+		name           string
+		request        *model.GetAreaRequest
+		expectedReturn []entity.MsArea
+	}{
+		{
+			name: "Get Area",
+			request: &model.GetAreaRequest{
+				AreaCode: []string{""},
+				AreaName: "",
+				Status:   "",
+			},
+			expectedReturn: []entity.MsArea{
+				{
+					Id:        3,
+					AreaCode:  "1",
+					AreaName:  "Sumatra",
+					Status:    "A",
+					CreatedAt: date,
+					UpdatedAt: date,
+				},
+				{
+					Id:        2,
+					AreaCode:  "2",
+					AreaName:  "Jabotabek-Jabar",
+					Status:    "A",
+					CreatedAt: date,
+					UpdatedAt: date,
+				},
+				{
+					Id:        1,
+					AreaCode:  "3",
+					AreaName:  "Jawa-Balinusra",
+					Status:    "A",
+					CreatedAt: date,
+					UpdatedAt: date,
+				},
+				{
+					Id:        4,
+					AreaCode:  "4",
+					AreaName:  "Pamasuka",
+					Status:    "A",
+					CreatedAt: date,
+					UpdatedAt: date,
+				},
+			},
+		},
+	}
+
+	for _, benchmark := range benchmarks {
+		areaRepository.Mock.On("GetArea", benchmark.request).Return(benchmark.expectedReturn, nil)
+
+		for index := 0; index < b.N; index++ {
+			b.Run(benchmark.name, func(b *testing.B) {
+				areaService.GetArea(benchmark.request)
+			})
+		}
+	}
 }

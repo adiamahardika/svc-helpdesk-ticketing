@@ -388,7 +388,7 @@ func BenchmarkGetCategoryService(b *testing.B) {
 		name    string
 		request *model.GetCategoryRequest
 	}{{
-		name: "Benchmark Get Category",
+		name: "Get Category",
 		request: &model.GetCategoryRequest{
 			Size:     100,
 			PageNo:   0,
@@ -397,17 +397,18 @@ func BenchmarkGetCategoryService(b *testing.B) {
 	}}
 
 	for _, benchmark := range benchmarks {
+		categoryRepository.Mock.On("CountCategory", benchmark.request).Return(int(1), nil)
+		categoryRepository.Mock.On("GetCategory", benchmark.request).Return([]entity.Category{
+			{
+				Id:          0,
+				Name:        "",
+				SubCategory: "",
+				IsActive:    "",
+				UpdateAt:    date,
+			},
+		}, nil)
+
 		for index := 0; index < b.N; index++ {
-			categoryRepository.Mock.On("CountCategory", benchmark.request).Return(int(1), nil)
-			categoryRepository.Mock.On("GetCategory", benchmark.request).Return([]entity.Category{
-				{
-					Id:          0,
-					Name:        "",
-					SubCategory: "",
-					IsActive:    "",
-					UpdateAt:    date,
-				},
-			}, nil)
 
 			b.Run(benchmark.name, func(b *testing.B) {
 				categoryService.GetCategory(benchmark.request)
@@ -423,7 +424,7 @@ func BenchmarkCreateCategoryService(b *testing.B) {
 		request        *model.CreateCategoryRequest
 		expectedReturn model.CreateCategoryRequest
 	}{{
-		name: "Benchmark Create Category",
+		name: "Create Category",
 		request: &model.CreateCategoryRequest{
 			Name: "Bill Acceptor Rupiah",
 			SubCategory: []entity.SubCategory{
@@ -463,20 +464,21 @@ func BenchmarkCreateCategoryService(b *testing.B) {
 	}}
 
 	for _, benchmark := range benchmarks {
-		for index := 0; index < b.N; index++ {
-			var request_sc []*entity.SubCategory
-			for _, value := range benchmark.expectedReturn.SubCategory {
-				request_sc = append(request_sc, &entity.SubCategory{
-					Name:       value.Name,
-					IdCategory: benchmark.expectedReturn.Id,
-					Priority:   value.Priority,
-					CreatedAt:  date,
-					UpdatedAt:  date,
-				})
-			}
+		var request_sc []*entity.SubCategory
+		for _, value := range benchmark.expectedReturn.SubCategory {
+			request_sc = append(request_sc, &entity.SubCategory{
+				Name:       value.Name,
+				IdCategory: benchmark.expectedReturn.Id,
+				Priority:   value.Priority,
+				CreatedAt:  date,
+				UpdatedAt:  date,
+			})
+		}
 
-			subCategoryRepository.Mock.On("CreateSubCategory", request_sc).Return(benchmark.expectedReturn.SubCategory, nil)
-			categoryRepository.Mock.On("CreateCategory", benchmark.request).Return(benchmark.expectedReturn, nil)
+		subCategoryRepository.Mock.On("CreateSubCategory", request_sc).Return(benchmark.expectedReturn.SubCategory, nil)
+		categoryRepository.Mock.On("CreateCategory", benchmark.request).Return(benchmark.expectedReturn, nil)
+
+		for index := 0; index < b.N; index++ {
 
 			b.Run(benchmark.name, func(b *testing.B) {
 				categoryService.CreateCategory(benchmark.request)
@@ -492,7 +494,7 @@ func BenchmarkUpdateCategoryService(b *testing.B) {
 		request        *model.CreateCategoryRequest
 		expectedReturn model.CreateCategoryRequest
 	}{{
-		name: "Benchmark Create Category",
+		name: "Update Category",
 		request: &model.CreateCategoryRequest{
 			Id:   78,
 			Name: "Bill Acceptor Rupiah",
@@ -535,21 +537,22 @@ func BenchmarkUpdateCategoryService(b *testing.B) {
 	}}
 
 	for _, benchmark := range benchmarks {
-		for index := 0; index < b.N; index++ {
-			var request_sc []*entity.SubCategory
-			for _, value := range benchmark.expectedReturn.SubCategory {
-				request_sc = append(request_sc, &entity.SubCategory{
-					Name:       value.Name,
-					IdCategory: benchmark.expectedReturn.Id,
-					Priority:   value.Priority,
-					CreatedAt:  date,
-					UpdatedAt:  date,
-				})
-			}
+		var request_sc []*entity.SubCategory
+		for _, value := range benchmark.expectedReturn.SubCategory {
+			request_sc = append(request_sc, &entity.SubCategory{
+				Name:       value.Name,
+				IdCategory: benchmark.expectedReturn.Id,
+				Priority:   value.Priority,
+				CreatedAt:  date,
+				UpdatedAt:  date,
+			})
+		}
 
-			subCategoryRepository.Mock.On("DeleteSubCategory", &benchmark.request.Id).Return(nil)
-			subCategoryRepository.Mock.On("CreateSubCategory", request_sc).Return(benchmark.expectedReturn.SubCategory, nil)
-			categoryRepository.Mock.On("UpdateCategory", benchmark.request).Return(benchmark.expectedReturn, nil)
+		subCategoryRepository.Mock.On("DeleteSubCategory", &benchmark.request.Id).Return(nil)
+		subCategoryRepository.Mock.On("CreateSubCategory", request_sc).Return(benchmark.expectedReturn.SubCategory, nil)
+		categoryRepository.Mock.On("UpdateCategory", benchmark.request).Return(benchmark.expectedReturn, nil)
+
+		for index := 0; index < b.N; index++ {
 
 			b.Run(benchmark.name, func(b *testing.B) {
 				categoryService.UpdateCategory(benchmark.request)
@@ -564,15 +567,14 @@ func BenchmarkDeleteCategoryService(b *testing.B) {
 		name    string
 		request int
 	}{{
-		name:    "Benchmark Delete Category",
+		name:    "Delete Category",
 		request: 70,
 	}}
 
 	for _, benchmark := range benchmarks {
+		categoryRepository.Mock.On("DeleteCategory", &benchmark.request).Return(nil)
+
 		for index := 0; index < b.N; index++ {
-
-			categoryRepository.Mock.On("DeleteCategory", &benchmark.request).Return(nil)
-
 			b.Run(benchmark.name, func(b *testing.B) {
 				categoryService.DeleteCategory(&benchmark.request)
 			})
@@ -586,21 +588,22 @@ func BenchmarkGetDetailCategoryService(b *testing.B) {
 		name    string
 		request string
 	}{{
-		name:    "Benchmark Get Category",
+		name:    "Get Category",
 		request: "78",
 	}}
 
 	for _, benchmark := range benchmarks {
+		categoryRepository.Mock.On("GetDetailCategory", &benchmark.request).Return([]entity.Category{
+			{
+				Id:          78,
+				Name:        "Bill Acceptor Rupiah",
+				SubCategory: `[{"id":40,"name":"Tidak dapat menerima uang/uang tereject","idCategory":78,"priority":"High","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},{"id":41,"name":"Mati/error","idCategory":78,"priority":"Critical","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},{"id":42,"name":"Uang tersangkut di dalam Bill acceptor","idCategory":78,"priority":"High","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"}]`,
+				IsActive:    "true",
+				UpdateAt:    date,
+			},
+		}, nil)
+
 		for index := 0; index < b.N; index++ {
-			categoryRepository.Mock.On("GetDetailCategory", &benchmark.request).Return([]entity.Category{
-				{
-					Id:          78,
-					Name:        "Bill Acceptor Rupiah",
-					SubCategory: `[{"id":40,"name":"Tidak dapat menerima uang/uang tereject","idCategory":78,"priority":"High","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},{"id":41,"name":"Mati/error","idCategory":78,"priority":"Critical","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"},{"id":42,"name":"Uang tersangkut di dalam Bill acceptor","idCategory":78,"priority":"High","createdAt":"0001-01-01T00:00:00Z","updatedAt":"0001-01-01T00:00:00Z"}]`,
-					IsActive:    "true",
-					UpdateAt:    date,
-				},
-			}, nil)
 
 			b.Run(benchmark.name, func(b *testing.B) {
 				categoryService.GetDetailCategory(&benchmark.request)
