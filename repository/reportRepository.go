@@ -2,16 +2,15 @@ package repository
 
 import (
 	"fmt"
-	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
 )
 
 type ReportRepositoryInterface interface {
-	GetReport(request *model.GetReportRequest) ([]entity.Ticket, error)
+	GetReport(request *model.GetReportRequest) ([]model.ReportResponse, error)
 }
 
-func (repo *repository) GetReport(request *model.GetReportRequest) ([]entity.Ticket, error) {
-	var ticket []entity.Ticket
+func (repo *repository) GetReport(request *model.GetReportRequest) ([]model.ReportResponse, error) {
+	var ticket []model.ReportResponse
 	var query string
 	var category string
 	var created_by string
@@ -35,7 +34,7 @@ func (repo *repository) GetReport(request *model.GetReportRequest) ([]entity.Tic
 		grapari_id = "AND ticket.grapari_id IN @GrapariId"
 	}
 
-	query = fmt.Sprintf("SELECT DISTINCT ON (ticket_code) ticket.*, ticketing_category.name AS category, ticket_isi.isi, ms_area.area_name, ms_grapari.name AS grapari_name, users1.name AS user_pembuat, users2.name AS assignee FROM ticket LEFT OUTER JOIN ticketing_category ON (ticket.category = CAST(ticketing_category.id AS varchar(10))) LEFT OUTER JOIN ticket_isi ON (ticket.ticket_code = ticket_isi.ticket_code) LEFT OUTER JOIN ms_area ON (ticket.area_code = ms_area.area_code) LEFT OUTER JOIN ms_grapari ON (ticket.grapari_id = ms_grapari.grapari_id) LEFT OUTER JOIN users users1 ON (ticket.username_pembuat = users1.username) LEFT OUTER JOIN users users2 ON (ticket.assigned_to = users2.username) WHERE prioritas IN @Priority AND ticket.status IN @Status AND assigned_to LIKE @AssignedTo %s %s %s %s %s AND ticket.tgl_dibuat >= @StartDate AND ticket.tgl_dibuat <= @EndDate ORDER BY ticket_code, ticket_isi.tgl_dibuat ASC", category, created_by, area_code, regional, grapari_id)
+	query = fmt.Sprintf("SELECT DISTINCT ON (ticket_code) ticket.*, TO_CHAR(ticket.tgl_diperbarui, 'DD-MM-YYYY HH24:MI:SS') AS tgl_diperbarui, TO_CHAR(ticket.tgl_dibuat, 'DD-MM-YYYY HH24:MI:SS' ) AS tgl_dibuat, TO_CHAR(ticket.start_time, 'DD-MM-YYYY HH24:MI:SS' ) AS start_time, TO_CHAR(ticket.close_time, 'DD-MM-YYYY HH24:MI:SS' ) AS close_time, TO_CHAR(ticket.assigning_time, 'DD-MM-YYYY HH24:MI:SS' ) AS assigning_time, ticketing_category.name AS category, ticket_isi.isi, ms_area.area_name, ms_grapari.name AS grapari_name, users1.name AS user_pembuat, users2.name AS assignee FROM ticket LEFT OUTER JOIN ticketing_category ON (ticket.category = CAST(ticketing_category.id AS varchar(10))) LEFT OUTER JOIN ticket_isi ON (ticket.ticket_code = ticket_isi.ticket_code) LEFT OUTER JOIN ms_area ON (ticket.area_code = ms_area.area_code) LEFT OUTER JOIN ms_grapari ON (ticket.grapari_id = ms_grapari.grapari_id) LEFT OUTER JOIN users users1 ON (ticket.username_pembuat = users1.username) LEFT OUTER JOIN users users2 ON (ticket.assigned_to = users2.username) WHERE prioritas IN @Priority AND ticket.status IN @Status AND assigned_to LIKE @AssignedTo %s %s %s %s %s AND ticket.tgl_dibuat >= @StartDate AND ticket.tgl_dibuat <= @EndDate ORDER BY ticket_code ASC", category, created_by, area_code, regional, grapari_id)
 
 	error := repo.db.Raw(query, model.GetReportRequest{
 		AssignedTo:      "%" + request.AssignedTo + "%",
