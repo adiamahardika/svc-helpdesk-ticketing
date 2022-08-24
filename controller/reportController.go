@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/general"
 	"svc-myg-ticketing/model"
 	"svc-myg-ticketing/service"
@@ -31,7 +30,7 @@ func (controller *reportContoller) GetReport(context *gin.Context) {
 	description := []string{}
 	http_status := http.StatusOK
 	var status *model.StandardResponse
-	var ticket []entity.Ticket
+	var ticket []model.ReportResponse
 
 	if error != nil {
 		for _, value := range error.(validator.ValidationErrors) {

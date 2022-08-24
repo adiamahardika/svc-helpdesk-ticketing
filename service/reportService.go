@@ -1,13 +1,12 @@
 package service
 
 import (
-	"svc-myg-ticketing/entity"
 	"svc-myg-ticketing/model"
 	"svc-myg-ticketing/repository"
 )
 
 type ReportServiceInterface interface {
-	GetReport(request *model.GetReportRequest) ([]entity.Ticket, error)
+	GetReport(request *model.GetReportRequest) ([]model.ReportResponse, error)
 }
 
 type reportService struct {
@@ -18,7 +17,7 @@ func ReportService(reportRepository repository.ReportRepositoryInterface) *repor
 	return &reportService{reportRepository}
 }
 
-func (reportService *reportService) GetReport(request *model.GetReportRequest) ([]entity.Ticket, error) {
+func (reportService *reportService) GetReport(request *model.GetReportRequest) ([]model.ReportResponse, error) {
 
 	request.EndDate = request.EndDate + " 23:59:59"
 	ticket, error := reportService.reportRepository.GetReport(request)

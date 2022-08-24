@@ -85,6 +85,7 @@ func (ticketService *ticketService) GetDetailTicket(ticket_code *string) (model.
 func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequest, context *gin.Context) (entity.Ticket, entity.TicketIsi, error) {
 	var wg sync.WaitGroup
 	var ticket []entity.Ticket
+	var assigning_time time.Time
 
 	date_now := time.Now()
 	dir := os.Getenv("FILE_DIR")
@@ -92,7 +93,6 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 	error := fmt.Errorf("error")
 	attachment1 := "-"
 	attachment2 := "-"
-	assigning_time := date_now
 	assigning_by := request.UserPembuat
 
 	_, check_dir_error := os.Stat(path)
@@ -120,9 +120,12 @@ func (ticketService *ticketService) CreateTicket(request *model.CreateTicketRequ
 	}
 	total_waktu := "0y 0m 0d 0h 0mm 0s"
 	if request.AssignedTo == "Unassigned" {
-		assigning_time = time.Date(1970, time.Month(1), 0, 0, 0, 0, 0, time.UTC)
+		assigning_time = time.Time{}
 		assigning_by = ""
+	} else {
+		assigning_time = date_now
 	}
+
 	ticket_request := entity.Ticket{
 		Judul:             request.Judul,
 		UsernamePembuat:   request.UserPembuat,
