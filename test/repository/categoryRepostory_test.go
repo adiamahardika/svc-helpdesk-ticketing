@@ -162,3 +162,44 @@ func Test_Repo_Category_Create(t *testing.T) {
 		})
 	}
 }
+
+func Test_Repo_Category_Update(t *testing.T) {
+
+	gormDB, mock := dbmock.DbMock(t)
+
+	repository := repository.Repository(gormDB)
+
+	tests := []struct {
+		name           string
+		request        *model.CreateCategoryRequest
+		expectedQuery  string
+		expectedReturn model.CreateCategoryRequest
+	}{{
+		name: "Success",
+		request: &model.CreateCategoryRequest{
+			Name:     "Test Category",
+			UpdateAt: time.Time{},
+		},
+		expectedQuery: "UPDATE ticketing_category SET name = $1, update_at = $2 WHERE id = $3 RETURNING ticketing_category.*",
+		expectedReturn: model.CreateCategoryRequest{
+			Id:       1,
+			Name:     "Test Category",
+			IsActive: "true",
+			UpdateAt: time.Time{},
+		},
+	}}
+
+	for _, test := range tests {
+
+		t.Run(test.name, func(t *testing.T) {
+			area := sqlmock.NewRows([]string{"id", "name", "is_active", "update_at"}).AddRow(test.expectedReturn.Id, test.expectedReturn.Name, test.expectedReturn.IsActive, test.expectedReturn.UpdateAt)
+
+			mock.ExpectQuery(regexp.QuoteMeta(test.expectedQuery)).WillReturnRows(area)
+
+			res, err := repository.UpdateCategory(test.request)
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedReturn, res)
+		})
+	}
+}
