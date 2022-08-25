@@ -76,3 +76,47 @@ func Test_Repo_Category_Get(t *testing.T) {
 		})
 	}
 }
+
+func Test_Repo_Category_Count(t *testing.T) {
+
+	gormDB, mock := dbmock.DbMock(t)
+
+	repository := repository.Repository(gormDB)
+
+	tests := []struct {
+		name           string
+		request        *model.GetCategoryRequest
+		expectedQuery  string
+		expectedReturn int
+	}{{
+		name: "Count All",
+		request: &model.GetCategoryRequest{
+			IsActive: "",
+		},
+		expectedQuery:  "SELECT COUNT(*) as total_data FROM ticketing_category WHERE is_active LIKE $1",
+		expectedReturn: 10,
+	}, {
+		name: "Count Active",
+		request: &model.GetCategoryRequest{
+			Size:       100,
+			StartIndex: 0,
+			IsActive:   "true",
+		},
+		expectedQuery:  "SELECT COUNT(*) as total_data FROM ticketing_category WHERE is_active LIKE $1",
+		expectedReturn: 5,
+	}}
+
+	for _, test := range tests {
+
+		t.Run(test.name, func(t *testing.T) {
+			area := sqlmock.NewRows([]string{"total_data"}).AddRow(test.expectedReturn)
+
+			mock.ExpectQuery(regexp.QuoteMeta(test.expectedQuery)).WillReturnRows(area)
+
+			res, err := repository.CountCategory(test.request)
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedReturn, res)
+		})
+	}
+}
