@@ -52,5 +52,45 @@ func Test_Repo_SubCategory_Get(t *testing.T) {
 			require.Equal(t, test.expectedReturn, res)
 		})
 	}
+}
 
+func Test_Repo_SubCategory_Delete(t *testing.T) {
+
+	gormDB, mock := dbmock.DbMock(t)
+
+	repository := repository.Repository(gormDB)
+
+	tests := []struct {
+		name           string
+		request        int
+		expectedQuery  string
+		expectedReturn entity.SubCategory
+	}{{
+		name:          "Success",
+		request:       1,
+		expectedQuery: "DELETE FROM ticketing_sub_category WHERE id_category = $1 RETURNING ticketing_sub_category.*",
+		expectedReturn: entity.SubCategory{
+			Id:         1,
+			Name:       "Test",
+			IdCategory: 1,
+			Priority:   "High",
+			CreatedAt:  time.Time{},
+			UpdatedAt:  time.Time{},
+		},
+	}}
+
+	for _, test := range tests {
+
+		t.Run(test.name, func(t *testing.T) {
+			sub_category := sqlmock.NewRows([]string{"id", "name", "id_category", "priority", "created_at", "updated_at"}).AddRow(test.expectedReturn.Id, test.expectedReturn.Name, test.expectedReturn.IdCategory, test.expectedReturn.Priority, test.expectedReturn.CreatedAt, test.expectedReturn.UpdatedAt)
+
+			mock.ExpectQuery(regexp.QuoteMeta(
+				test.expectedQuery)).
+				WillReturnRows(sub_category)
+
+			err := repository.DeleteSubCategory(&test.request)
+
+			require.NoError(t, err)
+		})
+	}
 }
