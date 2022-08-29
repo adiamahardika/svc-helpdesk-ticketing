@@ -133,3 +133,44 @@ func Test_Repo_EmailNotif_Delete(t *testing.T) {
 		})
 	}
 }
+
+func Test_Repo_EmailNotif_GetDetail(t *testing.T) {
+
+	gormDB, mock := dbmock.DbMock(t)
+
+	repository := repository.Repository(gormDB)
+
+	tests := []struct {
+		name           string
+		request        int
+		expectedQuery  string
+		expectedReturn []entity.EmailNotif
+	}{{
+		name:          "Success",
+		request:       1,
+		expectedQuery: "SELECT * FROM ticketing_email_notif WHERE id = $1 ORDER BY email ASC",
+		expectedReturn: []entity.EmailNotif{{
+			Id:        1,
+			Email:     "test@mail.com",
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
+		},
+		},
+	}}
+
+	for _, test := range tests {
+
+		t.Run(test.name, func(t *testing.T) {
+			sub_category := sqlmock.NewRows([]string{"id", "email", "created_at", "updated_at"}).AddRow(test.expectedReturn[0].Id, test.expectedReturn[0].Email, test.expectedReturn[0].CreatedAt, test.expectedReturn[0].UpdatedAt)
+
+			mock.ExpectQuery(regexp.QuoteMeta(
+				test.expectedQuery)).
+				WillReturnRows(sub_category)
+
+			res, err := repository.GetDetailEmailNotif(&test.request)
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedReturn, res)
+		})
+	}
+}
