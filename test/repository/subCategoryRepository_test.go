@@ -19,24 +19,38 @@ func Test_Repo_SubCategory_Get(t *testing.T) {
 
 	repository := repository.Repository(gormDB)
 
-	expected := []entity.SubCategory{{
-		Id:         1,
-		Name:       "Test",
-		IdCategory: 1,
-		Priority:   "High",
-		CreatedAt:  time.Time{},
-		UpdatedAt:  time.Time{},
-	},
+	tests := []struct {
+		name           string
+		expectedQuery  string
+		expectedReturn []entity.SubCategory
+	}{{
+		name:          "Success",
+		expectedQuery: "SELECT * FROM ticketing_sub_category ORDER BY name ASC",
+		expectedReturn: []entity.SubCategory{{
+			Id:         1,
+			Name:       "Test",
+			IdCategory: 1,
+			Priority:   "High",
+			CreatedAt:  time.Time{},
+			UpdatedAt:  time.Time{},
+		},
+		},
+	}}
+
+	for _, test := range tests {
+
+		t.Run(test.name, func(t *testing.T) {
+			sub_category := sqlmock.NewRows([]string{"id", "name", "id_category", "priority", "created_at", "updated_at"}).AddRow(test.expectedReturn[0].Id, test.expectedReturn[0].Name, test.expectedReturn[0].IdCategory, test.expectedReturn[0].Priority, test.expectedReturn[0].CreatedAt, test.expectedReturn[0].UpdatedAt)
+
+			mock.ExpectQuery(regexp.QuoteMeta(
+				test.expectedQuery)).
+				WillReturnRows(sub_category)
+
+			res, err := repository.GetSubCategory()
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedReturn, res)
+		})
 	}
 
-	sub_category := sqlmock.NewRows([]string{"id", "name", "id_category", "priority", "created_at", "updated_at"}).AddRow(expected[0].Id, expected[0].Name, expected[0].IdCategory, expected[0].Priority, expected[0].CreatedAt, expected[0].UpdatedAt)
-
-	mock.ExpectQuery(regexp.QuoteMeta(
-		"SELECT * FROM ticketing_sub_category ORDER BY name ASC")).
-		WillReturnRows(sub_category)
-
-	res, err := repository.GetSubCategory()
-
-	require.NoError(t, err)
-	require.Equal(t, expected, res)
 }
