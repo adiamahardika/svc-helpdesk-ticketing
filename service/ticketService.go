@@ -240,6 +240,14 @@ func (ticketService *ticketService) UpdateTicket(request *model.UpdateTicketRequ
 			}
 
 			_, error = ticketService.ticketRepository.CloseTicket(&close_req)
+		} else if ticket[0].Status != request.Status {
+			close_req := model.CloseTicketRequest{
+				TicketCode: request.TicketCode,
+				CloseTime:  time.Time{},
+				CloseBy:    "",
+			}
+
+			_, error = ticketService.ticketRepository.CloseTicket(&close_req)
 		}
 
 		ticket, error = ticketService.ticketRepository.UpdateTicket(request)
