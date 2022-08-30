@@ -47,17 +47,16 @@ type CreateTicketRequest struct {
 
 type UpdateTicketRequest struct {
 	AssignedTo    string    `json:"assignedTo" form:"assignedTo"`
-	Email         string    `json:"email" form:"email"`
 	Category      string    `json:"category" form:"category"`
 	SubCategory   string    `json:"subCategory" form:"subCategory"`
 	Prioritas     string    `json:"prioritas" form:"prioritas"`
 	Status        string    `json:"status" form:"status"`
 	TicketCode    string    `json:"ticketCode" form:"ticketCode"`
-	TotalWaktu    string    `json:"totalWaktu" form:"totalWaktu"`
 	UpdatedBy     string    `json:"updatedBy" form:"updatedBy"`
 	TglDiperbarui time.Time `json:"tglDiperbarui" form:"tglDiperbarui"`
 	AssigningTime time.Time `json:"assigningTime" form:"assigningTime"`
 	AssigningBy   string    `json:"assigningBy" form:"assigningBy"`
+	VisitStatus   string    `json:"visitStatus" form:"visitStatus"`
 }
 
 type ReplyTicket struct {
@@ -71,6 +70,7 @@ type ReplyTicket struct {
 	Attachment1       *multipart.FileHeader `json:"attachment1" form:"attachment1"`
 	Attachment2       *multipart.FileHeader `json:"attachment2" form:"attachment2"`
 	TglDibuat         time.Time             `json:"tglDibuat" form:"tglDibuat"`
+	VisitStatus       string                `json:"visitStatus" form:"visitStatus"`
 }
 
 type UpdateTicketStatusRequest struct {
@@ -86,7 +86,8 @@ type StartTicketRequest struct {
 }
 
 type CloseTicketRequest struct {
-	TicketCode string    `json:"ticketCode"`
-	CloseTime  time.Time `json:"closeTime"`
-	CloseBy    string    `json:"closeBy"`
+	TicketCode  string    `json:"ticketCode"`
+	VisitStatus string    `json:"visitStatus" form:"visitStatus"`
+	CloseTime   time.Time `json:"closeTime"`
+	CloseBy     string    `json:"closeBy"`
 }

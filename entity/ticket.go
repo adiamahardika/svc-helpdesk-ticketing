@@ -35,4 +35,5 @@ type Ticket struct {
 	CloseBy           string    `json:"closeBy" gorm:"->"`
 	AssigningTime     time.Time `json:"assigningTime"`
 	AssigningBy       string    `json:"assigningBy"`
+	VisitStatus       string    `json:"visitStatus" gorm:"->"`
 }

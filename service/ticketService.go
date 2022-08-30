@@ -222,12 +222,7 @@ func (ticketService *ticketService) UpdateTicket(request *model.UpdateTicketRequ
 	if len(ticket) == 0 {
 		error = fmt.Errorf("Ticket code does'nt exist!")
 	} else {
-		tgl := ticket[0].TglDibuat
-		past_date := time.Date(tgl.Year(), tgl.Month(), tgl.Day(), tgl.Hour(), tgl.Minute(), tgl.Second(), tgl.Nanosecond(), time.Local)
-		year, month, day, hour, min, sec := general.TimeDifference(past_date, date_now)
-		total_waktu := fmt.Sprintf("%dy %dm %dd %dh %dmm %ds", year, month, day, hour, min, sec)
 
-		request.TotalWaktu = total_waktu
 		request.TglDiperbarui = date_now
 		request.AssigningTime = ticket[0].AssigningTime
 		request.AssigningBy = ticket[0].AssigningBy
@@ -282,10 +277,6 @@ func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, cont
 	if len(ticket) == 0 {
 		error = fmt.Errorf("Ticket code does'nt exist!")
 	} else {
-		tgl := ticket[0].TglDibuat
-		past_date := time.Date(tgl.Year(), tgl.Month(), tgl.Day(), tgl.Hour(), tgl.Minute(), tgl.Second(), tgl.Nanosecond(), time.Local)
-		year, month, day, hour, min, sec := general.TimeDifference(past_date, date_now)
-		total_waktu := fmt.Sprintf("%dy %dm %dd %dh %dmm %ds", year, month, day, hour, min, sec)
 
 		if strings.EqualFold(request.ReplyType, "start") {
 			start_req := model.StartTicketRequest{
@@ -308,15 +299,14 @@ func (ticketService *ticketService) ReplyTicket(request *model.ReplyTicket, cont
 
 		update_ticket := model.UpdateTicketRequest{
 			AssignedTo:    ticket[0].AssignedTo,
-			Email:         ticket[0].Email,
 			Category:      ticket[0].Category,
 			Prioritas:     ticket[0].Prioritas,
 			SubCategory:   ticket[0].SubCategory,
 			AssigningTime: ticket[0].AssigningTime,
 			AssigningBy:   ticket[0].AssigningBy,
+			VisitStatus:   request.VisitStatus,
 			Status:        request.Status,
 			TicketCode:    request.TicketCode,
-			TotalWaktu:    total_waktu,
 			UpdatedBy:     request.UpdatedBy,
 			TglDiperbarui: date_now,
 		}
@@ -368,15 +358,14 @@ func (ticketService *ticketService) StartTicket(request *model.StartTicketReques
 		date_now := time.Now()
 		update_ticket := model.UpdateTicketRequest{
 			AssignedTo:    ticket[0].AssignedTo,
-			Email:         ticket[0].Email,
 			Category:      ticket[0].Category,
 			Prioritas:     ticket[0].Prioritas,
 			SubCategory:   ticket[0].SubCategory,
 			AssigningTime: ticket[0].AssigningTime,
 			AssigningBy:   ticket[0].AssigningBy,
+			VisitStatus:   ticket[0].VisitStatus,
 			Status:        "Process",
 			TicketCode:    request.TicketCode,
-			TotalWaktu:    ticket[0].TotalWaktu,
 			UpdatedBy:     request.StartBy,
 			TglDiperbarui: date_now,
 		}
@@ -402,15 +391,14 @@ func (ticketService *ticketService) CloseTicket(request *model.CloseTicketReques
 		date_now := time.Now()
 		update_ticket := model.UpdateTicketRequest{
 			AssignedTo:    ticket[0].AssignedTo,
-			Email:         ticket[0].Email,
 			Category:      ticket[0].Category,
 			Prioritas:     ticket[0].Prioritas,
 			SubCategory:   ticket[0].SubCategory,
 			AssigningTime: ticket[0].AssigningTime,
 			AssigningBy:   ticket[0].AssigningBy,
+			VisitStatus:   request.VisitStatus,
 			Status:        "Finish",
 			TicketCode:    request.TicketCode,
-			TotalWaktu:    ticket[0].TotalWaktu,
 			UpdatedBy:     request.CloseBy,
 			TglDiperbarui: date_now,
 		}
