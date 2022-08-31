@@ -33,4 +33,5 @@ type ReportResponse struct {
 	CloseBy           string `json:"closeBy" gorm:"->"`
 	AssigningTime     string `json:"assigningTime"`
 	AssigningBy       string `json:"assigningBy"`
+	VisitStatus       string `json:"visitStatus" gorm:"->"`
 }
