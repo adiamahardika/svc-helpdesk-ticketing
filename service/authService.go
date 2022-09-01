@@ -64,8 +64,7 @@ func (authService *authService) Login(request *model.LoginRequest) (*model.Login
 			}
 			expirationTime := time.Now().Add(time.Minute * 60)
 			claims := &model.Claims{
-				SignatureKey: general.GetMD5Hash(request.Username, strconv.Itoa(user.Id)),
-				Username:     request.Username,
+				Username: request.Username,
 				StandardClaims: jwt.StandardClaims{
 					ExpiresAt: expirationTime.Unix(),
 				},
@@ -107,7 +106,7 @@ func (authService *authService) RefreshToken(context *gin.Context) (*model.Login
 	token_string := context.Request.Header.Get("token")
 	claims := &model.Claims{}
 	jwtKey := []byte(os.Getenv("API_SECRET"))
-	var user []entity.User
+
 	var login_response *model.LoginResponse
 
 	decode_token, error := jwt.ParseWithClaims(token_string, claims,
@@ -125,12 +124,11 @@ func (authService *authService) RefreshToken(context *gin.Context) (*model.Login
 	}
 
 	if error == nil {
-		user, error = authService.userRepository.CheckUsername(&claims.Username)
+		_, error = authService.userRepository.CheckUsername(&claims.Username)
 
 		expirationTime := time.Now().Add(time.Minute * 60)
 		generate_token := &model.Claims{
-			SignatureKey: general.GetMD5Hash(claims.Username, strconv.Itoa(user[0].Id)),
-			Username:     claims.Username,
+			Username: claims.Username,
 			StandardClaims: jwt.StandardClaims{
 				ExpiresAt: expirationTime.Unix(),
 			},
@@ -202,6 +200,7 @@ func (authService *authService) Authorization() gin.HandlerFunc {
 		claims := &model.Claims{}
 		description := []string{}
 		jwtKey := []byte(os.Getenv("API_SECRET"))
+		signatureSecret := os.Getenv("SIGNATURE_SECRET")
 		var status *model.StandardResponse
 
 		_, error := jwt.ParseWithClaims(token_string, claims,
@@ -210,7 +209,7 @@ func (authService *authService) Authorization() gin.HandlerFunc {
 			})
 
 		user, error := authService.userRepository.CheckUsername(&claims.Username)
-		generate_sk := general.GetMD5Hash(claims.Username, strconv.Itoa(user[0].Id))
+		generate_sk := general.GetMD5Hash(claims.Username, strconv.Itoa(user[0].Id), signatureSecret)
 
 		if signature_key == "" {
 			error = fmt.Errorf(fmt.Sprintf("Please provide signature-key!"))

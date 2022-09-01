@@ -7,9 +7,9 @@ import (
 	"time"
 )
 
-func GetMD5Hash(text string, text_2 string) string {
+func GetMD5Hash(text string, text_2 string, text_3 string) string {
 	hasher := md5.New()
-	hasher.Write([]byte(text + text_2))
+	hasher.Write([]byte(text + text_2 + text_3))
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
