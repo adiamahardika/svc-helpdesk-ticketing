@@ -232,7 +232,21 @@ func (ticketService *ticketService) UpdateTicket(request *model.UpdateTicketRequ
 			request.AssigningBy = request.UpdatedBy
 		}
 
-		if ticket[0].Status != "Finish" && request.Status == "Finish" {
+		if ticket[0].Status != "Process" && request.Status == "Process" {
+			start_req := model.StartTicketRequest{
+				TicketCode: request.TicketCode,
+				StartTime:  date_now,
+				StartBy:    request.UpdatedBy,
+			}
+			_, error = ticketService.ticketRepository.StartTicket(&start_req)
+
+			close_req := model.CloseTicketRequest{
+				TicketCode: request.TicketCode,
+				CloseTime:  time.Time{},
+				CloseBy:    request.UpdatedBy,
+			}
+			_, error = ticketService.ticketRepository.CloseTicket(&close_req)
+		} else if ticket[0].Status != "Finish" && request.Status == "Finish" {
 			close_req := model.CloseTicketRequest{
 				TicketCode: request.TicketCode,
 				CloseTime:  date_now,
