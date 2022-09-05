@@ -34,7 +34,9 @@ func AuthService(userRepository repository.UserRepositoryInterface, roleReposito
 func (authService *authService) Login(request *model.LoginRequest) (*model.LoginResponse, error) {
 	var user_response *model.LoginResponse
 	user, error := authService.userRepository.GetUserDetail(&request.Username)
-
+	signatureSecret := os.Getenv("SIGNATURE_SECRET")
+	generate_sk := general.GetMD5Hash(user.Username, strconv.Itoa(user.Id), signatureSecret)
+	fmt.Println(generate_sk)
 	if user.Username == "" {
 		error = fmt.Errorf("Username Not Found!")
 	} else if user.Status != "Active" {

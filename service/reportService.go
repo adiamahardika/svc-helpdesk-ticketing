@@ -7,6 +7,7 @@ import (
 
 type ReportServiceInterface interface {
 	GetReport(request *model.GetReportRequest) ([]model.ReportResponse, error)
+	GetCountReportByStatus(request *model.GetCountReportByStatusRequest) ([]model.GetCountReportByStatusResponse, error)
 }
 
 type reportService struct {
@@ -21,6 +22,14 @@ func (reportService *reportService) GetReport(request *model.GetReportRequest) (
 
 	request.EndDate = request.EndDate + " 23:59:59"
 	ticket, error := reportService.reportRepository.GetReport(request)
+
+	return ticket, error
+}
+
+func (reportService *reportService) GetCountReportByStatus(request *model.GetCountReportByStatusRequest) ([]model.GetCountReportByStatusResponse, error) {
+
+	request.EndDate = request.EndDate + " 23:59:59"
+	ticket, error := reportService.reportRepository.GetCountReportByStatus(request)
 
 	return ticket, error
 }

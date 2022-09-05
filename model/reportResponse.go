@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type ReportResponse struct {
 	Id                int    `json:"id" gorm:"primaryKey"`
 	Judul             string `json:"judul"`
@@ -34,4 +36,11 @@ type ReportResponse struct {
 	AssigningTime     string `json:"assigningTime"`
 	AssigningBy       string `json:"assigningBy"`
 	VisitStatus       string `json:"visitStatus" gorm:"->"`
+}
+
+type GetCountReportByStatusResponse struct {
+	Date    time.Time `json:"date"`
+	New     int       `json:"new"`
+	Process int       `json:"process"`
+	Finish  int       `json:"finish"`
 }

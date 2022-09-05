@@ -7,6 +7,7 @@ import (
 
 type ReportRepositoryInterface interface {
 	GetReport(request *model.GetReportRequest) ([]model.ReportResponse, error)
+	GetCountReportByStatus(request *model.GetCountReportByStatusRequest) ([]model.GetCountReportByStatusResponse, error)
 }
 
 func (repo *repository) GetReport(request *model.GetReportRequest) ([]model.ReportResponse, error) {
@@ -50,4 +51,38 @@ func (repo *repository) GetReport(request *model.GetReportRequest) ([]model.Repo
 	}).Find(&ticket).Error
 
 	return ticket, error
+}
+
+func (repo *repository) GetCountReportByStatus(request *model.GetCountReportByStatusRequest) ([]model.GetCountReportByStatusResponse, error) {
+
+	var result []model.GetCountReportByStatusResponse
+	var area_code string
+	var regional string
+	var grapari_id string
+
+	if len(request.AreaCode) > 0 {
+		area_code = "AND ticket.area_code IN @AreaCode"
+	}
+	if len(request.Regional) > 0 {
+		regional = "AND ticket.regional IN @Regional"
+	}
+	if len(request.GrapariId) > 0 {
+		grapari_id = "AND ticket.grapari_id IN @GrapariId"
+	}
+
+	query1 := fmt.Sprintf("(SELECT * FROM (SELECT DATE(tgl_dibuat) AS date, COUNT(*) As new, 0 AS process, 0 As finish FROM myg_ticketing.ticket WHERE tgl_dibuat >= @StartDate and tgl_dibuat <= @EndDate  %s %s %s GROUP BY DATE(tgl_dibuat)) as tbl)", area_code, regional, grapari_id)
+	query2 := fmt.Sprintf("(SELECT * FROM (SELECT DATE(start_time) AS date, 0 AS new, COUNT(*) As process, 0 As finish FROM myg_ticketing.ticket WHERE start_time >= @StartDate and start_time <= @EndDate  %s %s %s GROUP BY DATE(start_time)) as tbl)", area_code, regional, grapari_id)
+	query3 := fmt.Sprintf("(SELECT * FROM (SELECT DATE(close_time) AS date, 0 AS new, 0 As process, COUNT(*) As finish FROM myg_ticketing.ticket WHERE close_time >= @StartDate and close_time <= @EndDate  %s %s %s GROUP BY DATE(close_time)) as tbl)", area_code, regional, grapari_id)
+
+	final_query := fmt.Sprintf("SELECT date, SUM(new) AS new, SUM(process) AS process, SUM(finish) AS finish FROM (%s UNION ALL %s UNION ALL %s) AS tbl2 GROUP BY date ORDER BY date ASC", query1, query2, query3)
+
+	error := repo.db.Raw(final_query, model.GetCountReportByStatusRequest{
+		AreaCode:  request.AreaCode,
+		Regional:  request.Regional,
+		GrapariId: request.GrapariId,
+		StartDate: request.StartDate,
+		EndDate:   request.EndDate,
+	}).Find(&result).Error
+
+	return result, error
 }

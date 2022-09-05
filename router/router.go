@@ -140,6 +140,7 @@ func AllRouter(db *gorm.DB) {
 			{
 				report.Use(authService.Authentication(), authService.Authorization())
 				report.POST("/get", reportController.GetReport)
+				report.POST("/get-count-by-status", reportController.GetCountReportByStatus)
 			}
 
 			auth := v1.Group("/auth")

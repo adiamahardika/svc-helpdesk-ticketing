@@ -12,3 +12,11 @@ type GetReportRequest struct {
 	StartDate       string   `json:"startDate" binding:"required"`
 	EndDate         string   `json:"endDate" binding:"required"`
 }
+
+type GetCountReportByStatusRequest struct {
+	AreaCode  []string `json:"areaCode"`
+	Regional  []string `json:"regional"`
+	GrapariId []string `json:"grapariId"`
+	StartDate string   `json:"startDate" binding:"required"`
+	EndDate   string   `json:"endDate" binding:"required"`
+}
